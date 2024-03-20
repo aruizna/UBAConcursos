@@ -4,6 +4,8 @@ WORKDIR /app
 COPY . .
 # Instalar dependencias y build de la aplicacion Angular
 RUN composer install
+#RUN php yii test
+#RUN php yii migrate
 
 
 # Stage 2: Serve App

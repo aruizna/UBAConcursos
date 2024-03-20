@@ -33,7 +33,7 @@ class CargosActuales extends \yii\db\ActiveRecord
     {
         return [
             [['id'], 'required'],
-            [['id', 'user_id'], 'integer'],
+            [['id', 'user_id', 'profile_id'], 'integer'],
             [['designacion', 'categoria', 'dedicacion', 'asignatura', 'facultad', 'universidad'], 'string', 'max' => 45],
             [['id'], 'unique'],
         ];
@@ -53,6 +53,7 @@ class CargosActuales extends \yii\db\ActiveRecord
             'facultad' => Yii::t('app', 'Facultad'),
             'universidad' => Yii::t('app', 'Universidad'),
             'user_id' => Yii::t('app', 'User ID'),
+            'profile_id' => Yii::t('app', 'Profile ID'),
         ];
     }
 

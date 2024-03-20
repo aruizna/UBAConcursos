@@ -109,4 +109,12 @@ class Concurso extends \yii\db\ActiveRecord
     {
         return ['id_concurso'];
     }
+
+      // Define the HasMany relationship to retrieve all profiles associated with a concurso
+      public function getProfiles()
+      {
+          // HasMany means a concurso can have multiple profiles
+          return $this->hasMany(Profile::class, ['concurso_id' => 'id_concurso']);
+          // 'concurso_id' is the foreign key in the profiles table that points to 'id' in the concursos table
+      }
 }

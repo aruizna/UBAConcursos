@@ -201,9 +201,9 @@ $this->title = 'Concursos';
                                     </div>
                                     <div class="row ml-2 my-2">
                                         <?php         
-                                            $profile = Profile::findOne(['user_id' => Yii::$app->user->id]);
+                                            $profile = $concurso->getProfiles()->where(['user_id' => Yii::$app->user->id])->one();
                                             $file = FileHelper::findFiles('attachments/formularios', [
-                                                'only' => ['*' . $profile->cuil.'_' . $concurso['id_concurso'] . '*' . 'pdf'],
+                                                'only' => ["*-{$profile->cuil}_{$profile->concurso_id}-*.pdf"],
                                             ]);
                                         ?>
                                         <?php if($file && basename($file[0])): ?>

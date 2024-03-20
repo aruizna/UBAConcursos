@@ -101,4 +101,11 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     {
         return $this->password === $password;
     }
+
+     // Define the HasManyThrough relationship to retrieve all concursos associated with a user through profiles
+     public function getConcursos()
+     {
+         return $this->hasMany(Concurso::class, ['id_concurso' => 'concurso_id'])
+             ->viaTable('profile', ['user_id' => 'id']);
+     }
 }

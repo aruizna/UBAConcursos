@@ -68,7 +68,7 @@ class Profile extends \yii\db\ActiveRecord
     {
         return [
             [['numero_documento','user_id','apellido', 'nombre', 'email', 'cuil','nacimiento_localidad', 'nacimiento_expedido', 'nacimiento_pais', 'domicilio_calle', 'domicilio_numero', 'domicilio_codigo_postal', 'domicilio_localidad', 'domicilio_provincia', 'domicilio_pais', 'nacimiento_fecha', 'estado_civil', 'numero_celular_sms'], 'required'],
-            [['user_id', 'gdpr_consent'], 'integer'],
+            [['user_id', 'gdpr_consent', 'concurso_id'], 'integer'],
             [['titulos_obtenidos','antecedentes_docentes', 'antecedentes_cientificos', 'cursos', 'congresos', 'actuacion_universidades', 'formacion_rrhh', 'sintesis_aportes', 'sintesis_profesional', 'otros_antecedentes', 'labor_docente', 'renovacion','cargo_actual'], 'string'],
             [['numero_documento'], 'string', 'max' => 12],
             [['apellido', 'nombre', 'email'], 'string', 'max' => 100],
@@ -80,30 +80,19 @@ class Profile extends \yii\db\ActiveRecord
             [['sexo'], 'string', 'max' => 20],
             [['numero_celular_sms'], 'string', 'max' => 15],
             [['cuil', 'estado_civil', 'conyuge', 'madre', 'padre', 'nacimiento_localidad', 'nacimiento_expedido', 'nacimiento_pais', 'domicilio_calle', 'domicilio_numero', 'domicilio_piso', 'domicilio_departamento', 'domicilio_codigo_postal', 'domicilio_localidad', 'domicilio_provincia', 'domicilio_pais'], 'string', 'max' => 45],
-            [['user_id'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
             [['cid'], 'safe'],
             [['cid'], 'string'],
-            [['nacimiento_fecha'], 'validateEdad'],
+            [['nacimiento_fecha'],function ($attribute, $params, $validator) {
+                $date = strtotime($this->$attribute);
+                $minAge = strtotime('-65 years -1 day');
+                $maxAge = strtotime('-18 years');
+    
+                if ($date > $maxAge || $date < $minAge) {
+                    $this->addError($attribute, 'The person must be between 18 and 65 years old.');
+                }
+            }],
         ];
-    }
-
-    public function validateEdad($attribute, $params)
-    {
-        $fechaNacimiento = $this->$attribute;
-    
-        $fechaNacimientoTimestamp = strtotime($fechaNacimiento);
-        $hoy = time();
-    
-        $diferencia = $hoy - $fechaNacimientoTimestamp;
-    
-        $edadAnios = floor($diferencia / (365.25 * 24 * 60 * 60));
-        $edadMeses = floor(($diferencia % (365.25 * 24 * 60 * 60)) / (30.44 * 24 * 60 * 60));
-        $edadDias = floor(($diferencia % (30.44 * 24 * 60 * 60)) / (24 * 60 * 60));
-    
-        if ($edadAnios > 65 || ($edadAnios == 65 && ($edadMeses > 0 || $edadDias > 0))) {
-            $this->addError($attribute, 'La edad no puede ser mayor a 65 años.');
-        }
     }
 
     /**
@@ -154,6 +143,8 @@ class Profile extends \yii\db\ActiveRecord
             'renovacion' => Yii::t('app', 'Renovacion'),
             'cargo_actual' => Yii::t('app', 'Cargo Actual'),
             'cid' => Yii::t('app', 'cid'),
+            "concurso_id"=> Yii::t('app', 'Concurso ID'),
+            'id'=> Yii::t('app', 'Profile ID'),
         ];
     }
 
@@ -167,6 +158,23 @@ class Profile extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+
+    // Definir la relación HasOne hacia el modelo Concursos
+    public function getConcursos()
+    {
+        // HasOne significa que un perfil puede tener como máximo un concurso
+        return $this->hasOne(Concurso::class, ['id_concurso' => 'concurso_id']);
+        // 'profile_id' es el nombre de la clave foránea en la tabla 'Concursos' que apunta a 'id' en la tabla 'Profile'
+    }
+    
+        // Definir la relación HasOne hacia el modelo Concursos
+        public function getCargosActuales()
+        {
+            // HasOne significa que un perfil puede tener como máximo un concurso
+            return $this->hasMany(CargosActuales::class, ['profile_id' => 'id']);
+            // 'profile_id' es el nombre de la clave foránea en la tabla 'Concursos' que apunta a 'id' en la tabla 'Profile'
+        }
+
     /**
      * {@inheritdoc}
      * @return ProfileQuery the active query used by this AR class.
@@ -176,8 +184,4 @@ class Profile extends \yii\db\ActiveRecord
         return new ProfileQuery(get_called_class());
     }
 
-    public static function primaryKey()
-    {
-        return ['user_id'];
-    }
-}
+ }

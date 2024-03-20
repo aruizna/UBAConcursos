@@ -1,5 +1,10 @@
 <?php
 
+use app\commands\HelloController;
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__."/..");
+$dotenv->load();
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -41,13 +46,12 @@ $config = [
         'db' => $db,
     ],
     'params' => $params,
-    /*
     'controllerMap' => [
-        'fixture' => [ // Fixture generation command line.
-            'class' => 'yii\faker\FixtureController',
+        'test' => [ // Fixture generation command line.
+            'class' => HelloController::class,
         ],
     ],
-    */
+    
 ];
 
 if (YII_ENV_DEV) {

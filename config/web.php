@@ -1,5 +1,8 @@
 <?php
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__."/..");
+$dotenv->load();
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -32,7 +35,7 @@ $config = [
             // 'i18n' => []
         ]
     ],
-    'components' => [  
+    'components' => [
         'as beforeRequest' => [
             'class' => 'yii\filters\AccessControl',
             'rules' => [
@@ -49,7 +52,7 @@ $config = [
             'denyCallback' => function ($rule, $action) {
                 return Yii::$app->response->redirect(['user/login']); // Redirige a la página de login
             },
-        ], 
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'vEyClvJhVt-oQmF7tjO7mPvgON9_nppa',
@@ -65,14 +68,15 @@ $config = [
             'errorAction' => 'site/error',
         ],
         'mailer' => [
-            'class' => \yii\symfonymailer\Mailer::class,
+            'class' => \yii\swiftmailer\Mailer::class,
             'transport' => [
-                'scheme' => 'smtp',
-                'host' => ' smtp.office365.com',
-                'username' => $_ENV['SMTP_USER'],
-                'password' => $_ENV['SMTP_PASSWORD'],
-                'port' => '587',
-                'dsn' => 'native://default',
+                'class' => 'Swift_SmtpTransport',
+                'host' => $_ENV['MAIL_HOST'] ?? 'smtp.office365.com',
+                'port' => $_ENV["MAIL_PORT"] ?? 587,
+                'username' => $_ENV['MAIL_USER'],
+                'password' => $_ENV['MAIL_PASSWORD'],
+                'encryption' => $_ENV["MAIL_ENCRYPTION"] ?? 'tls', // Security: TLS
+                'authMode' => $_ENV["MAIL_AUTHMODE"] ?? 'login', // Authentication type: LOGIN
             ],
             // 'viewPath' => 'mail',
             // send all mails to a file by default. You have to set
@@ -86,7 +90,7 @@ $config = [
                 [
                     'class' => 'yii\log\FileTarget',
                     // 'levels' => ['error', 'warning'],
-                    'levels' => ['error', 'warning','info'],
+                    'levels' => ['error', 'warning', 'info'],
                 ],
             ],
         ],
@@ -94,8 +98,7 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
+            'rules' => [],
         ],
         'user' => [
             'authTimeout' => 1800,   // segundos

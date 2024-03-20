@@ -20,15 +20,7 @@ Si el usuario no tiene permisos sobre los archivos donde se encuentra el proyect
 
 ### Configuración
 
-El archivo /config/db.php contiene la configuración necesaria para la integración con la base de datos (MySQL).
-
-return [
-    'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=127.0.0.1:3306;dbname=demoDbName',
-    'username' => 'demoUser',
-    'password' => 'demoPassword',
-    'charset' => 'utf8',
-];
+Las variable a configurar SMTP y Conexion de BD estan en .env
 
 
 # Aspirantes
@@ -69,3 +61,19 @@ Se instaló el componente yii2-usuario de 2amigos para el manejo de usuarios.
 https://github.com/2amigos/yii2-usuario
 
 Los archivos de configuración, vistas, modelos y controladores estan en /vendor/2amigos/yii2-usuario/src/User/
+
+
+## Docker
+Luego de levantar los contenedores de Docker.
+
+# Access the PHP container
+docker exec -it <php_container_name_or_id> /bin/bash
+
+# Navigate to your Yii application directory
+cd /app
+
+# Run Yii migrations
+php yii migrate
+
+# Exit the container
+exit

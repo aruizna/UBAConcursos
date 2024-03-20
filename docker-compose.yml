@@ -5,14 +5,25 @@ services:
       context: ./
       dockerfile: deploy/app.Dockerfile
     environment:
+      MYSQl_HOST: concurso_db
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: concursos
       MYSQL_USER: concursos
       MYSQL_PASSWORD: 1R27pfeGVOrI
-      SMTP_USER: concursos-NORESPONDER@uba.ar
-      SMTP_PASSWORD: Soq49955
+      MAIL_HOST: smtp.office365.com
+      MAIL_PORT: 587
+      MAIL_ENCRYPTION: tls
+      MAIL_AUTHMODE: login
+      MAIL_USER: concursos-NORESPONDER@uba.ar
+      MAIL_USER_NAME: CONCURSOS UBA
+      MAIL_PASSWORD: Soq49955
+      MAIL_ADMIN: admin@uba.ar
     ports:
       - '8080:80'
     networks:
-      - concursos     
+      - concursos
+    depends_on:
+      - db
 
   db:
     image: mysql
@@ -27,10 +38,10 @@ services:
       - ./deploy/database/concursos.sql:/docker-entrypoint-initdb.d/concursos.sql
       - database:/var/lib/mysql 
     networks:
-      - concursos  
+      - concursos
 
 networks:
   concursos:
-
+    
 volumes:
   database:

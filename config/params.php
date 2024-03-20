@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'adminEmail' => 'admin@example.com',
-    'senderEmail' => 'concursos-NORESPONDER@uba.ar',
-    'senderName' => 'Example.com mailer',
-    ];
+    'adminEmail' => $_ENV["MAIL_ADMIN"] ?? 'admin@example.com',
+    'senderEmail' => $_ENV["MAIL_USER"] ?? 'concursos-NORESPONDER@uba.ar',
+    'senderName' => $_ENV["MAIL_USER_NAME"] ?? 'CONCURSOS UBA',
+];
