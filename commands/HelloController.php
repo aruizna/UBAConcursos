@@ -12,6 +12,7 @@ use app\models\Concurso;
 use app\models\Preinscripto;
 use app\models\Profile;
 use app\models\User;
+use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
 
@@ -32,22 +33,14 @@ class HelloController extends Controller
      */
     public function actionIndex($message = 'hello world')
     {
-
-        $db = require __DIR__ . '../../config/db.php';
-        var_dump($db);
-        // Enable query logging
-        /*\Yii::$app->db->enableLogging = true;
-
-        // Print or log the SQL query
-        $preinscripto = Preinscripto::find()->select('concurso_id')->where(['user_id' => 86])->column();
-        var_dump(Profile::find()->where(['and', 'user_id' => 112, ['or', ['concurso_id' => $cid], ['concurso_id' => null]]])->orderBy(['concurso_id' => SORT_DESC])->one());
-
-        // Disable query logging
-        \Yii::$app->db->enableLogging = false;
-
-        // Get the last executed SQL query
-        #var_dump($p->id);
-
-        return ExitCode::OK;*/
+        $email = $this->prompt('Enter recipient email address:');
+        $mailer = Yii::$app->mailer;
+        var_dump($mailer->compose()
+            ->setFrom($_ENV["MAIL_USER"])
+            ->setTo($email)
+            ->setSubject('Asunto del correo')
+            ->setTextBody('Cuerpo del correo en texto sin formato')
+            ->send());
+        return;
     }
 }

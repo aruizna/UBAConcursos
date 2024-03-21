@@ -192,7 +192,13 @@ class ProfileController extends Controller
                     }
                     if ($dataProvider->validate()) {
                         if (!empty($dataProvider->concurso_id)) {
-                            if (empty($prevProfile)) $dataProvider->save(false);
+
+                            if (!$dataProvider->save(false)) {
+                                return $this->render('index?cid=0', [
+                                    'dataProvider' => $dataProvider,
+                                    'provincias' => $this->provincias
+                                ]);
+                            };
 
                             if (!($this->previsualizar($dataProvider->id) && $this->preinscripcion($dataProvider->id))) {
                                 Yii::$app->session->setFlash('error', 'Error al preinscribirse.');
@@ -201,12 +207,6 @@ class ProfileController extends Controller
                                     'provincias' => $this->provincias
                                 ]);
                             }
-                            if (!$dataProvider->save(false)) {
-                                return $this->render('index?cid=0', [
-                                    'dataProvider' => $dataProvider,
-                                    'provincias' => $this->provincias
-                                ]);
-                            };
                             Yii::$app->session->setFlash('success', 'Se preinscribió correctamente');
                             return $this->redirect(['/concurso']);
                         }

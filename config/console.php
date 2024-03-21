@@ -30,11 +30,20 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'mailer' => [
-            'class' => \yii\symfonymailer\Mailer::class,
-            'viewPath' => '@app/mail',
-            // send all mails to a file by default.
-            'useFileTransport' => true,
-        ],        
+            'class' => \yii\swiftmailer\Mailer::class,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => $_ENV['MAIL_HOST'] ?? 'smtp.office365.com',
+                'port' => $_ENV["MAIL_PORT"] ?? 587,
+                'username' => $_ENV['MAIL_USER'],
+                'password' => $_ENV['MAIL_PASSWORD'],
+                'encryption' => $_ENV["MAIL_ENCRYPTION"] ?? 'tls', // Security: TLS
+                'authMode' => $_ENV["MAIL_AUTHMODE"] ?? 'login', // Authentication type: LOGIN
+            ],
+            // 'useFileTransport' to false and configure transport
+            // for the mailer to send real emails.
+            'useFileTransport' => false,
+        ],  
         'log' => [
             'targets' => [
                 [

@@ -13,6 +13,7 @@ protected/components/widgets/select2/assets/*
 
 # phpstorm project files
 .idea
+.env
 
 # netbeans project files
 nbproject
