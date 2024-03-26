@@ -707,7 +707,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_codigo_postal',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'style' => 'max-width:150px', 'tabindex' => '1', 'placeholder' => 'Código Postal'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['minlength'=>'4','maxlength'=>'8','autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'style' => 'max-width:150px', 'tabindex' => '1', 'placeholder' => 'Código Postal'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
