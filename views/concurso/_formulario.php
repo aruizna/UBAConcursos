@@ -58,7 +58,7 @@ use yii\helpers\Json;
 
         <div style="display:flex;flex-direction:row">
             <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Área</p>
+                <p style="font-weight:600;font-family:Helvetica">Departamento</p>
             </div>        
             <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
                 <p style="font-weight:300;text-align:center;font-family:Helvetica"><?php try{echo (AreaDepartamento::find()->where(['id_area_departamento' => $model->id_area_departamento])->andWhere(['id_facultad' => $model->id_facultad])->one()->descripcion_area_departamento);} catch(\Throwable $e){echo ('');} ?></p>

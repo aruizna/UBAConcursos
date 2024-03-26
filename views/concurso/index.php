@@ -99,7 +99,7 @@ $this->title = 'Concursos';
                 disabled>
                 </select>
                 <p class="mx-4 areas" style="font-size:18px;font-weight:400;height:15px"><?php try{echo (AreaDepartamento::find()->where(['id_area_departamento' => $concurso['id_area_departamento']])->andWhere(['id_facultad' => $concurso['id_facultad']])->one()->descripcion_area_departamento);} catch(\Throwable $e){echo ('');} ?></p>
-                <p class="mx-4" style="font-size:18px;font-weight:400;height:15px">Área</p>
+                <p class="mx-4" style="font-size:18px;font-weight:400;height:15px">Departamento</p>
             </div>
 
             <div class="mt-2" style="display: flex;flex-direction:row-reverse;width: 100%;">
@@ -147,7 +147,7 @@ $this->title = 'Concursos';
             <div class="pt-4" style="display:<?= ($emptymessage=='none')?'flex':'none' ?>;width: 934px;flex-direction:column;">
             <table>
                 <tr>
-                    <th style="text-align: center;vertical-align: middle;width:100px">Área</td>
+                    <th style="text-align: center;vertical-align: middle;width:100px">Departamento</td>
                     <th style="text-align: center;vertical-align: middle;width:100px">Asignatura/s</td>
                     <th style="text-align: center;vertical-align: middle;width:100px">Categoría</td>
                     <th style="text-align: center;vertical-align: middle;width:100px">Dedicación</td>

@@ -196,7 +196,7 @@ $this->title = 'Profile';
                             </div>
                             <div class="mb-2" style="display:flex;flex-direction:row">
                                 <div style="width:250px;display:flex;align-items: center;">
-                                    <p class="my-0">Área</p>
+                                    <p class="my-0">Departamento</p>
                                 </div>
                                 <div class="ml-2" style="display:flex;align-items: center;">
                                     <p class="concurso_data"><?php try {
