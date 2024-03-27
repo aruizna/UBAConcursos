@@ -67,6 +67,15 @@ use yii\helpers\Json;
 
         <div style="display:flex;flex-direction:row">
             <div style="display:flex;flex-direction:column;min-width:70%">
+                <p style="font-weight:600;font-family:Helvetica">Área</p>
+            </div>        
+            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
+                <p style="font-weight:300;text-align:center;font-family:Helvetica"><?=  $model->area ?? ''?></p>
+            </div>
+        </div>
+
+        <div style="display:flex;flex-direction:row">
+            <div style="display:flex;flex-direction:column;min-width:70%">
                 <p style="font-weight:600;font-family:Helvetica">Asignatura/s</p>
             </div>    
             
