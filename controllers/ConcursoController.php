@@ -418,11 +418,11 @@ class ConcursoController extends Controller
     public function actionArea()
     {
         $parameter = Yii::$app->request->post('facultad');
-        $area = AreaDepartamento::find()
+        $departamento = AreaDepartamento::find()
             ->where(['id_facultad' => $parameter])
             ->orderBy(['descripcion_area_departamento' => SORT_ASC])
             ->all();
-        return Json::encode($area);
+        return Json::encode($departamento);
     }
 
     public function actionFormulario($id)
