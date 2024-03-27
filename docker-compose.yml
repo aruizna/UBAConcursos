@@ -5,7 +5,7 @@ services:
       context: ./
       dockerfile: deploy/app.Dockerfile
     environment:
-      MYSQl_HOST: concurso_db
+      MYSQl_HOST: db
       MYSQL_PORT: 3306
       MYSQL_DATABASE: concursos
       MYSQL_USER: concursos
