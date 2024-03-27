@@ -55,6 +55,31 @@ class MyPdf extends Fpdi
         $this->SetFont('Arial', 'B', 12);
         $this->Cell(0, 10, $this->PageNo(), 0, 0, 'C');
     }
+
+    public function setHeaderTable($titles){
+        $this->SetFont('Arial', 'B', 13, '', true, 'UTF-8');
+        foreach($titles as $title){
+            $this->Cell($title['width'], 12, $title['title'], 1, 0, 'L', FALSE);
+        }
+        $this->Ln();
+        $this->SetFont('Arial', '', 13, '', true, 'UTF-8');
+
+        $this->SetDrawColor(0);
+        $this->Line($this->GetX(), $this->GetY(), $this->GetX() + ($this->GetPageWidth('A4') - 20), $this->GetY());
+        $this->SetDrawColor(255, 255, 255);
+        $this->SetFont('Arial', '', 12, '', true, 'UTF-8');
+    }
+
+    public function checkPageBreak($lineHeight)
+    {
+        $marginBottom = 30;
+        if ($this->GetY() + $lineHeight > $this->GetPageHeight() - $marginBottom) {
+            $this->AddPage();
+            return true; // Indica que se realizó un salto de página
+        }
+        return false; // No es necesario un salto de página
+    }
+
 }
 
 class ProfileController extends Controller
@@ -418,7 +443,7 @@ class ProfileController extends Controller
 
             try {
                 $data = (AreaDepartamento::find()->where(['id_area_departamento' => $concurso['id_area_departamento']])->andWhere(['id_facultad' => $concurso['id_facultad']])->one()->descripcion_area_departamento);
-                $line = "Area: " . ($data) ? $dadta : "";
+                $line = "Area: " . ($data) ? $data : "";
                 $lines = ceil($pdf->GetStringWidth($line) / $width);
                 $height = $lines * $lineHeight;
                 ($line) && $pdf->MultiCell($width, 13, utf8_decode($line), 0, 'L');
@@ -600,36 +625,53 @@ class ProfileController extends Controller
                 $columnWidth = $width / 5;
                 $columnWidths = [$columnWidth, $columnWidth, $columnWidth, $columnWidth, $columnWidth];
 
-                $pdf->SetFont('Arial', 'B', 13, '', true, 'UTF-8');
+                
+                $headerTable = [
+                    [
+                    'width'=>$columnWidths[0],
+                    'title'=>utf8_decode('Designación'),
+                    ],
+                    [
+                    'width'=>$columnWidths[1],
+                    'title'=>utf8_decode('Categoría'),
+                    ],
+                    [
+                    'width'=>$columnWidths[2],
+                    'title'=>utf8_decode('Dedicación'),
+                    ],
+                    [
+                    'width'=>$columnWidths[3],
+                    'title'=>utf8_decode('Asignatura'),
+                    ],
+                    [
+                    'width'=>$columnWidths[4],
+                    'title'=>utf8_decode('Facultad'),
+                    ],
+                ];
+                
+                $pdf->setHeaderTable($headerTable);
 
-                $pdf->Cell($columnWidths[0], 12, utf8_decode('Designación'), 1, 0, 'L', false);
-                $pdf->Cell($columnWidths[1], 12, utf8_decode('Categoría'), 1, 0, 'L', false);
-                $pdf->Cell($columnWidths[2], 12, utf8_decode('Dedicación'), 1, 0, 'L', false);
-                $pdf->Cell($columnWidths[3], 12, utf8_decode('Asignatura'), 1, 0, 'L', false);
-                $pdf->Cell($columnWidths[4], 12, utf8_decode('Facultad'), 1, 0, 'L', false);
-                $pdf->Ln();
-
-                $pdf->SetFont('Arial', '', 13, '', true, 'UTF-8');
-
-                $pdf->SetDrawColor(0);
-                $pdf->Line($pdf->GetX(), $pdf->GetY(), $pdf->GetX() + $width, $pdf->GetY());
-                $pdf->SetDrawColor(255, 255, 255);
-                $pdf->SetFont('Arial', '', 12, '', true, 'UTF-8');
+                
 
                 $xPosition = $pdf->GetX();
                 $yPosition = $pdf->GetY();
                 foreach ($profile->cargosActuales as $index => $cargoactual) {
                     $lines = ceil($pdf->GetStringWidth($cargoactual->designacion) / $columnWidths[0]);
                     $height0 = $lines * 12;
-                    $lines = ceil($pdf->GetStringWidth($cargoactual->dedicacion) / $columnWidths[1]);
+                    $lines = ceil($pdf->GetStringWidth($cargoactual->categoria) / $columnWidths[1]);
                     $height1 = $lines * 12;
-                    $lines = ceil($pdf->GetStringWidth($cargoactual->asignatura) / $columnWidths[2]);
+                    $lines = ceil($pdf->GetStringWidth($cargoactual->dedicacion) / $columnWidths[2]);
                     $height2 = $lines * 12;
-                    $lines = ceil($pdf->GetStringWidth($cargoactual->facultad) / $columnWidths[3]);
+                    $lines = ceil($pdf->GetStringWidth($cargoactual->asignatura) / $columnWidths[3]);
                     $height3 = $lines * 12;
-                    $lines = ceil($pdf->GetStringWidth($cargoactual->designacion) / $columnWidths[4]);
+                    $lines = ceil($pdf->GetStringWidth($cargoactual->facultad) / $columnWidths[4]);
                     $height4 = $lines * 12;
                     $maxHeight = max($height0, $height1, $height2, $height3, $height4);
+                    
+                    if($pdf->checkPageBreak($maxHeight)){
+                        $pdf->setHeaderTable($headerTable);
+                        $yPosition = $pdf->GetY();
+                    }
 
                     $pdf->SetX($xPosition);
 
@@ -662,7 +704,7 @@ class ProfileController extends Controller
                     $pdf->MultiCell($columnWidths[4], 7, utf8_decode($cargoactual->facultad), 0, 'L', false);
                     // $pdf->MultiCell($columnWidths[0], 7, utf8_decode($pdf->GetX()), 0, 'L', false);
 
-                    $yPosition = $yPosition + 20;
+                    $yPosition = $yPosition + $maxHeight;
                     // $pdf->Ln();
                 }
 
