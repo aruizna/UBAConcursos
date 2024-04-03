@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Class m240327_015549_insert_nuevos_concursos
  */
-class m240327_015549_insert_nuevos_concursos extends Migration
+class m240327_215549_insert_nuevos_concursos extends Migration
 {
     /**
      * {@inheritdoc}
