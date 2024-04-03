@@ -16,7 +16,7 @@ services:
       MAIL_AUTHMODE: login
       MAIL_USER: concursos-NORESPONDER@uba.ar
       MAIL_USER_NAME: CONCURSOS UBA
-      MAIL_PASSWORD: Soq49955
+      MAIL_PASSWORD: pH+GcJ4@Gn!wL7X2
       MAIL_ADMIN: admin@uba.ar
     ports:
       - '8080:80'
