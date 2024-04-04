@@ -56,9 +56,10 @@ class MyPdf extends Fpdi
         $this->Cell(0, 10, $this->PageNo(), 0, 0, 'C');
     }
 
-    public function setHeaderTable($titles){
+    public function setHeaderTable($titles)
+    {
         $this->SetFont('Arial', 'B', 13, '', true, 'UTF-8');
-        foreach($titles as $title){
+        foreach ($titles as $title) {
             $this->Cell($title['width'], 12, $title['title'], 1, 0, 'L', FALSE);
         }
         $this->Ln();
@@ -79,7 +80,6 @@ class MyPdf extends Fpdi
         }
         return false; // No es necesario un salto de página
     }
-
 }
 
 class ProfileController extends Controller
@@ -290,7 +290,7 @@ class ProfileController extends Controller
             $dataProvider->user_id = Yii::$app->user->id;
             $dataProvider->save(false);
         }
-        if(!empty($dataProvider) && !empty($cid) && empty($dataProvider->concurso_id)){
+        if (!empty($dataProvider) && !empty($cid) && empty($dataProvider->concurso_id)) {
             $p2 = new Profile();
             $p2->attributes  = $dataProvider->attributes;
             $p2->concurso_id  = $cid;
@@ -303,7 +303,7 @@ class ProfileController extends Controller
                 $cardoCopy->profile_id = $p2->id; // Set the foreign key to the new profile's ID
                 $cardoCopy->save(false);
             }
-            $dataProvider=$p2;
+            $dataProvider = $p2;
         }
 
 
@@ -429,7 +429,7 @@ class ProfileController extends Controller
             $height = $lines * $lineHeight;
             ($line) && $pdf->MultiCell($width, 13, utf8_decode($line), 0, 'L');
 
-            $data = TipoConcurso::find()->where(['id_tipo_concurso' => $concurso->id_tipo_concurso])->one()->descripcion_tipo_concurso;
+            $data = $concurso->id_tipo_concurso ? TipoConcurso::find()->where(['id_tipo_concurso' => $concurso->id_tipo_concurso])->one()->descripcion_tipo_concurso : "";
             $line = "Tipo de concurso: $data";
             $lines = ceil($pdf->GetStringWidth($line) / $width);
             $height = $lines * $lineHeight;
@@ -629,33 +629,33 @@ class ProfileController extends Controller
                 $columnWidth = $width / 5;
                 $columnWidths = [$columnWidth, $columnWidth, $columnWidth, $columnWidth, $columnWidth];
 
-                
+
                 $headerTable = [
                     [
-                    'width'=>$columnWidths[0],
-                    'title'=>utf8_decode('Designación'),
+                        'width' => $columnWidths[0],
+                        'title' => utf8_decode('Designación'),
                     ],
                     [
-                    'width'=>$columnWidths[1],
-                    'title'=>utf8_decode('Categoría'),
+                        'width' => $columnWidths[1],
+                        'title' => utf8_decode('Categoría'),
                     ],
                     [
-                    'width'=>$columnWidths[2],
-                    'title'=>utf8_decode('Dedicación'),
+                        'width' => $columnWidths[2],
+                        'title' => utf8_decode('Dedicación'),
                     ],
                     [
-                    'width'=>$columnWidths[3],
-                    'title'=>utf8_decode('Asignatura'),
+                        'width' => $columnWidths[3],
+                        'title' => utf8_decode('Asignatura'),
                     ],
                     [
-                    'width'=>$columnWidths[4],
-                    'title'=>utf8_decode('Facultad'),
+                        'width' => $columnWidths[4],
+                        'title' => utf8_decode('Facultad'),
                     ],
                 ];
-                
+
                 $pdf->setHeaderTable($headerTable);
 
-                
+
 
                 $xPosition = $pdf->GetX();
                 $yPosition = $pdf->GetY();
@@ -671,8 +671,8 @@ class ProfileController extends Controller
                     $lines = ceil($pdf->GetStringWidth($cargoactual->facultad) / $columnWidths[4]);
                     $height4 = $lines * 12;
                     $maxHeight = max($height0, $height1, $height2, $height3, $height4);
-                    
-                    if($pdf->checkPageBreak($maxHeight)){
+
+                    if ($pdf->checkPageBreak($maxHeight)) {
                         $pdf->setHeaderTable($headerTable);
                         $yPosition = $pdf->GetY();
                     }
