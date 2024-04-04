@@ -18,7 +18,8 @@ class m240327_215549_insert_nuevos_concursos extends Migration
             [
                 [408, 4, 'Departamento de Computación', 1],
                 [409, 4, 'Departamento de Ecología, Genética y Evolución', 1],
-                [410, 4, 'Departamento de Biodiversidad y Biología Experimental', 1]
+                [410, 4, 'Departamento de Biodiversidad y Biología Experimental', 1],
+                
             ]
         );
 
