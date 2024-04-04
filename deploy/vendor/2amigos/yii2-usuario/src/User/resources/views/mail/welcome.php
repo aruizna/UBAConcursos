@@ -21,32 +21,21 @@ use yii\helpers\Url;
 
 ?>
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    <?= Yii::t('usuario', 'Hello') ?>,
-</p>
-
-<p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    <?= Yii::t('usuario', 'Your account on {0} has been created', Yii::$app->name) ?>.
-    <?php if ($showPassword || $module->generatePasswords): ?>
-        <?= Yii::t('usuario', 'We have generated a password for you') ?>: <strong><?= $user->password ?></strong>
-    <?php endif ?>
-    <?php if ($module->allowPasswordRecovery): ?>
-        <?= Yii::t('usuario', 'If you haven\'t received a password, you can reset it at') ?>: <strong><?= Html::a(Html::encode(Url::to(['/user/forgot'], true)), Url::to(['/user/forgot'], true)) ?></strong>
-    <?php endif ?>
-
+    <?= Yii::t('usuario', 'Estimado/a') ?>:
 </p>
 
 <?php if ($token !== null): ?>
     <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-        <?= Yii::t('usuario', 'In order to complete your registration, please click the link below') ?>.
+        <?= Yii::t('usuario', 'Su cuenta en el Sistema de Concursos de Profesores UBA ha sido creada. Para completar el registro, haga click en el siguiente enlace') ?>:
     </p>
     <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
         <?= Html::a(Html::encode($token->url), $token->url); ?>
     </p>
     <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-        <?= Yii::t('usuario', 'If you cannot click the link, please try pasting the text into your browser') ?>.
+        <?= Yii::t('usuario', 'Si no puede hacer click en el enlace, copie y pegue el enlace en su navegador web') ?>.
     </p>
 <?php endif ?>
 
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    <?= Yii::t('usuario', 'You received this email because someone, possibly you or someone on your behalf, have created an account at {app_name}', ['app_name' => Yii::$app->name]) ?>.
+    <?= Yii::t('usuario', 'Si usted no ha iniciado el registro de su cuenta en el sistema, por favor desestime este correo electrónico') ?>.
 </p>

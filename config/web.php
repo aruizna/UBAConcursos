@@ -4,6 +4,7 @@ $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
 $config = [
+    'name' => 'Concursos UBA',
     'id' => 'basic',
     'language' => 'es', // Set the language here
     'basePath' => dirname(__DIR__),
@@ -18,6 +19,11 @@ $config = [
         ],
         'user' => [
             'class' => Da\User\Module::class,
+            'mailParams' => [
+                'fromEmail' => $_ENV['MAIL_USER'],
+                'welcomeMailSubject' => "Sistema de Concursos de Profesores UBA - Registro de Usuario",
+                'recoveryMailSubject'=> "Sistema de Concursos de Profesores UBA - Restablecimiento de contraseña",
+            ]
             // ...other configs from here: [Configuration Options](installation/configuration-options.md), e.g.
             // 'administrators' => ['admin'], // this is required for accessing administrative actions
             // 'generatePasswords' => true,

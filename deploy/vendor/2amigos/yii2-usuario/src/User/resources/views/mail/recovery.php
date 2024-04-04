@@ -17,22 +17,18 @@ use yii\helpers\Html;
  */
 ?>
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    <?= Yii::t('usuario', 'Hello') ?>,
+    <?= Yii::t('usuario', 'Estimado/a') ?>:
 </p>
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    <?= Yii::t(
-        'usuario',
-        'We have received a request to reset the password for your account on {0}',
-        Yii::$app->name
-    ) ?>.
-    <?= Yii::t('usuario', 'Please click the link below to complete your password reset') ?>.
+    
+    <?= Yii::t('usuario', 'Para completar el restablecimiento de su contraseña en el Sistema de Concursos de Profesores UBA haga click en el siguiente enlace') ?>:
 </p>
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
     <?= Html::a(Html::encode($token->url), $token->url); ?>
 </p>
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    <?= Yii::t('usuario', 'If you cannot click the link, please try pasting the text into your browser') ?>.
+    <?= Yii::t('usuario', 'Si no puede hacer click en el enlace, copie y pegue el enlace en su navegador web') ?>.
 </p>
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.6; font-weight: normal; margin: 0 0 10px; padding: 0;">
-    <?= Yii::t('usuario', 'If you did not make this request you can ignore this email') ?>.
+    <?= Yii::t('usuario', 'Si usted no ha iniciado el restablecimiento de su cuenta en el sistema, por favor desestime este correo electrónico') ?>.
 </p>

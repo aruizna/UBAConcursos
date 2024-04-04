@@ -60,10 +60,12 @@
                 <table
                     style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; width: 100%; margin: 0; padding: 0;">
                     <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; margin: 0; padding: 0;">
-                        <td align="center"
+                        <td align="left"
                             style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 100%; line-height: 1.6; margin: 0; padding: 0;">
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.6; color: #666; font-weight: normal; margin: 0 0 10px; padding: 0;">
-                                © <?= Yii::$app->name ?> <?= date('Y') ?>.
+                            Dirección de Concursos<br>
+                            Secretaría de Asuntos Académicos<br>
+                            Universidad de Buenos Aires
                             </p>
                         </td>
                     </tr>
