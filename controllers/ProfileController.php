@@ -612,7 +612,7 @@ class ProfileController extends Controller
 
             if (!empty($profile->cargosActuales)) {
 
-                // $pdf->AddPage();
+                $pdf->AddPage();
                 $pdf->Cell(40, 12, '', 0, 1);
                 $pdf->SetFont('Arial', 'B', 18);
                 $pdf->SetFillColor(200, 200, 200);
