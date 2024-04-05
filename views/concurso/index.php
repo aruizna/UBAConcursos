@@ -148,7 +148,7 @@ $this->title = 'Concursos';
             <table>
                 <tr>
                     <th style="text-align: center;vertical-align: middle;width:100px">Departamento</th>
-                    <th style="text-align: center;vertical-align: middle;width:100px">Área/Cátedra</th>
+                    <th style="text-align: center;vertical-align: middle;width:100px">Área</th>
                     <th style="text-align: center;vertical-align: middle;width:100px">Asignatura/s</th>
                     <th style="text-align: center;vertical-align: middle;width:100px">Categoría</th>
                     <th style="text-align: center;vertical-align: middle;width:100px">Dedicación</th>

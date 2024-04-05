@@ -147,14 +147,15 @@ $this->title = 'Concursos';
                 <div class="pt-4" style="display:flex;width: 934px;flex-direction:column;">
                 <table>
                     <tr>
-                        <th style="text-align: center;vertical-align: middle;width:100px">Departamento</td>
-                        <th style="text-align: center;vertical-align: middle;width:100px">Asignatura/s</td>
-                        <th style="text-align: center;vertical-align: middle;width:100px">Categoría</td>
-                        <th style="text-align: center;vertical-align: middle;width:100px">Dedicación</td>
-                        <th style="text-align: center;vertical-align: middle;width:70px">Cargos</td>
-                        <th style="text-align: center;vertical-align: middle;width:150px">Período de Inscripción</td>
-                        <th style="text-align: center;vertical-align: middle;width:100px">Nº Expediente</td>
-                        <th style="text-align: center;vertical-align: middle;width:80px"></td>
+                        <th style="text-align: center;vertical-align: middle;width:100px">Departamento</th>
+                        <th style="text-align: center;vertical-align: middle;width:100px">Área</th>
+                        <th style="text-align: center;vertical-align: middle;width:100px">Asignatura/s</th>
+                        <th style="text-align: center;vertical-align: middle;width:100px">Categoría</th>
+                        <th style="text-align: center;vertical-align: middle;width:100px">Dedicación</th>
+                        <th style="text-align: center;vertical-align: middle;width:70px">Cargos</th>
+                        <th style="text-align: center;vertical-align: middle;width:150px">Período de Inscripción</th>
+                        <th style="text-align: center;vertical-align: middle;width:100px">Nº Expediente</th>
+                        <th style="text-align: center;vertical-align: middle;width:80px"></th>
                     </tr>
                     <?php 
                         // $activos=Concurso::find()->where(['like','id_facultad',$boton['id_facultad'],false])->andWhere(['IN', 'id_concurso', $preinscripto])->andWhere(['OR', ['like', 'id_area_departamento', $boton['id_area_departamento'], false], ['id_area_departamento' => null]])->andWhere(['<=', 'fecha_inicio_inscripcion', date('Y-m-d')])->count();//date('Y-m-d')])->count();
@@ -177,11 +178,12 @@ $this->title = 'Concursos';
                                     $asignatura='';
                                 }
                             ?>
-                            <td style="text-align: center;vertical-align: middle;width:150px"><?= implode('<br>', $idAsignaturaArray) ?></th>
-                            <td style="text-align: center;vertical-align: middle;width:100px"><?php try{echo (Categoria::find()->where(['id_categoria' => $concurso['id_categoria']])->one()->descripcion_categoria);} catch(\Throwable $e){echo ('');}?></th>
-                            <td style="text-align: center;vertical-align: middle;width:100px"><?php try{echo (Dedicacion::find()->where(['id_dedicacion' => $concurso['id_dedicacion']])->one()->descripcion_dedicacion);} catch(\Throwable $e){echo ('');} ?></th>
-                            <td style="text-align: center;vertical-align: middle;width:70px"><?=$concurso['cantidad_de_puestos']?></th>
-                            <td style="text-align: center;vertical-align: middle;width:150px">Desde <br><?=date("d/m/Y H:i", strtotime($concurso['fecha_inicio_inscripcion']))?> <br>Hasta <br><?=date("d/m/Y H:i", strtotime($concurso['fecha_fin_inscripcion']))?></th>
+                            <td style="text-align: center;vertical-align: middle;width:100px"><?=$concurso['area']?></td>
+                            <td style="text-align: center;vertical-align: middle;width:150px"><?= implode('<br>', $idAsignaturaArray) ?></td>
+                            <td style="text-align: center;vertical-align: middle;width:100px"><?php try{echo (Categoria::find()->where(['id_categoria' => $concurso['id_categoria']])->one()->descripcion_categoria);} catch(\Throwable $e){echo ('');}?></td>
+                            <td style="text-align: center;vertical-align: middle;width:100px"><?php try{echo (Dedicacion::find()->where(['id_dedicacion' => $concurso['id_dedicacion']])->one()->descripcion_dedicacion);} catch(\Throwable $e){echo ('');} ?></td>
+                            <td style="text-align: center;vertical-align: middle;width:70px"><?=$concurso['cantidad_de_puestos']?></td>
+                            <td style="text-align: center;vertical-align: middle;width:150px">Desde <br><?=date("d/m/Y H:i", strtotime($concurso['fecha_inicio_inscripcion']))?> <br>Hasta <br><?=date("d/m/Y H:i", strtotime($concurso['fecha_fin_inscripcion']))?></td>
                             <td style="text-align: center;vertical-align: middle;width:100px"><?=$concurso['numero_expediente']?></td>
                             <td style="width:70px;"> 
                                 <div class="col" style="display:grid;justify-content: center;">
