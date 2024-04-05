@@ -925,7 +925,7 @@ $this->title = 'Profile';
                                         </div>
                                     </div>
                                     <div class="row" style="justify-content: flex-end;">
-                                        <button style="max-width:max-content" id="buttonagregarcargo" type="button" aria-label="Agregar otro cargo...">Agregar otro cargo...</button>
+                                        <button style="max-width:max-content" id="buttonagregarcargo" type="button" aria-label="Guardar y/o agregar otro cargo">Guardar y/o agregar otro cargo</button>
                                     </div>
                                 </div>
                             </div>
