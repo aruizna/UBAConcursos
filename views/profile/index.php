@@ -304,7 +304,7 @@ $this->title = 'Profile';
                     <?php $form = ActiveForm::begin(
                         [
                             'options' => ['style' => 'display: flex;flex-direction:column;height: 100%;justify-content: space-around;', 'enctype' => 'multipart/form-data'],
-                            'action' => \Yii::$app->urlManager->createUrl(['/profile']),
+                            // 'action' => \Yii::$app->urlManager->createUrl(['/profile']),
                             'enableClientValidation' => false,
                             'enableAjaxValidation' => false,
                         ]
@@ -318,7 +318,7 @@ $this->title = 'Profile';
                             <?= $form->field(
                                 $dataProvider,
                                 'nombre',
-                                ['inputOptions' => ['class' => 'mt-4 text-center form-control', 'style' => 'display:inline;border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'tabindex' => '1', 'placeholder' => 'Nombre']]
+                                ['inputOptions' => ['class' => 'mt-4 text-center form-control', 'style' => 'display:inline;border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'tabindex' => '1', 'placeholder' => 'Nombre','required'=>'required']]
                             )->label(false)->textInput() ?>
                         </div>
 
@@ -327,7 +327,7 @@ $this->title = 'Profile';
                             <?= $form->field(
                                 $dataProvider,
                                 'apellido',
-                                ['inputOptions' => ['style' => 'border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'class' => 'mt-4 text-center form-control', 'tabindex' => '1', 'placeholder' => 'Apellido']]
+                                ['inputOptions' => ['style' => 'border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'class' => 'mt-4 text-center form-control', 'tabindex' => '1', 'placeholder' => 'Apellido','required'=>'required']]
                             )->label(false)->textInput() ?>
                         </div>
 
@@ -336,7 +336,7 @@ $this->title = 'Profile';
                             <?= $form->field(
                                 $dataProvider,
                                 'email',
-                                ['inputOptions' => ['style' => 'border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'class' => 'mt-4 text-center form-control', 'tabindex' => '1', 'placeholder' => 'Email']]
+                                ['inputOptions' => ['style' => 'border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'class' => 'mt-4 text-center form-control', 'tabindex' => '1', 'placeholder' => 'Email','required'=>'required']]
                             )->label(false)->textInput() ?>
                         </div>
                         <div style="display: flex;flex-direction: row;align-items: first baseline;justify-content: center;">
@@ -344,7 +344,7 @@ $this->title = 'Profile';
                             <?= $form->field(
                                 $dataProvider,
                                 'numero_celular_sms',
-                                ['inputOptions' => ['style' => 'border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'class' => 'mt-4 text-center form-control', 'tabindex' => '1', 'placeholder' => 'Teléfono']]
+                                ['inputOptions' => ['style' => 'border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'class' => 'mt-4 text-center form-control', 'tabindex' => '1', 'placeholder' => 'Teléfono','required'=>'required']]
                             )->label(false)->textInput() ?>
                         </div>
                     </div>
@@ -495,7 +495,7 @@ $this->title = 'Profile';
                                         </div>
                                         <div class="ml-2" style="display:flex;align-items: center;">
                                             <?=
-                                            $form->field($dataProvider, 'estado_civil')->dropDownList(
+                                            $form->field($dataProvider, 'estado_civil',['inputOptions'=>['required'=>'required']])->dropDownList(
                                                 [
                                                     'soltero' => 'Soltero',
                                                     'casado' => 'Casado',
@@ -569,7 +569,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'nacimiento_localidad',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Localidad'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Localidad','required'=>'required'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput();
                                         ?>
                                     </div>
@@ -582,8 +582,8 @@ $this->title = 'Profile';
                                         <?php
                                         $dataProvider->nacimiento_fecha = ($dataProvider->nacimiento_fecha == null) ? '' : Yii::$app->formatter->asDate($dataProvider->nacimiento_fecha, 'dd-MM-yyyy')
                                         ?>
-                                        <?= $form->field($dataProvider, 'nacimiento_fecha')->widget(DatePicker::class, [
-                                            'options' => ['placeholder' => 'Seleccione una fecha', 'id' => 'nacimientoFechaCalendar'],
+                                        <?= $form->field($dataProvider, 'nacimiento_fecha',['inputOptions'=>['required'=>'required']])->widget(DatePicker::class, [
+                                            'options' => ['placeholder' => 'Seleccione una fecha', 'id' => 'nacimientoFechaCalendar','required'=>'required'],
                                             'language' => 'es',
                                             'readonly' => true,
                                             'pluginOptions' => [
@@ -612,7 +612,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'nacimiento_expedido',
-                                            ['inputOptions' => ['id' => 'nacimientoprovinciaDropdown', 'autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Provincia'], 'errorOptions' => ['class' => 'text-danger']],
+                                            ['inputOptions' => ['id' => 'nacimientoprovinciaDropdown', 'autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Provincia','required'=>'required'], 'errorOptions' => ['class' => 'text-danger']],
 
                                         )->label(false)->dropDownList(
                                             $provincias,
@@ -632,7 +632,7 @@ $this->title = 'Profile';
                                         <p class="my-0"><span class="obligatorio">*</span>País</p>
                                     </div>
                                     <div style="display:flex;align-items: center;">
-                                        <select id="nacimientopaises" name="Profile[nacimiento_pais]" style="display:block;width: 200px;height:35px;
+                                        <select id="nacimientopaises" name="Profile[nacimiento_pais]" required style="display:block;width: 200px;height:35px;
                                             overflow: hidden; 
                                             white-space: nowrap;
                                             background-color: transparent;
@@ -662,7 +662,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_calle',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Calle'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Calle','required'=>'required'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
@@ -675,7 +675,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_numero',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Número'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Número','required'=>'required'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
@@ -715,7 +715,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_codigo_postal',
-                                            ['inputOptions' => ['minlength'=>'4','maxlength'=>'8','autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'style' => 'max-width:150px', 'tabindex' => '1', 'placeholder' => 'Código Postal'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['minlength'=>'4','maxlength'=>'8','autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'style' => 'max-width:150px', 'tabindex' => '1', 'placeholder' => 'Código Postal','required'=>'required'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
@@ -731,7 +731,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_localidad',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Localidad'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Localidad','required'=>'required'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
@@ -765,7 +765,7 @@ $this->title = 'Profile';
                                         <p class="my-0"><span class="obligatorio">*</span>País</p>
                                     </div>
                                     <div class="mt-2" style="display:flex;align-items: center;max-width: 200px">
-                                        <select id="domiciliopaises" name="Profile[domicilio_pais]" style="display:block;width: 200px;height:35px;
+                                        <select id="domiciliopaises" name="Profile[domicilio_pais]" required style="display:block;width: 200px;height:35px;
                                             overflow: hidden; 
                                             white-space: nowrap;
                                             background-color: transparent;

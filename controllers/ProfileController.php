@@ -198,7 +198,7 @@ class ProfileController extends Controller
     public function actionIndex($cid = 0)
     {
         // $provincias=['Buenos Aires','Ciudad Autónoma de Buenos Aires','Catamarca','Chaco','Chubut','Córdoba','Corrientes','Entre Ríos','Formosa','Jujuy','La Pampa','La Rioja','Mendoza','Misiones','Neuquén','Río Negro','Salta','San Juan','San Luis','Santa Cruz','Santa Fe','Santiago del Estero','Tierra del Fuego, Antártida e Islas del Atlántico Sur','Tucumán'];
-        $concurso = Concurso::findOne(['id_concurso' => $cid]);
+        $concurso = Concurso::findOne(['id_concurso' => $cid??$this->request->post("Profile")]);
         if ($this->request->isPost) {
             try {
                 if (!empty($this->request->post("Profile")["id"])) {
@@ -280,7 +280,7 @@ class ProfileController extends Controller
                 # var_dump("{$e->getMessage()} - {$e->getFile()}::{$e->getLine()}");
                 Yii::$app->session->setFlash('error', 'Error al preinscribirse.');
             }
-        } else $dataProvider = Profile::find()
+        }$dataProvider = Profile::find()
             ->where(['user_id' => Yii::$app->user->id])
             ->andWhere(['or', ['concurso_id' => $cid], ['concurso_id' => null]])
             ->orderBy(['concurso_id' => SORT_DESC])
