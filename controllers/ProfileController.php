@@ -199,13 +199,13 @@ class ProfileController extends Controller
     public function actionIndex($cid = 0)
     {
         // $provincias=['Buenos Aires','Ciudad Autónoma de Buenos Aires','Catamarca','Chaco','Chubut','Córdoba','Corrientes','Entre Ríos','Formosa','Jujuy','La Pampa','La Rioja','Mendoza','Misiones','Neuquén','Río Negro','Salta','San Juan','San Luis','Santa Cruz','Santa Fe','Santiago del Estero','Tierra del Fuego, Antártida e Islas del Atlántico Sur','Tucumán'];
-        $concurso = Concurso::findOne(['id_concurso' => $cid??$this->request->post("Profile")]);
+        $concurso = Concurso::findOne(['id_concurso' => $cid ?? $this->request->post("Profile")]);
         $dataProvider = Profile::find()
             ->where(['user_id' => Yii::$app->user->id])
             ->andWhere(['or', ['concurso_id' => $cid], ['concurso_id' => null]])
             ->orderBy(['concurso_id' => SORT_DESC])
             ->one();
-        
+
         if (empty($dataProvider) && empty($cid)) {
             $dataProvider = new Profile();
             $dataProvider->user_id = Yii::$app->user->id;
@@ -225,21 +225,25 @@ class ProfileController extends Controller
                 $cardoCopy->save(false);
             }
             $dataProvider = $p2;
-        }else{
-            if($concurso){
+        } else {
+
+            if ($concurso) {
                 $lastProfileSaved = Profile::find()
-                ->where(['user_id' => Yii::$app->user->id])
-                ->andWhere(['concurso_id' => null])
-                ->orderBy(['concurso_id' => SORT_DESC])
-                ->one();
+                    ->where(['user_id' => Yii::$app->user->id])
+                    ->andWhere(['concurso_id' => null])
+                    ->orderBy(['concurso_id' => SORT_DESC])
+                    ->one();
                 $dataProvider->attributes = $lastProfileSaved->attributes;
                 $dataProvider->concurso_id  = $cid;
-                foreach ($lastProfileSaved->cargosActuales as $cargo) {
-                    $cardoCopy = new CargosActuales();
-                    $cardoCopy->attributes = $cargo->attributes;
-                    $cardoCopy->id = null;
-                    $cardoCopy->profile_id = $dataProvider->id; // Set the foreign key to the new profile's ID
-                    $cardoCopy->save(false);
+                if(!$this->request->isPost){
+                    CargosActuales::deleteAll(['profile_id'=>$dataProvider->id]);
+                    foreach ($lastProfileSaved->cargosActuales as $cargo) {
+                        $cardoCopy = new CargosActuales();
+                        $cardoCopy->attributes = $cargo->attributes;
+                        $cardoCopy->id = null;
+                        $cardoCopy->profile_id = $dataProvider->id; // Set the foreign key to the new profile's ID
+                        $cardoCopy->save(false);
+                    }
                 }
                 $dataProvider->save(false);
             }
