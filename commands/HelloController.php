@@ -36,7 +36,7 @@ class HelloController extends Controller
         $email = $this->prompt('Enter recipient email address:');
         $mailer = Yii::$app->mailer;
         var_dump($mailer->compose()
-            ->setFrom($_ENV["MAIL_USER"])
+            ->setFrom($_ENV["MAIL_USER"]??'a')
             ->setTo($email)
             ->setSubject('Asunto del correo')
             ->setTextBody('Cuerpo del correo en texto sin formato')

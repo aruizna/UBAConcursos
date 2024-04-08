@@ -34,6 +34,7 @@ use app\models\Dedicacion;
 use app\models\CargosActuales;
 use app\models\Trato;
 use app\models\PersonaConcursoRenovacion;
+use Attribute;
 use DateTime;
 
 /**
@@ -199,6 +200,50 @@ class ProfileController extends Controller
     {
         // $provincias=['Buenos Aires','Ciudad Autónoma de Buenos Aires','Catamarca','Chaco','Chubut','Córdoba','Corrientes','Entre Ríos','Formosa','Jujuy','La Pampa','La Rioja','Mendoza','Misiones','Neuquén','Río Negro','Salta','San Juan','San Luis','Santa Cruz','Santa Fe','Santiago del Estero','Tierra del Fuego, Antártida e Islas del Atlántico Sur','Tucumán'];
         $concurso = Concurso::findOne(['id_concurso' => $cid??$this->request->post("Profile")]);
+        $dataProvider = Profile::find()
+            ->where(['user_id' => Yii::$app->user->id])
+            ->andWhere(['or', ['concurso_id' => $cid], ['concurso_id' => null]])
+            ->orderBy(['concurso_id' => SORT_DESC])
+            ->one();
+        
+        if (empty($dataProvider) && empty($cid)) {
+            $dataProvider = new Profile();
+            $dataProvider->user_id = Yii::$app->user->id;
+            $dataProvider->save(false);
+        }
+        if (!empty($dataProvider) && !empty($cid) && empty($dataProvider->concurso_id)) {
+            $p2 = new Profile();
+            $p2->attributes  = $dataProvider->attributes;
+            $p2->concurso_id  = $cid;
+            $p2->id = null;
+            $p2->save(false);
+            foreach ($dataProvider->cargosActuales as $cargo) {
+                $cardoCopy = new CargosActuales();
+                $cardoCopy->attributes = $cargo->attributes;
+                $cardoCopy->id = null;
+                $cardoCopy->profile_id = $p2->id; // Set the foreign key to the new profile's ID
+                $cardoCopy->save(false);
+            }
+            $dataProvider = $p2;
+        }else{
+            if($concurso){
+                $lastProfileSaved = Profile::find()
+                ->where(['user_id' => Yii::$app->user->id])
+                ->andWhere(['concurso_id' => null])
+                ->orderBy(['concurso_id' => SORT_DESC])
+                ->one();
+                $dataProvider->attributes = $lastProfileSaved->attributes;
+                $dataProvider->concurso_id  = $cid;
+                foreach ($lastProfileSaved->cargosActuales as $cargo) {
+                    $cardoCopy = new CargosActuales();
+                    $cardoCopy->attributes = $cargo->attributes;
+                    $cardoCopy->id = null;
+                    $cardoCopy->profile_id = $dataProvider->id; // Set the foreign key to the new profile's ID
+                    $cardoCopy->save(false);
+                }
+                $dataProvider->save(false);
+            }
+        }
         if ($this->request->isPost) {
             try {
                 if (!empty($this->request->post("Profile")["id"])) {
@@ -243,10 +288,10 @@ class ProfileController extends Controller
                             ]);
                         } else {
                             Yii::$app->session->setFlash('error', 'Faltan cargar datos obligatorios o tienen un formato incorrecto.');
-                            return $this->render('index', [
-                                'dataProvider' => $dataProvider,
-                                'provincias' => $this->provincias
-                            ]);
+                            // return $this->render('index', [
+                            //     'dataProvider' => $dataProvider,
+                            //     'provincias' => $this->provincias
+                            // ]);
                         }
                     } else {
                         $errors = $dataProvider->getErrors();
@@ -257,10 +302,10 @@ class ProfileController extends Controller
                         }
 
                         Yii::$app->session->setFlash('error', 'Faltan cargar datos obligatorios o tienen un formato incorrecto.');
-                        return $this->render('index', [
-                            'dataProvider' => $dataProvider,
-                            'provincias' => $this->provincias
-                        ]);
+                        // return $this->render('index', [
+                        //     'dataProvider' => $dataProvider,
+                        //     'provincias' => $this->provincias
+                        // ]);
                     }
                 } else {
                     $errors = $dataProvider->getErrors();
@@ -280,30 +325,6 @@ class ProfileController extends Controller
                 # var_dump("{$e->getMessage()} - {$e->getFile()}::{$e->getLine()}");
                 Yii::$app->session->setFlash('error', 'Error al preinscribirse.');
             }
-        }$dataProvider = Profile::find()
-            ->where(['user_id' => Yii::$app->user->id])
-            ->andWhere(['or', ['concurso_id' => $cid], ['concurso_id' => null]])
-            ->orderBy(['concurso_id' => SORT_DESC])
-            ->one();
-        if (empty($dataProvider) && empty($cid)) {
-            $dataProvider = new Profile();
-            $dataProvider->user_id = Yii::$app->user->id;
-            $dataProvider->save(false);
-        }
-        if (!empty($dataProvider) && !empty($cid) && empty($dataProvider->concurso_id)) {
-            $p2 = new Profile();
-            $p2->attributes  = $dataProvider->attributes;
-            $p2->concurso_id  = $cid;
-            $p2->id = null;
-            $p2->save(false);
-            foreach ($dataProvider->cargosActuales as $cargo) {
-                $cardoCopy = new CargosActuales();
-                $cardoCopy->attributes = $cargo->attributes;
-                $cardoCopy->id = null;
-                $cardoCopy->profile_id = $p2->id; // Set the foreign key to the new profile's ID
-                $cardoCopy->save(false);
-            }
-            $dataProvider = $p2;
         }
 
 

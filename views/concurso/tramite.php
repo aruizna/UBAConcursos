@@ -321,15 +321,13 @@ $this->title = 'Concursos';
         event.preventDefault();
         $('#modalform').load('formulario?id='+id);
         $('#exampleModal').modal('show');
-    })
-
+    });
     $('.eliminar').on('click', function (event) {
         pid=$(this).attr('value')
         // $("#pid-value").text(pid)
         event.preventDefault();
         $('#confirmationModal').modal('show');
-    })
-
+    });
     $('.preinscribirse').on('click', function(event) {
         var concursoid = $(this).attr('value');
         $.ajax({
@@ -339,10 +337,8 @@ $this->title = 'Concursos';
         });
         location.reload();
     });
-    
     $('#confirmButton').on('click', function (event) {
         $('#confirmationModal').modal('hide');
-
         $.ajax({
             url: 'desinscribir', 
             method: 'POST',
@@ -353,11 +349,9 @@ $this->title = 'Concursos';
             // error: function(data) {
             //     console.log(data);
             // },
-
         });
         location.reload();
     });
-
     JS;
     $this->registerJs($js);
 ?>

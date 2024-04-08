@@ -65,6 +65,9 @@ $this->title = 'Concursos';
         <div class="card my-4" style="padding:10px;border-radius:none;border:none;background-color:#F3F4F6;width:934px;align-items:center;justify-content:center">
             <p style="margin:0;font-family:Helvetica"><b>Aviso:</b> A través de esta pantalla usted podrá visualizar los concursos que fueron aprobados por el Consejo Superior de la UBA (publicados) hasta el momento en que se cierra la Nómina de Inscriptos.</p>
         </div>
+        <div class="alert alert-danger" style="padding:10px;width:934px;align-items:center;justify-content:center">
+            <p><b>Importante:</b> antes de iniciar una preinscripción a un concurso, debe ingresar en la sección Mi Perfil a través del Menú que se encuentra arriba a la derecha y completar todos los datos obligatorios</p>
+        </div>
         <div class="pt-2" style="display: flex;flex-direction: column;width: 934px;">
             <H1 style="font-weight:700;margin-bottom:0">Llamados a Concursos</H1>
             <H1 style="font-weight:700;margin-bottom:0">Aprobados por el</H1>
@@ -332,8 +335,7 @@ $this->title = 'Concursos';
         event.preventDefault();
         $('#modalform').load('concurso/formulario?id='+id);
         $('#vermasModal').modal('show');
-    })
-
+    });
     $('.preinscribirse').on('click', function(event) {
         var concursoid = $(this).attr('value');
         var id = $(this).data("id");
