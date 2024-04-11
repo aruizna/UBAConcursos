@@ -86,7 +86,7 @@ use yii\helpers\Json;
                         $idAsignaturaArray = [];
                         foreach ($concursoAsignaturas as $concursoAsignatura) {
                             if ($concursoAsignatura instanceof ConcursoAsignatura): ?> 
-                                <p style="margin:0;font-weight:300;text-align:center;font-family:Helvetica"><?= Asignatura::find()->where(['id_asignatura' => $concursoAsignatura->id_asignatura])->one()->descripcion_asignatura; ?></p>
+                                <p style="margin:0;font-weight:300;text-align:center;font-family:Helvetica"><?= Asignatura::find()->where(['id_asignatura' => $concursoAsignatura->id_asignatura,'id_facultad'=>$concursoAsignatura->id_facultad])->one()->descripcion_asignatura; ?></p>
                             <?php endif;
                         }
                     } 

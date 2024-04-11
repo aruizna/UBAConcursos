@@ -170,7 +170,7 @@ $this->title = 'Concursos';
                                     $idAsignaturaArray = [];
                                     foreach ($concursoAsignaturas as $concursoAsignatura) {
                                         if ($concursoAsignatura instanceof ConcursoAsignatura) {
-                                            $idAsignaturaArray[] = Asignatura::find()->where(['id_asignatura' => $concursoAsignatura->id_asignatura])->one()->descripcion_asignatura;
+                                            $idAsignaturaArray[] = Asignatura::find()->where(['id_asignatura' => $concursoAsignatura->id_asignatura,'id_facultad'=>$concursoAsignatura->id_facultad])->one()->descripcion_asignatura;
                                         }
                                     }
                                 } 
