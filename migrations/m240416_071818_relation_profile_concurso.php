@@ -18,7 +18,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000012,
+            '00000012',
             NULL,
             NULL,
             NULL,
@@ -34,7 +34,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000013,
+            '00000013',
             NULL,
             NULL,
             NULL,
@@ -50,7 +50,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000014,
+            '00000014',
             NULL,
             NULL,
             NULL,
@@ -66,7 +66,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000029,
+            '00000029',
             NULL,
             NULL,
             NULL,
@@ -82,7 +82,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000030,
+            '00000030',
             NULL,
             NULL,
             NULL,
@@ -98,7 +98,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000031,
+            '00000031',
             NULL,
             NULL,
             NULL,
@@ -114,7 +114,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000032,
+            '00000032',
             NULL,
             NULL,
             NULL,
@@ -130,7 +130,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000033,
+            '00000033',
             NULL,
             NULL,
             NULL,
@@ -146,7 +146,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000034,
+            '00000034',
             NULL,
             NULL,
             NULL,
@@ -162,7 +162,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000036,
+            '00000036',
             NULL,
             NULL,
             NULL,
@@ -178,7 +178,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000037,
+            '00000037',
             NULL,
             NULL,
             NULL,
@@ -194,7 +194,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000038,
+            '00000038',
             NULL,
             NULL,
             NULL,
@@ -210,7 +210,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000039,
+            '00000039',
             NULL,
             NULL,
             NULL,
@@ -226,7 +226,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000041,
+            '00000041',
             NULL,
             NULL,
             NULL,
@@ -242,7 +242,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000042,
+            '00000042',
             NULL,
             NULL,
             NULL,
@@ -258,7 +258,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000043,
+            '00000043',
             NULL,
             NULL,
             NULL,
@@ -274,7 +274,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000044,
+            '00000044',
             NULL,
             NULL,
             NULL,
@@ -290,7 +290,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000045,
+            '00000045',
             NULL,
             NULL,
             NULL,
@@ -306,7 +306,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000015,
+            '00000015',
             NULL,
             NULL,
             NULL,
@@ -322,7 +322,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000016,
+            '00000016',
             NULL,
             NULL,
             NULL,
@@ -338,7 +338,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000017,
+            '00000017',
             NULL,
             NULL,
             NULL,
@@ -354,7 +354,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000046,
+            '00000046',
             NULL,
             NULL,
             NULL,
@@ -370,7 +370,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000047,
+            '00000047',
             NULL,
             NULL,
             NULL,
@@ -386,7 +386,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000048,
+            '00000048',
             NULL,
             NULL,
             NULL,
@@ -402,7 +402,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000049,
+            '00000049',
             NULL,
             NULL,
             NULL,
@@ -418,7 +418,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000018,
+            '00000018',
             NULL,
             NULL,
             NULL,
@@ -434,7 +434,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000019,
+            '00000019',
             NULL,
             NULL,
             NULL,
@@ -450,7 +450,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000020,
+            '00000020',
             NULL,
             NULL,
             NULL,
@@ -466,7 +466,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000040,
+            '00000040',
             NULL,
             NULL,
             NULL,
@@ -482,7 +482,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000050,
+            '00000050',
             NULL,
             NULL,
             NULL,
@@ -498,7 +498,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000051,
+            '00000051',
             NULL,
             NULL,
             NULL,
@@ -514,7 +514,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000021,
+            '00000021',
             NULL,
             NULL,
             NULL,
@@ -530,7 +530,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000022,
+            '00000022',
             NULL,
             NULL,
             NULL,
@@ -546,7 +546,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000023,
+            '00000023',
             NULL,
             NULL,
             NULL,
@@ -562,7 +562,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000024,
+            '00000024',
             NULL,
             NULL,
             NULL,
@@ -578,7 +578,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000025,
+            '00000025',
             NULL,
             NULL,
             NULL,
@@ -594,7 +594,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000026,
+            '00000026',
             NULL,
             NULL,
             NULL,
@@ -610,7 +610,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000027,
+            '00000027',
             NULL,
             NULL,
             NULL,
@@ -626,7 +626,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000052,
+            '00000052',
             NULL,
             NULL,
             NULL,
@@ -642,7 +642,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000028,
+            '00000028',
             NULL,
             NULL,
             NULL,
@@ -658,7 +658,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000053,
+            '00000053',
             NULL,
             NULL,
             NULL,
@@ -674,7 +674,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000054,
+            '00000054',
             NULL,
             NULL,
             NULL,
@@ -690,7 +690,7 @@ class m240416_071818_relation_profile_concurso extends Migration
             select  
             c.id_concurso,
             NULL,
-            00000055,
+            '00000055',
             NULL,
             NULL,
             NULL,
