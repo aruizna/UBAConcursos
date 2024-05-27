@@ -12,6 +12,9 @@ class m240523_164301_create_nuevos_concursos_20240523 extends Migration
      */
     public function safeUp()
     {
+
+        $this->alterColumn('area_departamento', 'descripcion_area_departamento', $this->string(500));
+
         $this->batchInsert(
             "area_departamento",
             ["id_area_departamento", "id_facultad", "descripcion_area_departamento", "activa"],
