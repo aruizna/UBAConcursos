@@ -28,7 +28,7 @@ class m240625_180424_correcciones_concurso_20240523 extends Migration
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
-            UPDATE concurso_asignatura SET ID_ASIGNATURA = 738 WHERE id_concurso = 7329 and id_asignatura = 1495 and id_facultad = 3
+            UPDATE concurso_asignatura SET id_asignatura = 738 WHERE id_concurso = 7329 and id_asignatura = 1495 and id_facultad = 3
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
