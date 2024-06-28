@@ -29,7 +29,7 @@ class m240628_030652_create_nuevos_concursos_20240701 extends Migration
             [
                 [2906, 4, 'cualquier materia que deba ser dictada para alumnos de las carreras en la Facultad de Ciencias Exactas y Naturales cuyo contenido esté relacionado con el área', 's', NULL, NULL],
                 [2907, 4, 'otras materias de la Licenciatura en Ciencias Físicas', 's', NULL, NULL],
-                [2908, 4, 'otras materias  de la Licenciatura en Ciencias Físicas', 's', NULL, NULL]
+                [2908, 4, 'otras materias de la Licenciatura en Ciencias Físicas', 's', NULL, NULL]
             ]
         );
 
