@@ -12,6 +12,8 @@ class m240628_030652_create_nuevos_concursos_20240701 extends Migration
      */
     public function safeUp()
     {
+
+        $this->alterColumn('asignatura', 'descripcion_asignatura', $this->string(200));
         
         $this->batchInsert(
             "area_departamento",
@@ -1184,6 +1186,8 @@ class m240628_030652_create_nuevos_concursos_20240701 extends Migration
     public function safeDown()
     {
         echo "m240628_030652_create_nuevos_concursos_20240701 cannot be reverted.\n";
+
+        $this->alterColumn('asignatura', 'descripcion_asignatura', $this->string(150));
 
         return false;
     }
