@@ -19,93 +19,92 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
                 [457, 1, 'Departamento de Biología Aplicada y Alimentos', 1],
                 [458, 10, 'Departamento de Energía', 1],
                 [459, 13, 'carrera de Licenciatura en Musicoterapia', 1],
-                ]
+            ]
         );
 
-        
+
 
         $this->batchInsert(
             "asignatura",
             ["id_asignatura", "id_facultad", "descripcion_asignatura", "habilitada", "numero_resolucion", "observaciones"],
             [
-               [2909, 1, 'Agroecosistemas - carreras de Licenciatura en Ciencias Ambientales y de Profesorado de Enseñanza Secundaria y Superior en Ciencias Ambientales', 's', NULL, NULL],
-               
-               [2910, 1, 'Biomoléculas – carreras de Agronomía y de Licenciatura en Ciencias Ambientales', 's', NULL, NULL],
-               [2911, 1, 'Introducción a las Biomoléculas – carreras de Tecnicatura en Jardinería', 's', NULL, NULL],
-               [2912, 1, 'de Tecnicatura en Producción Vegetal Orgánica y de Tecnicatura en Floricultura y Biomoléculas y Metabolismo Vegetal – carreras de Tecnicatura Universitaria en Jardinería', 's', NULL, NULL],
-               [2913, 1, 'de Tecnicatura Universitaria en Producción Vegetal Orgánica y de Tecnicatura Universitaria en Producción Florihortícola', 's', NULL, NULL],
-               [2914, 1, 'Floricultura – carrera de Agronomía', 's', NULL, NULL],
-               [2915, 1, 'Producción de Flores y Verdes de Corte I – carrera de Tecnicatura en Floriculturaa', 's', NULL, NULL],
-               [2916, 1, 'Producción de Flores y Verdes de Corte II – carrera de Tecnicatura en Floriculturaa', 's', NULL, NULL],
-               [2917, 1, 'Riego Aplicado a la Floricultura', 's', NULL, NULL],
-               [2918, 1, 'Trabajo Final – carrera de Tecnicatura en Floricultura', 's', NULL, NULL],
-               [2919, 1, 'Producción de Especies Florícolas – carrera de Tecnicatura Universitaria en Producción Florihortícola', 's', NULL, NULL],
-               [2920, 1, 'Riego Aplicado a la Florihorticultura - carrera de Tecnicatura Universitaria en Producción Florihortícola', 's', NULL, NULL],
-               [2921, 1, 'Gestión de Cadenas Agroalimentarias – carrera de Licenciatura en Gestión de Agroalimentos', 's', NULL, NULL],
-               [2922, 1, 'Gestión Competitiva de Cadenas Agroalimentarias - carrera de Agronomía', 's', NULL, NULL],
-               [2923, 1, 'Fruticultura – carrera de Agronomía', 's', NULL, NULL],
-               [2924, 1, 'Análisis de Riesgo Ambiental – carrera de Licenciatura en Ciencias Ambientales', 's', NULL, NULL],
-               [2925, 1, 'Modelos de Simulación – carrera de Licenciatura en Ciencias Ambientales', 's', NULL, NULL],
-               [2926, 1, 'Gestión y Conservación de los Recursos Naturales – carrera de Licenciatura en Ciencias Ambientales', 's', NULL, NULL],
-               [2927, 1, 'Gestión y Conservación de los Recursos Naturales – carrera de Profesorado de Enseñanza Secundaria y Superior en Ciencias Ambientales', 's', NULL, NULL],
-               [2928, 1, 'Botánica Morfológica – carrera de Agronomía', 's', NULL, NULL],
-               [2929, 1, 'Botánica – carreras de Licenciatura en Ciencias Ambientales y de Profesorado de Enseñanza Secundaria y Superior en Ciencias Ambientales', 's', NULL, NULL],
-               [2930, 1, 'Botánica Morfológica – carreras de Tecnicatura en Jardinería de Tecnicatura en Producción Vegetal Orgánica y de Tecnicatura en Floricultura', 's', NULL, NULL],
-               [2931, 1, 'Botánica – carreras de Tecnicatura Universitaria en Jardinería, de Tecnicatura Universitaria en Producción Vegetal Orgánica y de Tecnicatura Universitaria en Producción Florihortícola', 's', NULL, NULL],
-               
-               [2932, 8, 'Matemática y Bioestadística', 's', NULL, NULL],
+                [2909, 1, 'Agroecosistemas - carreras de Licenciatura en Ciencias Ambientales y de Profesorado de Enseñanza Secundaria y Superior en Ciencias Ambientales', 's', NULL, NULL],
 
-               [2933, 10, 'Geología de los Hidrocarburos', 's', NULL, NULL],
-               [2934, 10, 'Electromagnetismo Aplicado', 's', NULL, NULL],
-               [2935, 10, 'Compatibilidad Electromagnética', 's', NULL, NULL],
-               [2936, 10, 'Electrónica de Alta Frecuencia', 's', NULL, NULL],
-               [2937, 10, 'Instrumentos Electrónicos y Metrología', 's', NULL, NULL],
-               [2938, 10, 'Estática', 's', NULL, NULL],
-               [2939, 10, '64-11 Estabilidad I B', 's', NULL, NULL],
-               [2940, 10, '64-11 84-03 Estabilidad II', 's', NULL, NULL],
-               [2941, 10, '64-12 Estabilidad II B', 's', NULL, NULL],
+                [2910, 1, 'Biomoléculas - carreras de Agronomía y de Licenciatura en Ciencias Ambientales', 's', NULL, NULL],
+                [2911, 1, 'Introducción a las Biomoléculas - carreras de Tecnicatura en Jardinería', 's', NULL, NULL],
+                [2912, 1, 'de Tecnicatura en Producción Vegetal Orgánica y de Tecnicatura en Floricultura y Biomoléculas y Metabolismo Vegetal - carreras de Tecnicatura Universitaria en Jardinería', 's', NULL, NULL],
+                [2913, 1, 'de Tecnicatura Universitaria en Producción Vegetal Orgánica y de Tecnicatura Universitaria en Producción Florihortícola', 's', NULL, NULL],
+                [2914, 1, 'Floricultura - carrera de Agronomía', 's', NULL, NULL],
+                [2915, 1, 'Producción de Flores y Verdes de Corte I - carrera de Tecnicatura en Floriculturaa', 's', NULL, NULL],
+                [2916, 1, 'Producción de Flores y Verdes de Corte II - carrera de Tecnicatura en Floriculturaa', 's', NULL, NULL],
+                [2917, 1, 'Riego Aplicado a la Floricultura', 's', NULL, NULL],
+                [2918, 1, 'Trabajo Final - carrera de Tecnicatura en Floricultura', 's', NULL, NULL],
+                [2919, 1, 'Producción de Especies Florícolas - carrera de Tecnicatura Universitaria en Producción Florihortícola', 's', NULL, NULL],
+                [2920, 1, 'Riego Aplicado a la Florihorticultura - carrera de Tecnicatura Universitaria en Producción Florihortícola', 's', NULL, NULL],
+                [2921, 1, 'Gestión de Cadenas Agroalimentarias - carrera de Licenciatura en Gestión de Agroalimentos', 's', NULL, NULL],
+                [2922, 1, 'Gestión Competitiva de Cadenas Agroalimentarias - carrera de Agronomía', 's', NULL, NULL],
+                [2923, 1, 'Fruticultura - carrera de Agronomía', 's', NULL, NULL],
+                [2924, 1, 'Análisis de Riesgo Ambiental - carrera de Licenciatura en Ciencias Ambientales', 's', NULL, NULL],
+                [2925, 1, 'Modelos de Simulación - carrera de Licenciatura en Ciencias Ambientales', 's', NULL, NULL],
+                [2926, 1, 'Gestión y Conservación de los Recursos Naturales - carrera de Licenciatura en Ciencias Ambientales', 's', NULL, NULL],
+                [2927, 1, 'Gestión y Conservación de los Recursos Naturales - carrera de Profesorado de Enseñanza Secundaria y Superior en Ciencias Ambientales', 's', NULL, NULL],
+                [2928, 1, 'Botánica Morfológica - carrera de Agronomía', 's', NULL, NULL],
+                [2929, 1, 'Botánica - carreras de Licenciatura en Ciencias Ambientales y de Profesorado de Enseñanza Secundaria y Superior en Ciencias Ambientales', 's', NULL, NULL],
+                [2930, 1, 'Botánica Morfológica - carreras de Tecnicatura en Jardinería de Tecnicatura en Producción Vegetal Orgánica y de Tecnicatura en Floricultura', 's', NULL, NULL],
+                [2931, 1, 'Botánica - carreras de Tecnicatura Universitaria en Jardinería, de Tecnicatura Universitaria en Producción Vegetal Orgánica y de Tecnicatura Universitaria en Producción Florihortícola', 's', NULL, NULL],
+                
+                [2932, 8, 'Matemática y Bioestadística', 's', NULL, NULL],
 
+                [2933, 10, 'Geología de los Hidrocarburos', 's', NULL, NULL],
+                [2934, 10, 'Electromagnetismo Aplicado', 's', NULL, NULL],
+                [2935, 10, 'Compatibilidad Electromagnética', 's', NULL, NULL],
+                [2936, 10, 'Electrónica de Alta Frecuencia', 's', NULL, NULL],
+                [2937, 10, 'Instrumentos Electrónicos y Metrología', 's', NULL, NULL],
+                [2938, 10, 'Estática', 's', NULL, NULL],
+                [2939, 10, '64-11 Estabilidad I B', 's', NULL, NULL],
+                [2940, 10, '64-11 84-03 Estabilidad II', 's', NULL, NULL],
+                [2941, 10, '64-12 Estabilidad II B', 's', NULL, NULL],
 
-            //    [2908, 1, '64-11 84-03 Estabilidad II', 's', NULL, NULL],
+                [2942, 4, 'Anatomía', 's', NULL, NULL],
             ]
         );
-        
+
 
         $this->batchInsert(
             "concurso",
             ["numero_expediente", "id_tipo_concurso", "id_facultad", "id_categoria", "id_dedicacion", "id_area_departamento", "cantidad_de_puestos", "fecha_inicio_inscripcion", "fecha_fin_inscripcion", "hora_inicio_inscripcion", "hora_fin_inscripcion", "fecha_publicacion", "cantidad_dias_publicacion", "area", "comentario"],
             [
-                ['EX-2024-00007079-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 3, 165, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-00007358-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 1, 457, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-00008305-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 3,   1, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-00010012-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 1, 428, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-00010046-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 3,   1, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-00010158-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 1, 153, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-00012302-   -UBA-DMESA#SSA_FAGRO', 1,  1, 4, 1, 153, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2023-07291942-   -UBA-DMESA#SSA_FAGRO', 4,  1, 3, 3, 111, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2023-07311003-   -UBA-DMESA#SSA_FAGRO', 4,  1, 3, 3, 111, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
+                ['EX-2024-00007079-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 3, 165, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'cátedra de Fertilidad y Fertilizantes', ''],
+                ['EX-2024-00007358-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 1, 457, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'cátedra de Química de Biomoléculas', ''],
+                ['EX-2024-00008305-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 3,   1, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'cátedra de Floricultura', ''],
+                ['EX-2024-00010012-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 1, 428, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'cátedra de Sistemas Agroalimentarios', ''],
+                ['EX-2024-00010046-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 3,   1, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'cátedra de Fruticultura', ''],
+                ['EX-2024-00010158-   -UBA-DMESA#SSA_FAGRO', 4,  1, 4, 1, 153, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
+                ['EX-2024-00012302-   -UBA-DMESA#SSA_FAGRO', 1,  1, 4, 1, 153, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
+                ['EX-2023-07291942-   -UBA-DMESA#SSA_FAGRO', 4,  1, 3, 3, 111, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'cátedra de Botánica General', ''],
+                ['EX-2023-07311003-   -UBA-DMESA#SSA_FAGRO', 4,  1, 3, 3, 111, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'cátedra de Botánica General', ''],
 
-                ['EX-2024-02483056-   -UBA-DME#SSA_FFYB'   , 4,  8, 4, 3, 12,  1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
+                ['EX-2024-02483056-   -UBA-DME#SSA_FFYB', 4,  8, 4, 3, 12,  1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'cátedra Matemática', ''],
 
-                ['EX-2022-05234370-   -UBA-DIMEDA#SA_FI'   , 4, 10, 4, 3, 458, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2022-05361585-   -UBA-DIMEDA#SA_FI'   , 1, 10, 4, 3, 429, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2022-05526067-   -UBA-DIMEDA#SA_FI'   , 4, 10, 4, 1, 104, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
+                ['EX-2022-05234370-   -UBA-DIMEDA#SA_FI', 4, 10, 4, 3, 458, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'área de docencia: Ciencia y Tecnología de la Tierra aplicada a los Hidrocarburos área de investigación: Estudios técnicos y mecánicos de formación de cuencas y sus fluidos, para la prospección de recursos hidrocarburíferos y geotérmicos destinados a aplicaciones en energía y secuestro y almacenamiento de CO2', ''],
+                ['EX-2022-05361585-   -UBA-DIMEDA#SA_FI', 1, 10, 4, 3, 429, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'área de docencia: Comunicaciones y Redes área de investigación: Propagación. Sistemas Irradiantes. Ingeniería Electromagnética', ''],
+                ['EX-2022-05526067-   -UBA-DIMEDA#SA_FI', 4, 10, 4, 1, 104, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'área de docencia: Mecánica del Sólido I', ''],
 
-                ['EX-2024-02725516-   -UBA-DMEA#FMED'      , 2, 11, 3, 1, 121, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-02725652-   -UBA-DMEA#FMED'      , 2, 11, 3, 1, 121, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-02725760-   -UBA-DMEA#FMED'      , 2, 11, 4, 1, 449, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
+                ['EX-2024-02725516-   -UBA-DMEA#FMED', 2, 11, 3, 1, 121, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
+                ['EX-2024-02725652-   -UBA-DMEA#FMED', 2, 11, 3, 1, 121, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
+                ['EX-2024-02725760-   -UBA-DMEA#FMED', 2, 11, 4, 1, 449, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
 
-                ['EX-2024-02387298-   -UBA-DMRD#SHA_FPSI'  , 2, 13, 4, 1, 459, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-03029135-   -UBA-DDMEA#CBC'      , 2, 75, 4, 1, null, 5, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-03029173-   -UBA-DDMEA#CBC'      , 2, 75, 2, 1, null, 1, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-03030215-   -UBA-DDMEA#CBC'      , 2, 75, 4, 1, null, 4, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-03032226-   -UBA-DDMEA#CBC'      , 2, 75, 4, 1, null, 5, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-03032270-   -UBA-DDMEA#CBC'      , 2, 75, 4, 1, null, 5, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ['EX-2024-03032316-   -UBA-DDMEA#CBC'      , 2, 75, 4, 1, null, 5, '2024-07-01 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
-                ]
+                ['EX-2024-02387298-   -UBA-DMRD#SHA_FPSI', 2, 13, 4, 1, 459, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, '', ''],
+                ['EX-2024-03029135-   -UBA-DDMEA#CBC', 2, 75, 4, 1, null, 5, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'área de Matemática', ''],
+                ['EX-2024-03029173-   -UBA-DDMEA#CBC', 2, 75, 2, 1, null, 1, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'área de Matemática', ''],
+                ['EX-2024-03030215-   -UBA-DDMEA#CBC', 2, 75, 4, 1, null, 4, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'área de Matemática', ''],
+                ['EX-2024-03032226-   -UBA-DDMEA#CBC', 2, 75, 4, 1, null, 5, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'área de Matemática', ''],
+                ['EX-2024-03032270-   -UBA-DDMEA#CBC', 2, 75, 4, 1, null, 5, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'área de Metodología de las Ciencias Sociales', ''],
+                ['EX-2024-03032316-   -UBA-DDMEA#CBC', 2, 75, 4, 1, null, 5, '2024-07-02 09:00:00', '2024-07-30 18:00:00', '09:00', '18:00', '2024-07-01', 1, 'área de Economía', ''],
+            ]
         );
 
-// EX-2024-00007079-   -UBA-DMESA#SSA_FAGRO
+        // EX-2024-00007079-   -UBA-DMESA#SSA_FAGRO
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -122,7 +121,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
 
 
 
-// EX-2024-00007358-   -UBA-DMESA#SSA_FAGRO
+        // EX-2024-00007358-   -UBA-DMESA#SSA_FAGRO
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -167,9 +166,9 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             from concurso c
             where c.numero_expediente = 'EX-2024-00007358-   -UBA-DMESA#SSA_FAGRO'
         ";
-        Yii::$app->db->createCommand($sql)->execute();        
+        Yii::$app->db->createCommand($sql)->execute();
 
-    // EX-2024-00008305-   -UBA-DMESA#SSA_FAGRO
+        // EX-2024-00008305-   -UBA-DMESA#SSA_FAGRO
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -248,7 +247,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-// EX-2024-00010012-   -UBA-DMESA#SSA_FAGRO
+        // EX-2024-00010012-   -UBA-DMESA#SSA_FAGRO
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -272,7 +271,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-# EX-2024-00010046-   -UBA-DMESA#SSA_FAGRO
+        # EX-2024-00010046-   -UBA-DMESA#SSA_FAGRO
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -285,7 +284,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-# EX-2024-00010158-   -UBA-DMESA#SSA_FAGRO
+        # EX-2024-00010158-   -UBA-DMESA#SSA_FAGRO
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -310,7 +309,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         Yii::$app->db->createCommand($sql)->execute();
 
 
-// EX-2024-00012302-   -UBA-DMESA#SSA_FAGRO
+        // EX-2024-00012302-   -UBA-DMESA#SSA_FAGRO
 
 
         $sql = "
@@ -336,8 +335,8 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         Yii::$app->db->createCommand($sql)->execute();
 
 
-# EX-2023-07291942-   -UBA-DMESA#SSA_FAGRO
-##########################################
+        # EX-2023-07291942-   -UBA-DMESA#SSA_FAGRO
+        ##########################################
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -383,8 +382,8 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-# EX-2023-07311003-   -UBA-DMESA#SSA_FAGRO
-##########################################
+        # EX-2023-07311003-   -UBA-DMESA#SSA_FAGRO
+        ##########################################
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -431,8 +430,8 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         Yii::$app->db->createCommand($sql)->execute();
 
 
-# 
-# EX-2024-02483056-   -UBA-DME#SSA_FFYB
+        # 
+        # EX-2024-02483056-   -UBA-DME#SSA_FFYB
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -445,7 +444,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-# EX-2022-05234370-   -UBA-DIMEDA#SA_FI
+        # EX-2022-05234370-   -UBA-DIMEDA#SA_FI
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -458,7 +457,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-# EX-2022-05361585-   -UBA-DIMEDA#SA_FI
+        # EX-2022-05361585-   -UBA-DIMEDA#SA_FI
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -515,7 +514,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-# EX-2022-05526067-   -UBA-DIMEDA#SA_FI
+        # EX-2022-05526067-   -UBA-DIMEDA#SA_FI
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -572,7 +571,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-# EX-2024-02725516-   -UBA-DMEA#FMED
+        # EX-2024-02725516-   -UBA-DMEA#FMED
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -585,7 +584,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-# EX-2024-02725652-   -UBA-DMEA#FMED
+        # EX-2024-02725652-   -UBA-DMEA#FMED
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -598,7 +597,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-# EX-2024-02725760-   -UBA-DMEA#FMED
+        # EX-2024-02725760-   -UBA-DMEA#FMED
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -611,7 +610,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-# EX-2024-02387298-   -UBA-DMRD#SHA_FPSI
+        # EX-2024-02387298-   -UBA-DMRD#SHA_FPSI
 
         $sql = "
             insert INTO concurso_asignatura 
@@ -630,7 +629,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
 
 
 
-        $sql = "insert INTO profile (nombre,apellido,numero_documento,user_id) values ('Patricia Lilia', 'FERNÁNDEZo', '00000122',0)";
+        $sql = "insert INTO profile (nombre,apellido,numero_documento,user_id) values ('Patricia Lilia', 'FERNÁNDEZ', '00000122',0)";
         Yii::$app->db->createCommand($sql)->execute();
         $sql = "insert INTO profile (nombre,apellido,numero_documento,user_id) values ('Paula Virginia', 'FERNÁNDEZ', '00000123',0)";
         Yii::$app->db->createCommand($sql)->execute();
@@ -657,7 +656,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
         $sql = "insert INTO profile (nombre,apellido,numero_documento,user_id) values ('Alfredo Alberto', 'CORRAL' , '00000139',0)";
         Yii::$app->db->createCommand($sql)->execute();
 
-        
+
 
         $sql = "
             insert INTO persona_concurso_renovacion 
@@ -671,8 +670,8 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL,
             NULL
             from concurso c
-            where c.numero_expediente = 'EX-2024-00007079-   -UBA-DMESA#SSA_FAGRON'
-        ";    
+            where c.numero_expediente = 'EX-2024-00007079-   -UBA-DMESA#SSA_FAGRO'
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -688,7 +687,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2024-00007358-   -UBA-DMESA#SSA_FAGRO'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -704,7 +703,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2024-00008305-   -UBA-DMESA#SSA_FAGRO'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -720,7 +719,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2024-00010012-   -UBA-DMESA#SSA_FAGRO'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -735,8 +734,8 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL,
             NULL
             from concurso c
-            where c.numero_expediente = 'EX-2024-00010046-   -UBA-DMESA#SSA_FAGROO'
-        ";    
+            where c.numero_expediente = 'EX-2024-00010046-   -UBA-DMESA#SSA_FAGRO'
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -752,7 +751,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2024-00010158-   -UBA-DMESA#SSA_FAGRO'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -768,7 +767,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2024-00012302-   -UBA-DMESA#SSA_FAGRO'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -784,7 +783,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2023-07291942-   -UBA-DMESA#SSA_FAGRO'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -800,7 +799,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2023-07311003-   -UBA-DMESA#SSA_FAGRO'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -816,7 +815,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2024-02483056-   -UBA-DME#SSA_FFYB'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -832,7 +831,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2022-05234370-   -UBA-DIMEDA#SA_FI'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -848,7 +847,7 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2022-05361585-   -UBA-DIMEDA#SA_FI'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
         $sql = "
@@ -864,20 +863,50 @@ class m240702_123334_fix_nuevos_concursos_20240701 extends Migration
             NULL
             from concurso c
             where c.numero_expediente = 'EX-2022-05526067-   -UBA-DIMEDA#SA_FI'
-        ";    
+        ";
         Yii::$app->db->createCommand($sql)->execute();
 
 
 
-# CORRECCIONES:
+        # CORRECCIONES:
+
+        $sql = "
+            insert INTO concurso_asignatura 
+            select  
+            c.id_concurso,
+            2764,
+            4
+            from concurso c
+            where c.numero_expediente = 'EX-2024-01786079-   -UBA-DMESA#FCEN'
+        ";
+        Yii::$app->db->createCommand($sql)->execute();
 
 
+        $sql = "
+            insert INTO concurso_asignatura 
+            select  
+            c.id_concurso,
+            2908,
+            4
+            from concurso c
+            where c.numero_expediente = 'EX-2024-01786079-   -UBA-DMESA#FCEN'
+        ";
+        Yii::$app->db->createCommand($sql)->execute();
 
 
+        $this->update("concurso", ["id_tipo_concurso" => 4], ["numero_expediente" => "EX-2024-02079984-   -UBA-DME#SSA_FFYB"]);
 
 
+        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-02 09:00:00","fecha_publicacion"=>"2024-07-01","area" => "área Química Analítica"], ["numero_expediente" => "EX-2024-01713496-   -UBA-DMESA#FCEN"]);
+        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-02 09:00:00","fecha_publicacion"=>"2024-07-01","area" => "área Química Inorgánica, Analítica y Química Física"], ["numero_expediente" => "EX-2024-01714245-   -UBA-DMESA#FCEN"]);
+        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-02 09:00:00","fecha_publicacion"=>"2024-07-01","area" => "área Química Inorgánica, Analítica y Química Física"], ["numero_expediente" => "EX-2024-01714760-   -UBA-DMESA#FCEN"]);
+        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-02 09:00:00","fecha_publicacion"=>"2024-07-01","area" => "área Química Ambiental  área de investigación: Química Ambiental"], ["numero_expediente" => "EX-2024-01715181-   -UBA-DMESA#FCEN"]);
+        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-02 09:00:00","fecha_publicacion"=>"2024-07-01","area" => "área Biología Molecular y Bioquímica Analítica y Estructural, Química Fisiológica, Toxicológica y Biomédica y Microbiología y Virología"], ["numero_expediente" => "EX-2024-01786079-   -UBA-DMESA#FCEN"]);
+        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-02 09:00:00","fecha_publicacion"=>"2024-07-01","area" => "área Didáctica de la Biología área de investigación: Didáctica de la Biología"], ["numero_expediente" => "EX-2024-02343297-   -UBA-DMESA#FCEN"]);
+        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-02 09:00:00","fecha_publicacion"=>"2024-07-01","area" => "área docente: Física Estadística / Dinámica no Lineal / Biofísica / Materia Blanda / Nuclear / Partículas / Campos / Gravitación / Cosmología"], ["numero_expediente" => "EX-2024-02357757-   -UBA-DMESA#FCEN"]);
+        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-02 09:00:00","fecha_publicacion"=>"2024-07-01","area" => "área Física Aplicada"], ["numero_expediente" => "EX-2024-02357806-   -UBA-DMESA#FCEN"]);
 
-
+        $this->update("asignatura", ["descripcion_asignatura"=>"Anatomía"],["id_asignatura"=>2908]);
     }
 
     /**
