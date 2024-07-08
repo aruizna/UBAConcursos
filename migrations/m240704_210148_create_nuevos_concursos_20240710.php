@@ -827,21 +827,6 @@ class m240704_210148_create_nuevos_concursos_20240710 extends Migration
         ";
         Yii::$app->db->createCommand($sql)->execute();
 
-/*
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-01713496-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-01714245-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-01714760-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-01715181-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-01786079-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-02343297-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-02357757-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-02357806-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-01715181-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-01786079-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-02343297-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-02357757-   -UBA-DMESA#FCEN"]);
-        $this->update("concurso", ["fecha_inicio_inscripcion"=>"2024-07-10 09:00:00","fecha_publicacion"=>"2024-08-06"], ["numero_expediente" => "EX-2024-02357806-   -UBA-DMESA#FCEN"]);
-*/
 
     }
 
