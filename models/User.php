@@ -9,6 +9,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     public $password;
     public $authKey;
     public $accessToken;
+    public $is_superuser;
 
     private static $users = [
         '100' => [
@@ -17,6 +18,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
             'password' => 'admin',
             'authKey' => 'test100key',
             'accessToken' => '100-token',
+            'is_superuser' => 1,
         ],
         '101' => [
             'id' => '101',
@@ -24,6 +26,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
             'password' => 'demo',
             'authKey' => 'test101key',
             'accessToken' => '101-token',
+            'is_superuser' => 0,
         ],
     ];
 
@@ -108,4 +111,13 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
          return $this->hasMany(Concurso::class, ['id_concurso' => 'concurso_id'])
              ->viaTable('profile', ['user_id' => 'id']);
      }
+
+         /**
+     * Check if user is a superuser
+     * @return bool
+     */
+    public function getIsSuperuser()
+    {
+        return $this->is_superuser == 1;
+    }
 }

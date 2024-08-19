@@ -20,7 +20,7 @@ $config = [
         'user' => [
             'class' => Da\User\Module::class,
             'mailParams' => [
-                'fromEmail' => $_ENV['MAIL_USER'],
+                'fromEmail' => $_ENV['MAIL_USER']?? "mail@mail.com",
                 'welcomeMailSubject' => "Sistema de Concursos de Profesores UBA - Registro de Usuario",
                 'recoveryMailSubject'=> "Sistema de Concursos de Profesores UBA - Restablecimiento de contraseña",
             ]
@@ -76,8 +76,8 @@ $config = [
                 'class' => 'Swift_SmtpTransport',
                 'host' => $_ENV['MAIL_HOST'] ?? 'smtp.office365.com',
                 'port' => $_ENV["MAIL_PORT"] ?? 587,
-                'username' => $_ENV['MAIL_USER'],
-                'password' => $_ENV['MAIL_PASSWORD'],
+                'username' => $_ENV['MAIL_USER'] ?? "mail@mail.com",
+                'password' => $_ENV['MAIL_PASSWORD'] ?? "123",
                 'encryption' => $_ENV["MAIL_ENCRYPTION"] ?? 'tls', // Security: TLS
                 'authMode' => $_ENV["MAIL_AUTHMODE"] ?? 'login', // Authentication type: LOGIN
             ],

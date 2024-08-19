@@ -5,6 +5,7 @@ namespace app\controllers;
 use yii\filters\AccessControl;
 
 use app\models\Concurso;
+use app\models\ConcursoPendiente;
 use app\models\ConcursoQuery;
 use app\models\Facultad;
 use app\models\Preinscripto;
@@ -31,6 +32,39 @@ class ConcursoController extends Controller
     /**
      * @inheritDoc
      */
+    // public function behaviors()
+    // {
+    //     return array_merge(
+    //         parent::behaviors(),
+    //         [
+    //             'access' => [
+    //                 'class' => AccessControl::class,
+    //                 'rules' => [
+    //                     [
+    //                         'actions' => ['confirmar', 'descargar', 'previsualizar', 'preinscripcion', 'index', 'view', 'create', 'update', 'delete', 'area', 'formulario', 'tramite', 'desinscribir'],
+    //                         'allow' => true,
+    //                         'roles' => ['@'],
+    //                     ],
+    //                     [
+    //                         'actions' => ['previsualizar', 'preinscripcion', 'index', 'view', 'create', 'update', 'delete', 'area', 'formulario', 'tramite'],
+    //                         'allow' => false,
+    //                         'roles' => ['?'],
+    //                     ],
+    //                 ],
+    //             ],
+    //             'verbs' => [
+    //                 'class' => VerbFilter::className(),
+    //                 'actions' => [
+    //                     'delete' => ['POST'],
+    //                 ],
+    //             ],
+    //         ]
+    //     );
+    // }
+
+        /**
+     * new ABM behavior
+     */
     public function behaviors()
     {
         return array_merge(
@@ -40,12 +74,20 @@ class ConcursoController extends Controller
                     'class' => AccessControl::class,
                     'rules' => [
                         [
-                            'actions' => ['confirmar', 'descargar', 'previsualizar', 'preinscripcion', 'index', 'view', 'create', 'update', 'delete', 'area', 'formulario', 'tramite', 'desinscribir'],
+                            'actions' => ['confirmar', 'descargar', 'previsualizar', 'preinscripcion', 'index', 'view', 'update', 'delete', 'area', 'formulario', 'tramite', 'desinscribir', 'pending', 'manage', 'publish', 'publish-confirm'],
                             'allow' => true,
                             'roles' => ['@'],
                         ],
                         [
-                            'actions' => ['previsualizar', 'preinscripcion', 'index', 'view', 'create', 'update', 'delete', 'area', 'formulario', 'tramite'],
+                            'actions' => ['create'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                return Yii::$app->user->identity->is_superuser;
+                            },
+                        ],
+                        [
+                            'actions' => ['previsualizar', 'preinscripcion', 'index', 'view', 'update', 'delete', 'area', 'formulario', 'tramite'],
                             'allow' => false,
                             'roles' => ['?'],
                         ],
@@ -343,47 +385,109 @@ class ConcursoController extends Controller
         ]);
     }
 
+    // /**
+    //  * Creates a new Concurso model.
+    //  * If creation is successful, the browser will be redirected to the 'view' page.
+    //  * @return string|\yii\web\Response
+    //  */
+    // public function actionCreate()
+    // {
+    //     $model = new Concurso();
+
+    //     if ($this->request->isPost) {
+    //         if ($model->load($this->request->post()) && $model->save()) {
+    //             return $this->redirect(['view', 'id_concurso' => $model->id_concurso]);
+    //         }
+    //     } else {
+    //         $model->loadDefaultValues();
+    //     }
+
+    //     return $this->render('create', [
+    //         'model' => $model,
+    //     ]);
+    // }
+
+
     /**
-     * Creates a new Concurso model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
+      * New intermediate Concurso model, this creates a pending approval Concurso
+      * If creation is successful, the browser will be redirected to the 'index' page.
+      * @return string|\yii\web\Response
+    */
     public function actionCreate()
     {
-        $model = new Concurso();
+        $model = new ConcursoPendiente();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_concurso' => $model->id_concurso]);
+                Yii::$app->session->setFlash('success', 'Concurso pendiente creado correctamente. Esperando aprobación.');
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();
         }
 
-        return $this->render('create', [
+        return $this->render('manage/create', [
             'model' => $model,
         ]);
     }
+    
 
-    /**
-     * Updates an existing Concurso model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id_concurso Id Concurso
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+    /** 
+     * This lists the pending Concursos 
+     * 
      */
-    public function actionUpdate($id_concurso)
-    {
-        $model = $this->findModel($id_concurso);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_concurso' => $model->id_concurso]);
-        }
+     public function actionPending()
+     {
+         $dataProvider = new ActiveDataProvider([
+             'query' => ConcursoPendiente::find(),
+             'pagination' => [
+                 'pageSize' => 20,
+             ],
+             'sort' => [
+                 'defaultOrder' => [
+                     'id_concurso_pendiente' => SORT_DESC,
+                 ],
+             ],
+         ]);
+ 
+         return $this->render('manage/pending', [
+             'dataProvider' => $dataProvider,
+         ]);
+     }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+    // /**
+    //  * Updates an existing Concurso model.
+    //  * If update is successful, the browser will be redirected to the 'view' page.
+    //  * @param int $id_concurso Id Concurso
+    //  * @return string|\yii\web\Response
+    //  * @throws NotFoundHttpException if the model cannot be found
+    //  */
+    // public function actionUpdate($id_concurso)
+    // {
+    //     $model = $this->findModel($id_concurso);
+
+    //     if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+    //         return $this->redirect(['view', 'id_concurso' => $model->id_concurso]);
+    //     }
+
+    //     return $this->render('update', [
+    //         'model' => $model,
+    //     ]);
+    // }
+
+    public function actionUpdate($id)
+{
+    $model = ConcursoPendiente::findOne($id);
+
+    if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        Yii::$app->session->setFlash('success', 'El concurso ha sido actualizado exitosamente.');
+    } else {
+        Yii::$app->session->setFlash('error', 'No se pudo actualizar el concurso.');
     }
+
+    return $this->redirect(['pending']);
+}
 
     /**
      * Deletes an existing Concurso model.
@@ -454,4 +558,70 @@ class ConcursoController extends Controller
             'ar' => $ar
         ]);
     }
+
+    public function actionManage()
+{
+    return $this->render('manage/index');
+}
+
+public function actionPublish()
+{
+    $dataProvider = new ActiveDataProvider([
+        'query' => ConcursoPendiente::find(),
+        'pagination' => [
+            'pageSize' => 20,
+        ],
+        'sort' => [
+            'defaultOrder' => [
+                'id_concurso_pendiente' => SORT_DESC,
+            ],
+        ],
+    ]);
+
+    return $this->render('manage/publish', [
+        'dataProvider' => $dataProvider,
+    ]);
+}
+
+public function actionPublishConfirm($id)
+{
+    $concursoPendiente = ConcursoPendiente::findOne($id);
+
+    if ($concursoPendiente !== null) {
+        $concurso = new Concurso();
+
+        // Asignar atributos desde concursoPendiente excluyendo id_concurso
+        $concurso->attributes = $concursoPendiente->getAttributes(null, ['id_concurso_pendiente', 'id_concurso']);
+
+        // Asegurar que las fechas se formatean correctamente como datetime
+        if (!empty($concursoPendiente->fecha_sorteo_publicada)) {
+            $concurso->fecha_sorteo_publicada = date('Y-m-d H:i:s', strtotime($concursoPendiente->fecha_sorteo_publicada));
+        } else {
+            $concurso->fecha_sorteo_publicada = null;
+        }
+
+        if (!empty($concursoPendiente->fecha_entrevista_prueba_publicada)) {
+            $concurso->fecha_entrevista_prueba_publicada = date('Y-m-d H:i:s', strtotime($concursoPendiente->fecha_entrevista_prueba_publicada));
+        } else {
+            $concurso->fecha_entrevista_prueba_publicada = null;
+        }
+
+        if ($concurso->save()) {
+            $concursoPendiente->delete();
+            Yii::$app->session->setFlash('success', 'El concurso ha sido publicado exitosamente.');
+        } else {
+            $errors = $concurso->getErrors();
+            Yii::$app->session->setFlash('error', 'No se pudo publicar el concurso: ' . json_encode($errors));
+        }
+    } else {
+        Yii::$app->session->setFlash('error', 'Concurso no encontrado.');
+    }
+
+    return $this->redirect(['publish']);
+}
+
+
+
+
+
 }

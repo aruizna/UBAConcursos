@@ -56,13 +56,15 @@ Html::cssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/al
                 [
                     'label' => '<p style="margin-bottom:0;color:black">Menú</p>',
                     'visible' => !Yii::$app->user->isGuest,
-                    'items' => [
+                    'items' => array_merge([
                         ['label' => 'Mi perfil', 'url' => ['/profile']],
                         ['label' => 'Llamados a concursos', 'url' => ['/concurso']],
                         ['label' => 'Mis concursos', 'url' => ['/concurso/tramite']],
                         ['label' => 'Datos UUAA', 'url' => ['/site/datos-utiles']],
                         ['label' => 'Doc. a presentar', 'url' => ['/site/documentos']],
-                    ],
+                    ], Yii::$app->user->identity->is_superuser ? [
+                        ['label' => 'Gestionar Llamados a Concurso', 'url' => ['/concurso/manage']],
+                    ] : []),
                 ],
             ]
         ])?>
