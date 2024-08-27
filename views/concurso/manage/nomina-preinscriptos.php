@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\grid\GridView;
+use yii\bootstrap5\Modal;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -132,80 +133,64 @@ body {
                 },
             ],
             [
-                'label' => 'Tipo de Concurso',
+                'label' => 'Unidad Académica',
                 'value' => function ($model) {
-                    return $model['id_tipo_concurso'] ?: 'N/A';
+                    return $model['nombre_facultad'] ?: 'N/A';
                 },
             ],
             [
-                'label' => 'Facultad',
-                'value' => function ($model) {
-                    return $model['id_facultad'] ?: 'N/A';
-                },
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view-more}',
+                'buttons' => [
+                    'view-more' => function ($url, $model, $key) {
+                        return Html::button('Ver más', [
+                            'class' => 'btn btn-info',
+                            'data-bs-toggle' => 'modal',
+                            'data-bs-target' => '#viewModal' . $model['id'],
+                        ]);
+                    },
+                ],
             ],
-            [
-                'label' => 'Categoría',
-                'value' => function ($model) {
-                    return $model['id_categoria'] ?: 'N/A';
-                },
-            ],
-            [
-                'label' => 'Dedicación',
-                'value' => function ($model) {
-                    return $model['id_dedicacion'] ?: 'N/A';
-                },
-            ],
-            [
-                'label' => 'Área/Departamento',
-                'value' => function ($model) {
-                    return $model['id_area_departamento'] ?: 'N/A';
-                },
-            ],
-            [
-                'label' => 'Cantidad de Puestos',
-                'value' => function ($model) {
-                    return $model['cantidad_de_puestos'] ?: 'N/A';
-                },
-            ],
-            [
-                'label' => 'Fecha Inicio Inscripción',
-                'value' => function ($model) {
-                    return Yii::$app->formatter->asDate($model['fecha_inicio_inscripcion'], 'php:d/m/Y');
-                },
-            ],
-            [
-                'label' => 'Fecha Fin Inscripción',
-                'value' => function ($model) {
-                    return Yii::$app->formatter->asDate($model['fecha_fin_inscripcion'], 'php:d/m/Y');
-                },
-            ],
-            [
-                'label' => 'Hora Inicio Inscripción',
-                'value' => function ($model) {
-                    return $model['hora_inicio_inscripcion'] ?: 'N/A';
-                },
-            ],
-            [
-                'label' => 'Hora Fin Inscripción',
-                'value' => function ($model) {
-                    return $model['hora_fin_inscripcion'] ?: 'N/A';
-                },
-            ],
-            [
-                'label' => 'Fecha Publicación',
-                'value' => function ($model) {
-                    return Yii::$app->formatter->asDate($model['fecha_publicacion'], 'php:d/m/Y');
-                },
-            ],
-            'doc',
         ],
     ]); ?>
+
+    <?php foreach ($dataProvider->models as $model): ?>
+        <?php
+        Modal::begin([
+            'id' => 'viewModal' . $model['id'],
+            'title' => 'Detalles del Preinscripto',
+            'footer' => Html::button('Cerrar', ['class' => 'btn btn-secondary', 'data-bs-dismiss' => 'modal']),
+        ]);
+
+        echo '<div class="modal-body">';
+        echo '<p><strong>Tipo de Concurso:</strong> ' . ($model['descripcion_tipo_concurso'] ?: 'N/A') . '</p>';
+        echo '<p><strong>Facultad:</strong> ' . ($model['nombre_facultad'] ?: 'N/A') . '</p>';
+        echo '<p><strong>Categoría:</strong> ' . ($model['descripcion_categoria'] ?: 'N/A') . '</p>';
+        echo '<p><strong>Dedicación:</strong> ' . ($model['descripcion_dedicacion'] ?: 'N/A') . '</p>';
+        echo '<p><strong>Área/Departamento:</strong> ' . ($model['descripcion_area_departamento'] ?: 'N/A') . '</p>';
+        echo '<p><strong>Cantidad de Puestos:</strong> ' . ($model['cantidad_de_puestos'] ?: 'N/A') . '</p>';
+        echo '<p><strong>Fecha Inicio Inscripción:</strong> ' . Yii::$app->formatter->asDate($model['fecha_inicio_inscripcion'], 'php:d/m/Y') . '</p>';
+        echo '<p><strong>Fecha Fin Inscripción:</strong> ' . Yii::$app->formatter->asDate($model['fecha_fin_inscripcion'], 'php:d/m/Y') . '</p>';
+        echo '<p><strong>Hora Inicio Inscripción:</strong> ' . ($model['hora_inicio_inscripcion'] ?: 'N/A') . '</p>';
+        echo '<p><strong>Hora Fin Inscripción:</strong> ' . ($model['hora_fin_inscripcion'] ?: 'N/A') . '</p>';
+        echo '<p><strong>Fecha Publicación:</strong> ' . Yii::$app->formatter->asDate($model['fecha_publicacion'], 'php:d/m/Y') . '</p>';
+        echo '<p><strong>Documento:</strong> ' . $model['doc'] . '</p>';
+        echo '</div>';
+
+        Modal::end();
+        ?>
+    <?php endforeach; ?>
+
 </div>
 
 
 <script>
-function verDetalles(idUsuario) {
-    // Aquí podrías redirigir a una página de detalles o abrir un modal con la información completa del usuario
-    alert('Mostrar detalles del usuario: ' + idUsuario);
-}
+document.querySelectorAll('.toggle-detail').forEach(function(element) {
+    element.addEventListener('click', function(event) {
+        event.preventDefault();
+        var id = this.getAttribute('data-id');
+        var detail = document.getElementById('detail-' + id);
+        detail.style.display = (detail.style.display === 'none' || detail.style.display === '') ? 'block' : 'none';
+    });
+});
 </script>

@@ -761,14 +761,15 @@ public function actionNominaPreinscriptos()
 
     $query = (new \yii\db\Query())
         ->select([
+            'preinscripto.id',
             'user.username',
             'user.email',
             'concurso.numero_expediente',
-            'concurso.id_tipo_concurso',
-            'concurso.id_facultad',
-            'concurso.id_categoria',
-            'concurso.id_dedicacion',
-            'concurso.id_area_departamento',
+            'tipo_concurso.descripcion_tipo_concurso', // Agregamos descripción de tipo de concurso
+            'facultad.nombre_facultad', // Agregamos nombre de la facultad
+            'categoria.descripcion_categoria', // Agregamos descripción de categoría
+            'dedicacion.descripcion_dedicacion', // Agregamos descripción de dedicación
+            'area_departamento.descripcion_area_departamento', // Agregamos descripción del área/departamento
             'concurso.cantidad_de_puestos',
             'concurso.fecha_inicio_inscripcion',
             'concurso.fecha_fin_inscripcion',
@@ -779,7 +780,12 @@ public function actionNominaPreinscriptos()
         ])
         ->from('preinscripto')
         ->innerJoin('user', 'preinscripto.user_id = user.id')
-        ->innerJoin('concurso', 'preinscripto.concurso_id = concurso.id_concurso');
+        ->innerJoin('concurso', 'preinscripto.concurso_id = concurso.id_concurso')
+        ->innerJoin('tipo_concurso', 'concurso.id_tipo_concurso = tipo_concurso.id_tipo_concurso')
+        ->innerJoin('facultad', 'concurso.id_facultad = facultad.id_facultad')
+        ->innerJoin('categoria', 'concurso.id_categoria = categoria.id_categoria')
+        ->innerJoin('dedicacion', 'concurso.id_dedicacion = dedicacion.id_dedicacion')
+        ->innerJoin('area_departamento', 'concurso.id_area_departamento = area_departamento.id_area_departamento');
 
     if ($expediente) {
         $query->andWhere(['concurso.numero_expediente' => $expediente]);
@@ -813,6 +819,7 @@ public function actionNominaPreinscriptos()
         'facultadesList' => $facultadesList,
     ]);
 }
+
 
 
 
