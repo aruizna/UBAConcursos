@@ -110,6 +110,51 @@ $this->title = 'Profile';
         border: 1px solid #5bbbbb;
         font-size: 14px;
     }
+
+    .primary-button {
+    background-color: #f7a600;
+    margin: 1vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    transition: background-color 0.3s, color 0.3s;
+    width: 200px;
+    border: none;
+    }
+
+    .primary-button:hover {
+        background-color: #91bde1;
+    }
+
+    .secondary-button {
+    background-color: #91bde1;
+    margin: 1vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    transition: background-color 0.3s, color 0.3s;
+    width: 200px;
+    border: none;
+    }
+
+    .secondary-button:hover {
+        background-color: #f7a600;
+    }
+    .input-texto {
+    border-radius: 0;
+    background-color: #bbbbbb20;
+    max-width: 350px;
+    text-align: center;
+    font-size: 14px;
+}
+
+
 </style>
 
 <div class="profile-index">
@@ -140,19 +185,20 @@ $this->title = 'Profile';
     $sexos = ["Masculino", "Femenino", "X"];
     ?>
 
-    <div class="col mx-0 px-0" style="border:transparent;">
+    <div style="border:transparent;">
         <div style="display:flex;flex-direction:row;min-width: 1000px;">
-            <div class="mt-4" style="align-items:center;display:flex;flex-direction:column;width:200px;">
-                <?= Html::img('@web/images/user/default_avatar.png', ['class' => 'mb-4', 'style' => 'height: 80px; width:80px;']) ?>
+            <div 
+             style="align-items:center;display:flex;flex-direction:column;width:200px; margin-top:2vh">
+                <?= Html::img('@web/images/user/default_avatar.png', [ 'style' => 'height: 80px; width:80px;']) ?>
 
-                <div class="mt-2">
+                <div>
                     <?php if (isset($cid) && $cid != '0') : ?>
-                        <button id="concurso" class="mt-2 btn btn-block color-btn active" style="width:150px;font-weight:600;border:none" onclick="changeColor(this)">Concurso</button>
+                        <button id="concurso"  style="width:150px;font-weight:600;border:none" onclick="changeColor(this)">Concurso</button>
                     <?php endif ?>
                 </div>
 
-                <button id="perfil" class="mt-2 btn btn-block color-btn <?php echo (!(isset($cid) && $cid != '0')) ? 'active' : '' ?>" style="width:150px;font-weight:600;border:none" onclick="changeColor(this)">Mis datos</button>
-                <button id="formulario" class="mt-2 btn btn-block color-btn" style="width:150px;font-weight:600;border:none" onclick="changeColor(this)">Formulario</button>
+                <button id="perfil" class="primary-button"  <?php echo (!(isset($cid) && $cid != '0')) ? 'active' : '' ?>" onclick="changeColor(this)">Mis datos</button>
+                <button id="formulario" class="primary-button" onclick="changeColor(this)">Formulario</button>
             </div>
 
             <!-- CONCURSO -->
@@ -318,7 +364,7 @@ $this->title = 'Profile';
                             <?= $form->field(
                                 $dataProvider,
                                 'nombre',
-                                ['inputOptions' => ['class' => 'mt-4 text-center form-control', 'style' => 'display:inline;border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'tabindex' => '1', 'placeholder' => 'Nombre']]
+                                ['inputOptions' => ['class' => 'input-texto', 'autofocus' => 'autofocus', 'tabindex' => '1', 'placeholder' => 'Nombre']]
                             )->label(false)->textInput() ?>
                         </div>
 
@@ -327,7 +373,7 @@ $this->title = 'Profile';
                             <?= $form->field(
                                 $dataProvider,
                                 'apellido',
-                                ['inputOptions' => ['style' => 'border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'class' => 'mt-4 text-center form-control', 'tabindex' => '1', 'placeholder' => 'Apellido']]
+                                ['inputOptions' => ['class' => 'input-texto', 'autofocus' => 'autofocus', 'tabindex' => '1', 'placeholder' => 'Apellido']]
                             )->label(false)->textInput() ?>
                         </div>
 
@@ -336,7 +382,7 @@ $this->title = 'Profile';
                             <?= $form->field(
                                 $dataProvider,
                                 'email',
-                                ['inputOptions' => ['style' => 'border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'class' => 'mt-4 text-center form-control', 'tabindex' => '1', 'placeholder' => 'Email']]
+                                ['inputOptions' => ['class' => 'input-texto', 'autofocus' => 'autofocus', 'tabindex' => '1', 'placeholder' => 'Email']]
                             )->label(false)->textInput() ?>
                         </div>
                         <div style="display: flex;flex-direction: row;align-items: first baseline;justify-content: center;">
@@ -344,7 +390,7 @@ $this->title = 'Profile';
                             <?= $form->field(
                                 $dataProvider,
                                 'numero_celular_sms',
-                                ['inputOptions' => ['style' => 'border-radius:10px;background-color:transparent;width:350px;border:1px solid black', 'autofocus' => 'autofocus', 'class' => 'mt-4 text-center form-control', 'tabindex' => '1', 'placeholder' => 'Teléfono']]
+                                ['inputOptions' => ['class' => 'input-texto', 'autofocus' => 'autofocus', 'tabindex' => '1', 'placeholder' => 'Teléfono']]
                             )->label(false)->textInput() ?>
                         </div>
                     </div>
@@ -356,7 +402,7 @@ $this->title = 'Profile';
             <!-- PASSWORD CHANGE -->
 
             <div id="passworddiv" class="mt-4" style="align-items:center;display:<?php echo (!(isset($cid) && $cid != '0')) ? 'flex' : 'none' ?>;flex-direction:column;width:700px;">
-                <button id="password" class="mt-2 btn btn-block" style="color:white;background-color:#FFC161;width:300px;font-weight:600;border:none" type="button">Cambiar contraseña</button>
+                <button id="password" class="primary-button" type="button">Cambiar contraseña</button>
                 <div id='passwordcontentdiv'>
                 </div>
             </div>
@@ -381,7 +427,7 @@ $this->title = 'Profile';
                                             $form->field(
                                                 $dataProvider,
                                                 'numero_documento',
-                                                ['inputOptions' => ['id' => 'dniinput', 'readOnly' => 'true', 'class' => 'input text-center form-control', 'placeholder' => 'Documento'], 'errorOptions' => ['class' => 'text-danger']]
+                                                ['inputOptions' => ['id' => 'dniinput', 'readOnly' => 'true', 'class' => 'input-texto', 'placeholder' => 'Documento'], 'errorOptions' => ['class' => 'text-danger']]
                                             )->label(false)->textInput()
                                             ?>
                                         </div>
@@ -397,7 +443,7 @@ $this->title = 'Profile';
                                             $form->field(
                                                 $dataProvider,
                                                 'cuil',
-                                                ['inputOptions' => ['id' => 'cuilinput', 'autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'CUIL'], 'errorOptions' => ['class' => 'text-danger']]
+                                                ['inputOptions' => ['id' => 'cuilinput', 'autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'CUIL'], 'errorOptions' => ['class' => 'text-danger']]
                                             )->label(false)->textInput()
                                             ?>
                                         </div>
@@ -409,7 +455,7 @@ $this->title = 'Profile';
                                             <p class="my-0">Apellido</p>
                                         </div>
                                         <div class="ml-2" style="display:flex;align-items: center;">
-                                            <input readOnly="true" value="<?= $dataProvider->apellido ?>" type="text" style="background-color:#D9D9D9" class="input text-center form-control" placeholder="Apellido">
+                                            <input class='input-texto', readOnly="true" value="<?= $dataProvider->apellido ?>" type="text" style="background-color:#D9D9D9"  placeholder="Apellido">
                                         </div>
                                     </div>
 
@@ -419,7 +465,7 @@ $this->title = 'Profile';
                                             <p class="my-0">Nombre</p>
                                         </div>
                                         <div class="ml-2" style="display:flex;align-items: center;">
-                                            <input readOnly="true" value="<?= $dataProvider->nombre ?>" type="text" style="background-color:#D9D9D9" class="input text-center form-control" placeholder="Nombre">
+                                            <input class='input-texto' readOnly="true" value="<?= $dataProvider->nombre ?>" type="text" style="background-color:#D9D9D9"  placeholder="Nombre">
                                         </div>
                                     </div>
 
@@ -429,7 +475,7 @@ $this->title = 'Profile';
                                             <p class="my-0">Sexo</p>
                                         </div>
                                         <div class="ml-2" style="display:flex;align-items: center;">
-                                            <select id="sexos" name="Profile[sexo]" style="display:block;width: 200px;height:35px;
+                                            <select id="sexos"  name="Profile[sexo]" style="display:block;width: 200px;height:35px;
                                                 overflow: hidden; 
                                                 white-space: nowrap;
                                                 background-color: transparent;
@@ -472,7 +518,7 @@ $this->title = 'Profile';
                                             <p class="my-0">Teléfono</p>
                                         </div>
                                         <div class="ml-2" style="display:flex;align-items: center;">
-                                            <input readOnly="true" value="<?= $dataProvider->numero_celular_sms ?>" type="text" style="background-color:#D9D9D9" class="input text-center form-control" placeholder="Teléfono">
+                                            <input class='input-texto' readOnly="true" value="<?= $dataProvider->numero_celular_sms ?>" type="text" style="background-color:#D9D9D9" placeholder="Teléfono">
                                         </div>
                                     </div>
 
@@ -482,7 +528,7 @@ $this->title = 'Profile';
                                             <p class="my-0">Email</p>
                                         </div>
                                         <div class="ml-2" style="display:flex;align-items: center;">
-                                            <input readOnly="true" value="<?= $dataProvider->email ?>" type="text" style="background-color:#D9D9D9" class="input text-center form-control" placeholder="Email">
+                                            <input class='input-texto' readOnly="true" value="<?= $dataProvider->email ?>" type="text" style="background-color:#D9D9D9" placeholder="Email">
                                         </div>
                                     </div>
                                 </div>
@@ -521,7 +567,7 @@ $this->title = 'Profile';
                                             $form->field(
                                                 $dataProvider,
                                                 'conyuge',
-                                                ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Cónyuge / Concubino']]
+                                                ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Cónyuge / Concubino']]
                                             )->label(false)->textInput()
                                             ?>
                                         </div>
@@ -535,7 +581,7 @@ $this->title = 'Profile';
                                             $form->field(
                                                 $dataProvider,
                                                 'madre',
-                                                ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Nombre y Apellido de la Madre']]
+                                                ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Nombre y Apellido de la Madre']]
                                             )->label(false)->textInput()
                                             ?>
                                         </div>
@@ -550,7 +596,7 @@ $this->title = 'Profile';
                                             $form->field(
                                                 $dataProvider,
                                                 'padre',
-                                                ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Nombre y Apellido del Padre']]
+                                                ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Nombre y Apellido del Padre']]
                                             )->label(false)->textInput()
                                             ?>
                                         </div>
@@ -569,7 +615,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'nacimiento_localidad',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Localidad'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Localidad'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput();
                                         ?>
                                     </div>
@@ -612,7 +658,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'nacimiento_expedido',
-                                            ['inputOptions' => ['id' => 'nacimientoprovinciaDropdown', 'autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Provincia'], 'errorOptions' => ['class' => 'text-danger']],
+                                            ['inputOptions' => ['id' => 'nacimientoprovinciaDropdown', 'autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Provincia'], 'errorOptions' => ['class' => 'text-danger']],
 
                                         )->label(false)->dropDownList(
                                             $provincias,
@@ -623,7 +669,7 @@ $this->title = 'Profile';
                                         <?= $form->field(
                                             $dataProvider,
                                             'nacimiento_expedido',
-                                            ['inputOptions' => ['id' => 'nacimientoprovinciainput', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Provincia'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['id' => 'nacimientoprovinciainput', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Provincia'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput(['style' => 'display: none', 'id' => 'nacimientoprovinciaTextInput']);
                                         ?>
                                     </div>
@@ -662,7 +708,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_calle',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Calle'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Calle'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
@@ -675,7 +721,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_numero',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Número'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Número'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
@@ -690,7 +736,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_piso',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Piso', 'errorOptions' => ['class' => 'text-danger']]]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Piso', 'errorOptions' => ['class' => 'text-danger']]]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
@@ -702,7 +748,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_departamento',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'style' => 'max-width:150px', 'tabindex' => '1', 'placeholder' => 'Departamento'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Departamento'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
@@ -715,7 +761,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_codigo_postal',
-                                            ['inputOptions' => ['minlength'=>'4','maxlength'=>'8','autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'style' => 'max-width:150px', 'tabindex' => '1', 'placeholder' => 'Código Postal'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['minlength'=>'4','maxlength'=>'8','autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Código Postal'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
@@ -731,7 +777,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_localidad',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Localidad'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Localidad'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput()
                                         ?>
                                     </div>
@@ -744,7 +790,7 @@ $this->title = 'Profile';
                                         $form->field(
                                             $dataProvider,
                                             'domicilio_provincia',
-                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Provincia'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Provincia'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->dropDownList(
                                             $provincias,
                                             ['placeholder' => 'Provincia', 'id' => 'domicilioprovinciaDropdown'],
@@ -753,7 +799,7 @@ $this->title = 'Profile';
                                         <?= $form->field(
                                             $dataProvider,
                                             'domicilio_provincia',
-                                            ['inputOptions' => ['id' => 'domicilioprovinciainput', 'class' => 'input text-center form-control', 'tabindex' => '1', 'placeholder' => 'Provincia'], 'errorOptions' => ['class' => 'text-danger']]
+                                            ['inputOptions' => ['id' => 'domicilioprovinciainput', 'class' => 'input-texto', 'tabindex' => '1', 'placeholder' => 'Provincia'], 'errorOptions' => ['class' => 'text-danger']]
                                         )->label(false)->textInput(['style' => 'display: none', 'id' => 'domicilioprovinciaTextInput']);
                                         ?>
                                     </div>
@@ -941,7 +987,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'titulos_obtenidos',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -952,7 +998,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'antecedentes_docentes',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -963,7 +1009,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'antecedentes_cientificos',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -975,7 +1021,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'cursos',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -986,7 +1032,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'congresos',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -997,7 +1043,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'actuacion_universidades',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
 
@@ -1009,7 +1055,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'formacion_rrhh',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -1020,7 +1066,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'sintesis_aportes',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -1031,7 +1077,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'sintesis_profesional',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -1042,7 +1088,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'otros_antecedentes',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -1053,7 +1099,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'labor_docente',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -1064,7 +1110,7 @@ $this->title = 'Profile';
                                 $form->field(
                                     $dataProvider,
                                     'renovacion',
-                                    ['inputOptions' => ['autofocus' => 'autofocus', 'style' => 'width:100%', 'class' => 'input  form-control', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
+                                    ['inputOptions' => ['autofocus' => 'autofocus', 'class' => 'input-texto', 'tabindex' => '1', 'errorOptions' => ['class' => 'text-danger']]]
                                 )->label(false)->textarea(['rows' => '6'])
                                 ?>
                             </div>
@@ -1086,7 +1132,7 @@ $this->title = 'Profile';
             </div>
         <?php else : ?>
             <div style="justify-content: space-around;display: flex;justify-content:center;width:200px">
-                <?= Html::submitButton('Guardar', ['class' => 'mt-4 btn btn-block', 'style' => 'width:150px;background-color:#40BB97;font-weight:600', 'tabindex' => '3']) ?>
+                <?= Html::submitButton('Guardar', ['class' => 'secondary-button', 'tabindex' => '3']) ?>
             </div>
         <?php endif ?>
     </div>

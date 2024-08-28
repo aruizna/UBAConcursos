@@ -185,8 +185,8 @@ body {
 
     <?php endif ?>
     <?php if (!Yii::$app->user->isGuest) : ?>
-    <div class="warning">
-        <p class="text"><b>Importante:</b> antes de iniciar una preinscripción a un concurso, debe ingresar en la
+    <div class="announcement">
+        <p class="textWhite"><b>Importante:</b> antes de iniciar una preinscripción a un concurso, debe ingresar en la
             sección Mi Perfil a través del Menú que se encuentra arriba a la derecha y completar todos los datos
             obligatorios</p>
     </div>

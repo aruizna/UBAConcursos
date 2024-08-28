@@ -23,188 +23,134 @@ use yii\helpers\Json;
 
 ?>
 
-<div style="display:flex;flex-direction:column;padding:15px">
-    <div style="display:flex;flex-direction:row;margin-bottom:20px">
-        <H3 style="font-family:Helvetica">Detalle del concurso</H3>
+<div style="padding: 20px; background-color: #f4f7fa; border: 1px solid #1d2554; border-radius: 5px;">
+    <div style="margin-bottom: 20px; text-align: center;">
+        <h3 style="font-family: 'Bitter', serif; color: #1d2554; font-weight: 900;">Detalle del Concurso</h3>
     </div>
 
-    <div class="px-2">
-        <div style="display:flex;flex-direction:row;">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Nº Expediente</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
-                <p style="font-weight:300;text-align:center;font-family:Helvetica"><?= $model->numero_expediente?></p>
-            </div>
+    <div class="detalle-concurso">
+        <div class="detalle-item">
+            <p class="detalle-label">Nº Expediente</p>
+            <p class="detalle-value"><?= $model->numero_expediente ?></p>
         </div>
 
-        <div style="display:flex;flex-direction:row">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Tipo de concurso</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
-                <p style="font-weight:300;text-align:center;font-family:Helvetica"><?php try{echo (TipoConcurso::find()->where(['id_tipo_concurso' => $model->id_tipo_concurso])->one()->descripcion_tipo_concurso);} catch(\Throwable $e){echo ('');} ?></p>
-            </div>
+        <div class="detalle-item">
+            <p class="detalle-label">Tipo de Concurso</p>
+            <p class="detalle-value"><?php try { echo TipoConcurso::find()->where(['id_tipo_concurso' => $model->id_tipo_concurso])->one()->descripcion_tipo_concurso; } catch (\Throwable $e) { echo ''; } ?></p>
         </div>
 
-        <div style="display:flex;flex-direction:row">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Unidad académica</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
-                <p style="font-weight:300;text-align:center;font-family:Helvetica"><?php try{echo (Facultad::find()->where(['id_facultad' => $model->id_facultad])->one()->nombre_facultad);} catch(\Throwable $e){echo ('');} ?></p>
-            </div>
+        <div class="detalle-item">
+            <p class="detalle-label">Unidad Académica</p>
+            <p class="detalle-value"><?php try { echo Facultad::find()->where(['id_facultad' => $model->id_facultad])->one()->nombre_facultad; } catch (\Throwable $e) { echo ''; } ?></p>
         </div>
 
-        <div style="display:flex;flex-direction:row">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Departamento</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
-                <p style="font-weight:300;text-align:center;font-family:Helvetica"><?php try{echo (AreaDepartamento::find()->where(['id_area_departamento' => $model->id_area_departamento])->andWhere(['id_facultad' => $model->id_facultad])->one()->descripcion_area_departamento);} catch(\Throwable $e){echo ('');} ?></p>
-            </div>
+        <div class="detalle-item">
+            <p class="detalle-label">Departamento</p>
+            <p class="detalle-value"><?php try { echo AreaDepartamento::find()->where(['id_area_departamento' => $model->id_area_departamento])->andWhere(['id_facultad' => $model->id_facultad])->one()->descripcion_area_departamento; } catch (\Throwable $e) { echo ''; } ?></p>
         </div>
 
-        <div style="display:flex;flex-direction:row">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Área</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
-                <p style="font-weight:300;text-align:center;font-family:Helvetica"><?=  $model->area ?? ''?></p>
-            </div>
+        <div class="detalle-item">
+            <p class="detalle-label">Área</p>
+            <p class="detalle-value"><?= $model->area ?? '' ?></p>
         </div>
 
-        <div style="display:flex;flex-direction:row">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Asignatura/s</p>
-            </div>    
-            
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
+        <div class="detalle-item">
+            <p class="detalle-label">Asignatura/s</p>
+            <div class="detalle-value">
                 <?php 
-                    try{
-                        $concursoAsignaturas=ConcursoAsignatura::find()->where(['id_concurso' => $model->id_concurso])->all();
-                        $idAsignaturaArray = [];
+                    try {
+                        $concursoAsignaturas = ConcursoAsignatura::find()->where(['id_concurso' => $model->id_concurso])->all();
                         foreach ($concursoAsignaturas as $concursoAsignatura) {
-                            if ($concursoAsignatura instanceof ConcursoAsignatura): ?> 
-                                <p style="margin:0;font-weight:300;text-align:center;font-family:Helvetica"><?= Asignatura::find()->where(['id_asignatura' => $concursoAsignatura->id_asignatura,'id_facultad'=>$concursoAsignatura->id_facultad])->one()->descripcion_asignatura; ?></p>
-                            <?php endif;
+                            if ($concursoAsignatura instanceof ConcursoAsignatura) { 
+                                echo '<p>' . Asignatura::find()->where(['id_asignatura' => $concursoAsignatura->id_asignatura, 'id_facultad' => $concursoAsignatura->id_facultad])->one()->descripcion_asignatura . '</p>';
+                            }
                         }
-                    } 
-                    catch(\Throwable $e){
-                    }
+                    } catch (\Throwable $e) {}
                 ?>
-    
-            
             </div>
         </div>
-        
-        <?php if($model->comentario): ?>
-        <div style="display:flex;flex-direction:row;flex-wrap: wrap;">
-            <div style="display:flex;flex-direction:column;min-width:50%">
-                <p style="font-weight:600;font-family:Helvetica;min-width:50%">Comentario adicional al grupo de asignaturas</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;flex-direction: column-reverse;
-                min-width: 50%;
-                align-items: end;
-                padding-right: 20px;">
-                <p style="font-weight:300;text-align:center;font-family:Helvetica"><?= $model->comentario?></p>
-            </div>
+
+        <?php if ($model->comentario): ?>
+        <div class="detalle-item">
+            <p class="detalle-label">Comentario Adicional al Grupo de Asignaturas</p>
+            <p class="detalle-value"><?= $model->comentario ?></p>
         </div>
         <?php endif ?>
-        
-        <div style="display:flex;flex-direction:row">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Categoría</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
-                <p style="font-weight:300;text-align:center;font-family:Helvetica"><?php try{echo (Categoria::find()->where(['id_categoria' => $model->id_categoria])->one()->descripcion_categoria);} catch(\Throwable $e){echo ('');} ?></p>
-            </div>
+
+        <div class="detalle-item">
+            <p class="detalle-label">Categoría</p>
+            <p class="detalle-value"><?php try { echo Categoria::find()->where(['id_categoria' => $model->id_categoria])->one()->descripcion_categoria; } catch (\Throwable $e) { echo ''; } ?></p>
         </div>
 
-        <div style="display:flex;flex-direction:row">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Dedicación</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
-                <p style="font-weight:300;text-align:center;font-family:Helvetica"><?php try{echo (Dedicacion::find()->where(['id_dedicacion' => $model->id_dedicacion])->one()->descripcion_dedicacion);} catch(\Throwable $e){echo ('');} ?></p>
-            </div>
+        <div class="detalle-item">
+            <p class="detalle-label">Dedicación</p>
+            <p class="detalle-value"><?php try { echo Dedicacion::find()->where(['id_dedicacion' => $model->id_dedicacion])->one()->descripcion_dedicacion; } catch (\Throwable $e) { echo ''; } ?></p>
         </div>
 
-        <div style="display:flex;flex-direction:row">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Cantidad de cargos</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
-                <p style="font-weight:300;text-align:center;font-family:Helvetica"><?= $model->cantidad_de_puestos?></p>
-            </div>
+        <div class="detalle-item">
+            <p class="detalle-label">Cantidad de Cargos</p>
+            <p class="detalle-value"><?= $model->cantidad_de_puestos ?></p>
         </div>
 
-        <div style="display:flex;flex-direction:row">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Docente/s que ocupa/n cargo</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
+        <div class="detalle-item">
+            <p class="detalle-label">Docente/s que Ocupa/n Cargo</p>
+            <div class="detalle-value">
                 <?php 
-                    try{
-                        $docentesqueocupancargo=PersonaConcursoRenovacion::find()->where(['id_concurso' => $model->id_concurso])->groupBy(['numero_documento'])->all();
-                        $iddocenteArray = [];
+                    try {
+                        $docentesqueocupancargo = PersonaConcursoRenovacion::find()->where(['id_concurso' => $model->id_concurso])->groupBy(['numero_documento'])->all();
                         foreach ($docentesqueocupancargo as $docente) {
-                            if ($docente instanceof PersonaConcursoRenovacion): 
+                            if ($docente instanceof PersonaConcursoRenovacion) {
                                 $perfilDocente = Profile::find()->where(['numero_documento' => $docente->numero_documento])->one();
-                                if (!$perfilDocente) {
-                                    continue;
-                                }  
-                                $nombre = ($perfilDocente)?Profile::find()->where(['numero_documento' => $docente->numero_documento])->one()->nombre:'';
-                                $apellido = ($perfilDocente)?Profile::find()->where(['numero_documento' => $docente->numero_documento])->one()->apellido:'';
-                                ?> 
-                                <p style="margin:0;font-weight:300;text-align:center;font-family:Helvetica"><?= ($perfilDocente)? $nombre." ".$apellido:'' ?></p>
-                            <?php endif;
+                                if ($perfilDocente) {
+                                    echo '<p>' . $perfilDocente->nombre . ' ' . $perfilDocente->apellido . '</p>';
+                                }
+                            }
                         }
-                    } 
-                    catch(\Throwable $e){
-                    }
+                    } catch (\Throwable $e) {}
                 ?>
-    
-            </div>
-        </div>
-        
-
-        <div style="display:flex;flex-direction:row">
-            <div style="display:flex;flex-direction:column;min-width:70%">
-                <p style="font-weight:600;font-family:Helvetica">Período de inscripción</p>
-            </div>        
-            <div style="display:flex;flex-direction:column;min-width:30%;align-items: center;">
-                <p style="font-weight:300;text-align:center;font-family:Helvetica"></p>
             </div>
         </div>
 
-        <div style="display:flex;flex-direction:row;align-items: center;margin-left:10px">
-            <p style="font-weight:600;font-family:Helvetica;font-size: 15px;margin: 0;">Inicio inscripción</p>
-            <?php 
-                $fecha_inicio_inscripcion_sp = date('d/m/Y H:i', strtotime($model->fecha_inicio_inscripcion));
-            ?>
-            <p style="font-weight:300;text-align:center;font-family:Helvetica;margin:0;margin-left: 10px;"><?= $fecha_inicio_inscripcion_sp?></p>
+        <div class="detalle-item">
+            <p class="detalle-label">Período de Inscripción</p>
+            <div>
+                <p style="font-weight: 600;">Inicio Inscripción:</p>
+                <p class="detalle-value"><?= date('d/m/Y H:i', strtotime($model->fecha_inicio_inscripcion)) ?></p>
+            </div>
+            <div>
+                <p style="font-weight: 600;">Fin Inscripción:</p>
+                <p class="detalle-value"><?= date('d/m/Y H:i', strtotime($model->fecha_fin_inscripcion)) ?></p>
+            </div>
         </div>
-
-        <div style="display:flex;flex-direction:row;align-items: center;margin-left:10px">
-            <p style="font-weight:600;font-family:Helvetica;font-size: 15px;margin: 0;">Fin inscripción</p>
-            <?php 
-                $fecha_fin_inscripcion_sp = date('d/m/Y H:i', strtotime($model->fecha_fin_inscripcion));
-            ?>
-        <p style="font-weight:300;text-align:center;font-family:Helvetica;margin:0;margin-left: 10px;"><?= $fecha_fin_inscripcion_sp?></p>
     </div>
 
-    </div>
-
-    <div style="display:flex;flex-direction:row;margin-top:20px;margin-bottom:0;font-weight:600">
-        <p style="font-family:Helvetica;font-size: 12px;margin-bottom:0">Informes y confirmación de inscripción</p>
-    </div>
-
-    <hr style="border-bottom: 1px dotted gray;margin-top:4px;margin-bottom:4px;">
-
-    <div style="display:flex;flex-direction:row;margin-top:10px">
-        <p style="font-family:Helvetica;font-weight:200;font-size: 10px;">
-            <?php try{echo (Facultad::find()->where(['id_facultad' => $model->id_facultad])->one()->informacion_inscripcion);} catch(\Throwable $e){echo ('');} ?>
-        </p>
+    <div style="margin-top: 20px;">
+        <p style="font-family: 'Bitter', serif; font-size: 12px; font-weight: 600;">Informes y Confirmación de Inscripción</p>
+        <hr style="border: 1px dotted gray;">
+        <p style="font-family: 'Bitter', serif; font-weight: 200; font-size: 10px;"><?php try { echo Facultad::find()->where(['id_facultad' => $model->id_facultad])->one()->informacion_inscripcion; } catch (\Throwable $e) { echo ''; } ?></p>
     </div>
 </div>
+
+<style>
+.detalle-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.detalle-label {
+    font-weight: 600;
+    font-family: "Bitter", serif;
+    font-size: 16px;
+    color: #1d2554;
+}
+
+.detalle-value {
+    font-weight: 300;
+    font-family: "Bitter", serif;
+    font-size: 16px;
+    color: #1d2554;
+    text-align: center;
+    min-width: 30%;
+}
+</style>

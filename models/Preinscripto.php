@@ -3,6 +3,9 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
+
+
 
 /**
  * This is the model class for table "preinscripto".
@@ -11,8 +14,11 @@ use Yii;
  * @property int|null $user_id
  * @property int|null $concurso_id
  * @property string|null $doc
+ *
+ * @property Usuario $usuario
+ * @property Concurso $concurso
  */
-class Preinscripto extends \yii\db\ActiveRecord
+class Preinscripto extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -47,6 +53,26 @@ class Preinscripto extends \yii\db\ActiveRecord
     }
 
     /**
+     * Relación con el modelo Usuario
+     * 
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsuario()
+    {
+        return $this->hasOne(Usuario::class, ['id' => 'user_id']);
+    }
+
+    /**
+     * Relación con el modelo Concurso
+     * 
+     * @return \yii\db\ActiveQuery
+     */
+    public function getConcurso()
+    {
+        return $this->hasOne(Concurso::class, ['id_concurso' => 'concurso_id']);
+    }
+
+    /**
      * {@inheritdoc}
      * @return PreinscriptoQuery the active query used by this AR class.
      */
@@ -54,4 +80,7 @@ class Preinscripto extends \yii\db\ActiveRecord
     {
         return new PreinscriptoQuery(get_called_class());
     }
+
+
+
 }

@@ -22,8 +22,15 @@ use setasign\Fpdi\Fpdi;
 use yii\helpers\FileHelper;
 
 $this->title = 'Concursos';
+
+$this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.7/jquery.inputmask.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
+
 ?>
 <link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+
+
+
+
 
 <style>
     main{

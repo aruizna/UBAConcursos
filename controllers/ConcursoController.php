@@ -4,13 +4,20 @@ namespace app\controllers;
 
 use yii\filters\AccessControl;
 
-use app\models\Concurso;
-use app\models\ConcursoQuery;
-use app\models\Facultad;
-use app\models\Preinscripto;
 use app\models\AreaDepartamento;
+use app\models\Asignatura;
+use app\models\Carrera;
+use app\models\Categoria;
+use app\models\Concurso;
+use app\models\ConcursoPendiente;
+use app\models\ConcursoQuery;
+use app\models\Dedicacion;
+use app\models\Facultad;
+use app\models\PersonasHistorico;
+use app\models\Preinscripto;
 use app\models\Profile;
 use app\models\ProfileQuery;
+use app\models\TipoConcurso;
 
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -22,6 +29,7 @@ use setasign\Fpdi\Fpdi;
 use setasign\Fpdi\Fpdf\Fpdf;
 use yii\helpers\FileHelper;
 use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
 
 /**
  * ConcursoController implements the CRUD actions for Concurso model.
@@ -30,6 +38,39 @@ class ConcursoController extends Controller
 {
     /**
      * @inheritDoc
+     */
+    // public function behaviors()
+    // {
+    //     return array_merge(
+    //         parent::behaviors(),
+    //         [
+    //             'access' => [
+    //                 'class' => AccessControl::class,
+    //                 'rules' => [
+    //                     [
+    //                         'actions' => ['confirmar', 'descargar', 'previsualizar', 'preinscripcion', 'index', 'view', 'create', 'update', 'delete', 'area', 'formulario', 'tramite', 'desinscribir'],
+    //                         'allow' => true,
+    //                         'roles' => ['@'],
+    //                     ],
+    //                     [
+    //                         'actions' => ['previsualizar', 'preinscripcion', 'index', 'view', 'create', 'update', 'delete', 'area', 'formulario', 'tramite'],
+    //                         'allow' => false,
+    //                         'roles' => ['?'],
+    //                     ],
+    //                 ],
+    //             ],
+    //             'verbs' => [
+    //                 'class' => VerbFilter::className(),
+    //                 'actions' => [
+    //                     'delete' => ['POST'],
+    //                 ],
+    //             ],
+    //         ]
+    //     );
+    // }
+
+        /**
+     * new ABM behavior
      */
     public function behaviors()
     {
@@ -40,12 +81,20 @@ class ConcursoController extends Controller
                     'class' => AccessControl::class,
                     'rules' => [
                         [
-                            'actions' => ['confirmar', 'descargar', 'previsualizar', 'preinscripcion', 'index', 'view', 'create', 'update', 'delete', 'area', 'formulario', 'tramite', 'desinscribir'],
+                            'actions' => ['confirmar', 'descargar', 'previsualizar', 'preinscripcion', 'index', 'view', 'update', 'delete', 'area', 'formulario', 'tramite', 'desinscribir', 'pending', 'manage', 'publish', 'publish-confirm', 'get-departamentos', 'get-asignaturas', 'buscar-docente', 'nomina-preinscriptos'],
                             'allow' => true,
                             'roles' => ['@'],
                         ],
                         [
-                            'actions' => ['previsualizar', 'preinscripcion', 'index', 'view', 'create', 'update', 'delete', 'area', 'formulario', 'tramite'],
+                            'actions' => ['create'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+                                return Yii::$app->user->identity->is_superuser;
+                            },
+                        ],
+                        [
+                            'actions' => ['previsualizar', 'preinscripcion', 'index', 'view', 'update', 'delete', 'area', 'formulario', 'tramite'],
                             'allow' => false,
                             'roles' => ['?'],
                         ],
@@ -330,6 +379,42 @@ class ConcursoController extends Controller
         ]);
     }
 
+    public function actionViewNominaPreinscriptos($id_concurso)
+    {
+        $query = (new Query())
+            ->select([
+                'user.username', 
+                'user.email', 
+                'concurso.numero_expediente',
+                'concurso.id_tipo_concurso',
+                'concurso.id_facultad',
+                'concurso.id_categoria',
+                'concurso.id_dedicacion',
+                'concurso.id_area_departamento',
+                'concurso.cantidad_de_puestos',
+                'concurso.fecha_inicio_inscripcion',
+                'concurso.fecha_fin_inscripcion',
+                'concurso.hora_inicio_inscripcion',
+                'concurso.hora_fin_inscripcion',
+                'concurso.fecha_publicacion',
+            ])
+            ->from('preinscripto')
+            ->innerJoin('user', 'preinscripto.user_id = user.id')
+            ->innerJoin('concurso', 'preinscripto.concurso_id = concurso.id_concurso')
+            ->where(['concurso.id_concurso' => $id_concurso]);
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 20,
+            ],
+        ]);
+
+        return $this->render('nomina-preinscriptos', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
     /**
      * Displays a single Concurso model.
      * @param int $id_concurso Id Concurso
@@ -343,47 +428,196 @@ class ConcursoController extends Controller
         ]);
     }
 
+    // /**
+    //  * Creates a new Concurso model.
+    //  * If creation is successful, the browser will be redirected to the 'view' page.
+    //  * @return string|\yii\web\Response
+    //  */
+    // public function actionCreate()
+    // {
+    //     $model = new Concurso();
+
+    //     if ($this->request->isPost) {
+    //         if ($model->load($this->request->post()) && $model->save()) {
+    //             return $this->redirect(['view', 'id_concurso' => $model->id_concurso]);
+    //         }
+    //     } else {
+    //         $model->loadDefaultValues();
+    //     }
+
+    //     return $this->render('create', [
+    //         'model' => $model,
+    //     ]);
+    // }
+
+
     /**
-     * Creates a new Concurso model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
+      * New intermediate Concurso model, this creates a pending approval Concurso
+      * If creation is successful, the browser will be redirected to the 'index' page.
+      * @return string|\yii\web\Response
+    */
     public function actionCreate()
     {
-        $model = new Concurso();
-
+        $model = new ConcursoPendiente();
+    
+        // Obtener datos para los desplegables
+        $tiposConcurso = TipoConcurso::find()->all();
+        $tiposConcursoList = ArrayHelper::map($tiposConcurso, 'id_tipo_concurso', 'descripcion_tipo_concurso');
+    
+        $facultades = Facultad::find()->all();
+        $facultadesList = ArrayHelper::map($facultades, 'id_facultad', 'nombre_facultad');
+    
+        $categorias = Categoria::find()->all();
+        $categoriasList = ArrayHelper::map($categorias, 'id_categoria', 'descripcion_categoria');
+    
+        $dedicaciones = Dedicacion::find()->all();
+        $dedicacionesList = ArrayHelper::map($dedicaciones, 'id_dedicacion', 'descripcion_dedicacion');
+    
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id_concurso' => $model->id_concurso]);
+            if ($model->load($this->request->post())) {
+                // El modelo ya debe estar procesando las fechas en beforeSave
+                if ($model->validate()) {
+                    if ($model->save()) {
+                        Yii::$app->session->setFlash('success', 'Concurso pendiente creado correctamente.');
+                        return $this->redirect(['index']);
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Error al guardar el concurso pendiente.');
+                    }
+                } else {
+                    Yii::$app->session->setFlash('error', 'Error de validación: ' . Json::encode($model->errors));
+                }
             }
         } else {
             $model->loadDefaultValues();
         }
-
-        return $this->render('create', [
+    
+        return $this->render('manage/create', [
             'model' => $model,
+            'tiposConcursoList' => $tiposConcursoList,
+            'facultadesList' => $facultadesList,
+            'categoriasList' => $categoriasList,
+            'dedicacionesList' => $dedicacionesList,
         ]);
     }
+    
+    
 
-    /**
-     * Updates an existing Concurso model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id_concurso Id Concurso
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id_concurso)
+    // Acción para obtener los departamentos (áreas)
+    public function actionGetDepartamentos($id_facultad)
     {
-        $model = $this->findModel($id_concurso);
+        $departamentos = AreaDepartamento::find()
+            ->where(['id_facultad' => $id_facultad, 'activa' => 1])
+            ->all();
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id_concurso' => $model->id_concurso]);
+        return $this->asJson(ArrayHelper::map($departamentos, 'id_area_departamento', 'descripcion_area_departamento'));
+    }
+
+    // Acción para obtener asignaturas
+    public function actionGetAsignaturas($term = '', $id_facultad = null)
+    {
+        $query = Asignatura::find()->where(['like', 'descripcion_asignatura', $term]);
+
+        if ($id_facultad) {
+            $query->andWhere(['id_facultad' => $id_facultad]);
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        $asignaturas = $query->all();
+
+        $result = [];
+        foreach ($asignaturas as $asignatura) {
+            $result[] = [
+                'label' => $asignatura->descripcion_asignatura,
+                'value' => $asignatura->id_asignatura,
+            ];
+        }
+
+        return $this->asJson($result);
     }
+
+    public function actionBuscarDocente()
+    {
+        $dni = Yii::$app->request->get('dni');
+        $apellido = Yii::$app->request->get('apellido');
+        $nombre = Yii::$app->request->get('nombre');
+    
+        $query = PersonasHistorico::find();
+    
+        if ($dni) {
+            $query->andWhere(['numero_documento' => $dni]);
+        }
+        if ($apellido) {
+            $query->andWhere(['like', 'apellido', $apellido]);
+        }
+        if ($nombre) {
+            $query->andWhere(['like', 'nombre', $nombre]);
+        }
+    
+        $resultados = $query->all();
+    
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    
+        return $resultados;
+    }
+    
+
+
+
+    /** 
+     * This lists the pending Concursos 
+     * 
+     */
+
+     public function actionPending()
+     {
+         $dataProvider = new ActiveDataProvider([
+             'query' => ConcursoPendiente::find(),
+             'pagination' => [
+                 'pageSize' => 20,
+             ],
+             'sort' => [
+                 'defaultOrder' => [
+                     'id_concurso_pendiente' => SORT_DESC,
+                 ],
+             ],
+         ]);
+ 
+         return $this->render('manage/pending', [
+             'dataProvider' => $dataProvider,
+         ]);
+     }
+
+    // /**
+    //  * Updates an existing Concurso model.
+    //  * If update is successful, the browser will be redirected to the 'view' page.
+    //  * @param int $id_concurso Id Concurso
+    //  * @return string|\yii\web\Response
+    //  * @throws NotFoundHttpException if the model cannot be found
+    //  */
+    // public function actionUpdate($id_concurso)
+    // {
+    //     $model = $this->findModel($id_concurso);
+
+    //     if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+    //         return $this->redirect(['view', 'id_concurso' => $model->id_concurso]);
+    //     }
+
+    //     return $this->render('update', [
+    //         'model' => $model,
+    //     ]);
+    // }
+
+    public function actionUpdate($id)
+{
+    $model = ConcursoPendiente::findOne($id);
+
+    if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        Yii::$app->session->setFlash('success', 'El concurso ha sido actualizado exitosamente.');
+    } else {
+        Yii::$app->session->setFlash('error', 'No se pudo actualizar el concurso.');
+    }
+
+    return $this->redirect(['pending']);
+}
 
     /**
      * Deletes an existing Concurso model.
@@ -454,4 +688,141 @@ class ConcursoController extends Controller
             'ar' => $ar
         ]);
     }
+
+    public function actionManage()
+{
+    return $this->render('manage/index');
+}
+
+
+
+
+public function actionPublish()
+{
+    $dataProvider = new ActiveDataProvider([
+        'query' => ConcursoPendiente::find(),
+        'pagination' => [
+            'pageSize' => 20,
+        ],
+        'sort' => [
+            'defaultOrder' => [
+                'id_concurso_pendiente' => SORT_DESC,
+            ],
+        ],
+    ]);
+
+    return $this->render('manage/publish', [
+        'dataProvider' => $dataProvider,
+    ]);
+}
+
+public function actionPublishConfirm($id)
+{
+    $concursoPendiente = ConcursoPendiente::findOne($id);
+
+    if ($concursoPendiente !== null) {
+        $concurso = new Concurso();
+
+        // Asignar atributos desde concursoPendiente excluyendo id_concurso
+        $concurso->attributes = $concursoPendiente->getAttributes(null, ['id_concurso_pendiente', 'id_concurso']);
+
+        // Asegurar que las fechas se formatean correctamente como datetime
+        if (!empty($concursoPendiente->fecha_sorteo_publicada)) {
+            $concurso->fecha_sorteo_publicada = date('Y-m-d H:i:s', strtotime($concursoPendiente->fecha_sorteo_publicada));
+        } else {
+            $concurso->fecha_sorteo_publicada = null;
+        }
+
+        if (!empty($concursoPendiente->fecha_entrevista_prueba_publicada)) {
+            $concurso->fecha_entrevista_prueba_publicada = date('Y-m-d H:i:s', strtotime($concursoPendiente->fecha_entrevista_prueba_publicada));
+        } else {
+            $concurso->fecha_entrevista_prueba_publicada = null;
+        }
+
+        if ($concurso->save()) {
+            $concursoPendiente->delete();
+            Yii::$app->session->setFlash('success', 'El concurso ha sido publicado exitosamente.');
+        } else {
+            $errors = $concurso->getErrors();
+            Yii::$app->session->setFlash('error', 'No se pudo publicar el concurso: ' . json_encode($errors));
+        }
+    } else {
+        Yii::$app->session->setFlash('error', 'Concurso no encontrado.');
+    }
+
+    return $this->redirect(['publish']);
+}
+
+
+public function actionNominaPreinscriptos()
+{
+    $expediente = Yii::$app->request->get('expediente');
+    $unidad_academica = Yii::$app->request->get('unidad_academica');
+
+    $query = (new \yii\db\Query())
+        ->select([
+            'preinscripto.id',
+            'user.username',
+            'user.email',
+            'concurso.numero_expediente',
+            'tipo_concurso.descripcion_tipo_concurso', // Agregamos descripción de tipo de concurso
+            'facultad.nombre_facultad', // Agregamos nombre de la facultad
+            'categoria.descripcion_categoria', // Agregamos descripción de categoría
+            'dedicacion.descripcion_dedicacion', // Agregamos descripción de dedicación
+            'area_departamento.descripcion_area_departamento', // Agregamos descripción del área/departamento
+            'concurso.cantidad_de_puestos',
+            'concurso.fecha_inicio_inscripcion',
+            'concurso.fecha_fin_inscripcion',
+            'concurso.hora_inicio_inscripcion',
+            'concurso.hora_fin_inscripcion',
+            'concurso.fecha_publicacion',
+            'preinscripto.doc'
+        ])
+        ->from('preinscripto')
+        ->innerJoin('user', 'preinscripto.user_id = user.id')
+        ->innerJoin('concurso', 'preinscripto.concurso_id = concurso.id_concurso')
+        ->innerJoin('tipo_concurso', 'concurso.id_tipo_concurso = tipo_concurso.id_tipo_concurso')
+        ->innerJoin('facultad', 'concurso.id_facultad = facultad.id_facultad')
+        ->innerJoin('categoria', 'concurso.id_categoria = categoria.id_categoria')
+        ->innerJoin('dedicacion', 'concurso.id_dedicacion = dedicacion.id_dedicacion')
+        ->innerJoin('area_departamento', 'concurso.id_area_departamento = area_departamento.id_area_departamento');
+
+    if ($expediente) {
+        $query->andWhere(['concurso.numero_expediente' => $expediente]);
+    }
+
+    if ($unidad_academica) {
+        $query->andWhere(['concurso.id_facultad' => $unidad_academica]);
+    }
+
+    $dataProvider = new \yii\data\ActiveDataProvider([
+        'query' => $query,
+        'pagination' => [
+            'pageSize' => 20,
+        ],
+    ]);
+
+    $expedientesList = Concurso::find()
+        ->select(['numero_expediente'])
+        ->where(['>=', 'fecha_fin_inscripcion', date('Y-m-d')])
+        ->indexBy('numero_expediente')
+        ->column();
+
+    $facultadesList = Facultad::find()
+        ->select(['nombre_facultad'])
+        ->indexBy('id_facultad')
+        ->column();
+
+    return $this->render('manage/nomina-preinscriptos', [
+        'dataProvider' => $dataProvider,
+        'expedientesList' => $expedientesList,
+        'facultadesList' => $facultadesList,
+    ]);
+}
+
+
+
+
+
+
 }
