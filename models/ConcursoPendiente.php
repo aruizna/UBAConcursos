@@ -40,16 +40,22 @@ class ConcursoPendiente extends ActiveRecord
     public function rules()
     {
         return [
-            [['numero_expediente', 'id_tipo_concurso', 'id_facultad', 'id_area_departamento', 'id_categoria', 'id_dedicacion', 'cantidad_de_puestos', 'fecha_inicio_inscripcion', 'hora_inicio_inscripcion', 'hora_fin_inscripcion', 'fecha_publicacion'], 'required'],
+            [['id_tipo_concurso', 'id_facultad', 'id_area_departamento', 'id_categoria', 'id_dedicacion', 'cantidad_de_puestos', 'fecha_inicio_inscripcion', 'hora_inicio_inscripcion', 'hora_fin_inscripcion', 'fecha_publicacion'], 'required'],
             [['id_tipo_concurso', 'id_facultad', 'id_area_departamento', 'id_categoria', 'id_dedicacion', 'cantidad_de_puestos'], 'integer'],
             [['fecha_inicio_inscripcion', 'fecha_fin_inscripcion', 'hora_inicio_inscripcion', 'hora_fin_inscripcion', 'fecha_publicacion'], 'safe'],
             [['comentario'], 'string', 'max' => 400],
             [['area'], 'string', 'max' => 255],
             [['numero_expediente'], 'string', 'max' => 50],
-            [['expediente_ano', 'expediente_numero', 'expediente_dependencia'], 'safe'],
+            [['expediente_ano'], 'required', 'message' => 'El año es obligatorio'],
+            [['expediente_ano'], 'match', 'pattern' => '/^\d{4}$/', 'message' => 'El año debe tener 4 dígitos'],
+            [['expediente_numero'], 'required', 'message' => 'El número es obligatorio'],
+            [['expediente_numero'], 'match', 'pattern' => '/^\d{1,6}$/', 'message' => 'El número debe tener entre 1 y 6 dígitos'],
+            [['expediente_dependencia'], 'required', 'message' => 'La dependencia es obligatoria'],
+            [['expediente_dependencia'], 'string', 'max' => 3],
             [['asignaturas_seleccionadas'], 'safe'],
         ];
     }
+    
 
     public function attributeLabels()
     {
