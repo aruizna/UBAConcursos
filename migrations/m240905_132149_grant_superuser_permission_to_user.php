@@ -12,9 +12,8 @@ class m240905_132149_grant_superuser_permission_to_user extends Migration
      */
     public function safeUp()
     {
-        
-        $this->update('user', ['is_superuser' => 1], ['username' => 33036641]);
-        
+
+        $this->update("user", ["is_superuser" => 1], ["username" => "33036641"]);
     }
 
     /**
@@ -22,7 +21,7 @@ class m240905_132149_grant_superuser_permission_to_user extends Migration
      */
     public function safeDown()
     {
-        $this->update('user', ['is_superuser' => 0], ['username' => 33036641]);
+        $this->update("user", ["is_superuser" => 0], ["username" => "33036641"]);
     }
 
     /*
