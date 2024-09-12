@@ -22,9 +22,6 @@ use setasign\Fpdi\Fpdi;
 use yii\helpers\FileHelper;
 
 $this->title = 'Concursos';
-
-$this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.7/jquery.inputmask.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
-
 ?>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
