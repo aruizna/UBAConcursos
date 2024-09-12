@@ -26,6 +26,9 @@ $this->title = 'Concursos';
 $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.7/jquery.inputmask.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 
 ?>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
 
 
@@ -284,7 +287,7 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5
     </div>
 
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <?php
     $this->registerJs("
     var selectua;
