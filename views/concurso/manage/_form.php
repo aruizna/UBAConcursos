@@ -15,7 +15,11 @@ use app\models\AreaDepartamento;
 // Definir las listas necesarias para los dropdowns
 $tiposConcursoList = TipoConcurso::find()->select(['descripcion_tipo_concurso', 'id_tipo_concurso'])->indexBy('id_tipo_concurso')->column();
 $facultadesList = Facultad::find()->select(['nombre_facultad', 'id_facultad'])->indexBy('id_facultad')->column();
-$categoriasList = Categoria::find()->select(['descripcion_categoria', 'id_categoria'])->indexBy('id_categoria')->column();
+$categoriasList = Categoria::find()
+    ->select(['descripcion_categoria', 'id_categoria'])
+    ->where(['mostrar_en_propuesta' => 's']) // Filtra solo las categorías con 's' en mostrar_en_propuesta
+    ->indexBy('id_categoria')
+    ->column();
 $dedicacionesList = Dedicacion::find()->select(['descripcion_dedicacion', 'id_dedicacion'])->indexBy('id_dedicacion')->column();
 $areasDepartamentoList = AreaDepartamento::find()->select(['descripcion_area_departamento', 'id_area_departamento'])->indexBy('id_area_departamento')->column();
 

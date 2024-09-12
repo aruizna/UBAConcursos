@@ -467,7 +467,7 @@ class ConcursoController extends Controller
         $facultades = Facultad::find()->all();
         $facultadesList = ArrayHelper::map($facultades, 'id_facultad', 'nombre_facultad');
     
-        $categorias = Categoria::find()->all();
+        $categorias = Categoria::find()->where(['mostrar_en_propuesta' => 's'])->all();
         $categoriasList = ArrayHelper::map($categorias, 'id_categoria', 'descripcion_categoria');
     
         $dedicaciones = Dedicacion::find()->all();
