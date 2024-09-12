@@ -51,7 +51,7 @@ class ConcursoPendiente extends ActiveRecord
             [['expediente_numero'], 'required', 'message' => 'El número es obligatorio'],
             [['expediente_numero'], 'match', 'pattern' => '/^\d{1,6}$/', 'message' => 'El número debe tener entre 1 y 6 dígitos'],
             [['expediente_dependencia'], 'required', 'message' => 'La dependencia es obligatoria'],
-            [['expediente_dependencia'], 'string', 'max' => 3],
+            [['expediente_dependencia'], 'string', 'max' => 20],
             [['asignaturas_seleccionadas'], 'safe'],
         ];
     }
