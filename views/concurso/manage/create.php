@@ -262,7 +262,7 @@ body {
                 <span>-</span>
                 <?= $form->field($model, 'expediente_numero', ['template' => "{input}\n{error}"])->textInput(['maxlength' => 6, 'placeholder' => 'Número', 'id' => 'expediente-numero']) ?>
                 <span>--UBA-</span>
-                <?= $form->field($model, 'expediente_dependencia', ['template' => "{input}\n{error}"])->textInput(['maxlength' => 3, 'placeholder' => 'Dep.', 'id' => 'expediente-dependencia']) ?>
+                <?= $form->field($model, 'expediente_dependencia', ['template' => "{input}\n{error}"])->textInput(['maxlength' => 20, 'placeholder' => 'Dep.', 'id' => 'expediente-dependencia']) ?>
             </div>
         </div>
 
@@ -378,7 +378,6 @@ body {
 
 </div>
 
-<!-- Modal para buscar y cargar docentes -->
 <?php
 Modal::begin([
     'id' => 'modal-docente',
@@ -416,8 +415,33 @@ echo '<tbody id="docente-results-body"></tbody>';
 echo '</table>';
 echo '</div>';
 
+// Contenedor para el botón "Añadir Docente" y los campos correspondientes
+echo '<div id="agregar-docente-container" style="display: none;">';
+echo '<h4>Agregar Nuevo Docente</h4>';
+echo '<div class="form-group">';
+echo '<label for="nuevo-docente-dni">Número de Documento</label>';
+echo '<input type="text" id="nuevo-docente-dni" class="form-control">';
+echo '</div>';
+
+echo '<div class="form-group">';
+echo '<label for="nuevo-docente-apellido">Apellido</label>';
+echo '<input type="text" id="nuevo-docente-apellido" class="form-control">';
+echo '</div>';
+
+echo '<div class="form-group">';
+echo '<label for="nuevo-docente-nombre">Nombre</label>';
+echo '<input type="text" id="nuevo-docente-nombre" class="form-control">';
+echo '</div>';
+
+echo '<div class="form-group">';
+echo Html::button('Agregar Docente', ['class' => 'btn btn-primary btn-space', 'onclick' => 'agregarNuevoDocente()']);
+echo '</div>';
+echo '</div>';
+
 Modal::end();
 ?>
+
+
 
 <script>
     function agregarAsignatura() {
@@ -532,7 +556,6 @@ Modal::end();
 
         docentesSeleccionados.push({ dni, apellido, nombre });
 
-        // Cambiar el botón a "Eliminar"
         button.textContent = 'Eliminar';
         button.className = 'btn btn-secondary btn-sm';
         button.onclick = function() {
@@ -546,11 +569,102 @@ Modal::end();
         row.remove();
     }
 
-    function aceptarDocentes() {
+function aceptarDocentes() {
         const docenteInput = document.getElementById('docente-input');
         docenteInput.value = docentesSeleccionados.map(docente => `${docente.nombre} ${docente.apellido} (DNI: ${docente.dni})`).join('\n');
 
         var modal = bootstrap.Modal.getInstance(document.getElementById('modal-docente'));
         modal.hide();
     }
+
+function buscarDocente() {
+    var dni = document.getElementById('docente-dni').value;
+    var apellido = document.getElementById('docente-apellido').value;
+    var nombre = document.getElementById('docente-nombre').value;
+
+    if (!dni && !apellido && !nombre) {
+        alert('Debe completar al menos uno de los campos para buscar.');
+        return;
+    }
+
+    fetch("<?= Url::to(['buscar-docente']) ?>?dni=" + dni + "&apellido=" + apellido + "&nombre=" + nombre)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            var resultsBody = document.getElementById('docente-results-body');
+            resultsBody.innerHTML = '';
+            if (data.length === 0) {
+                mostrarBotonAgregarDocente();
+            } else {
+                data.forEach(docente => {
+                    var row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${docente.numero_documento}</td>
+                        <td>${docente.apellido}</td>
+                        <td>${docente.nombre}</td>
+                        <td><button type="button" class="btn btn-success btn-sm" onclick="seleccionarDocente(this, '${docente.numero_documento}', '${docente.apellido}', '${docente.nombre}')">Seleccionar</button></td>
+                    `;
+                    resultsBody.appendChild(row);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error al buscar docentes:', error);
+            alert('Error al buscar docentes. Inténtelo de nuevo.');
+        });
+}
+
+function mostrarBotonAgregarDocente() {
+    var container = document.getElementById('agregar-docente-container');
+    container.style.display = 'block'; // Mostrar el contenedor de "Agregar Docente"
+}
+
+function agregarNuevoDocente() {
+    // Obtener valores de los inputs
+    var dni = document.getElementById('nuevo-docente-dni').value;
+    var apellido = document.getElementById('nuevo-docente-apellido').value;
+    var nombre = document.getElementById('nuevo-docente-nombre').value;
+
+    // Preparar los datos para enviar
+    var data = {
+        dni: dni,
+        apellido: apellido,
+        nombre: nombre,
+        user_id: 0 // Enviar user_id como 0
+    };
+
+    // Mostrar en consola los datos preparados para verificar
+    console.log("Datos preparados para enviar: ", data);
+
+    // Realizar la solicitud fetch
+    fetch("<?= Url::to(['concurso/agregar-docente']) ?>", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json', // Asegurar el formato correcto
+            'X-CSRF-Token': '<?= Yii::$app->request->csrfToken ?>',
+        },
+        body: JSON.stringify(data) // Convertir a JSON antes de enviar
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Mostrar la respuesta del servidor en consola para verificar
+        console.log('Respuesta del servidor:', data);
+        if (data.success) {
+            alert('Docente añadido exitosamente a la base de datos.');
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        // Mostrar errores en consola
+        console.error('Error al agregar el docente:', error);
+        alert('Error al agregar el docente. Inténtelo de nuevo.');
+    });
+}
+
+
 </script>
