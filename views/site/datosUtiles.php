@@ -7,7 +7,7 @@ use yii\helpers\Url;
 
 $this->title = 'Concursos';
 ?>
-<link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
 
 <style>
     main{
