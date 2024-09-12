@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\bootstrap5\Modal;
-use yii\helpers\ArrayHelper;
+
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -248,10 +248,11 @@ foreach ($dataProvider->models as $model) {
 
     Modal::end();
 
-    // Modal para editar el concurso
+    // Modal para editar el concurso    
     Modal::begin([
         'id' => 'editModal' . $model->id_concurso_pendiente,
         'title' => 'Editar Concurso',
+        'dialogOptions' => ['class' => 'modal-dialog modal-lg modal-dialog-centered'], // Clases para tamaño y centrado
         'footer' => Html::button('Guardar', [
             'class' => 'btn btn-success',
             'onclick' => '$("#concurso-pendiente-form-' . $model->id_concurso_pendiente . '").submit();',

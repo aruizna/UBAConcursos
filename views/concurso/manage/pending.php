@@ -228,12 +228,13 @@ foreach ($dataProvider->models as $model) {
     Modal::begin([
         'id' => 'editModal' . $model->id_concurso_pendiente,
         'title' => 'Editar Concurso',
+        'dialogOptions' => ['class' => 'modal-dialog modal-lg modal-dialog-centered'], // Clases para tamaño y centrado
         'footer' => Html::button('Guardar', [
             'class' => 'btn btn-success',
             'onclick' => '$("#concurso-pendiente-form-' . $model->id_concurso_pendiente . '").submit();', // Enviar el formulario al hacer clic en "Guardar"
         ]) . Html::button('Cerrar', ['class' => 'btn btn-secondary', 'data-bs-dismiss' => 'modal']),
     ]);
-
+    
     echo '<div class="modal-body">';
     echo $this->render('_form', ['model' => $model]);
     echo '</div>';
@@ -241,4 +242,3 @@ foreach ($dataProvider->models as $model) {
     Modal::end();
 }
 ?>
-
