@@ -539,8 +539,11 @@ class ConcursoController extends Controller
         $dni = Yii::$app->request->get('dni');
         $apellido = Yii::$app->request->get('apellido');
         $nombre = Yii::$app->request->get('nombre');
+        $page = Yii::$app->request->get('page', 1); // Página actual, por defecto es 1
+        $pageSize = 10; // Número de resultados por página, ajusta según sea necesario
     
-        $query = PersonasHistorico::find();
+  
+        $query = Profile::find();
     
         if ($dni) {
             $query->andWhere(['numero_documento' => $dni]);
@@ -552,12 +555,28 @@ class ConcursoController extends Controller
             $query->andWhere(['like', 'nombre', $nombre]);
         }
     
+        // Contar el total de resultados
+        $totalCount = $query->count();
+    
+        // Calcular el offset y limitar los resultados para la paginación
+        $query->offset(($page - 1) * $pageSize)
+              ->limit($pageSize);
+    
+        // Obtener los resultados paginados
         $resultados = $query->all();
+    
+        // Calcular el total de páginas
+        $totalPages = ceil($totalCount / $pageSize);
     
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
     
-        return $resultados;
+        return [
+            'docentes' => $resultados,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+        ];
     }
+    
     
 
 
@@ -857,7 +876,8 @@ public function actionAgregarDocente()
     } else {
         // Mostrar errores detallados de validación
         Yii::debug("Errores al guardar el docente: " . json_encode($docente->errors));
-        return ['success' => false, 'message' => 'Error al guardar el docente.', 'errors' => $docente->errors];
+        return ['success' => false, 'message' => 'Error al guardar el docente: ' . implode(', ', array_map(fn($errors) => implode(', ', $errors), $docente->errors)),
+ 'errors' => $docente->errors];
     }
 }
 
