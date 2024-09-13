@@ -3,9 +3,9 @@
 use yii\db\Migration;
 
 /**
- * Class m240908_225124_create_nuevos_concursos_20240911
+ * Class m240909_225124_update_nuevos_concursos_20240911
  */
-class m240908_225124_create_nuevos_concursos_20240911 extends Migration
+class m240909_225124_update_nuevos_concursos_20240911 extends Migration
 {
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ class m240908_225124_create_nuevos_concursos_20240911 extends Migration
      */
     public function safeDown()
     {
-        echo "m240908_225124_create_nuevos_concursos_20240911 cannot be reverted.\n";
+        echo "m240909_225124_update_nuevos_concursos_20240911 cannot be reverted.\n";
 
         return false;
     }
@@ -54,7 +54,7 @@ class m240908_225124_create_nuevos_concursos_20240911 extends Migration
 
     public function down()
     {
-        echo "m240908_225124_create_nuevos_concursos_20240911 cannot be reverted.\n";
+        echo "m240909_225124_update_nuevos_concursos_20240911 cannot be reverted.\n";
 
         return false;
     }
