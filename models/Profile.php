@@ -54,6 +54,9 @@ use Da\User\Model\User;
  */
 class Profile extends \yii\db\ActiveRecord
 {
+    const SCENARIO_DEFAULT = 'default';
+    const SCENARIO_DOCENTE = 'docente';
+
     public string $cid = '0';
 
     /**
@@ -67,9 +70,14 @@ class Profile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['numero_documento','user_id','apellido', 'nombre', 'email', 'cuil','nacimiento_localidad', 'nacimiento_expedido', 'nacimiento_pais', 'domicilio_calle', 'domicilio_numero', 'domicilio_codigo_postal', 'domicilio_localidad', 'domicilio_provincia', 'domicilio_pais', 'nacimiento_fecha', 'estado_civil', 'numero_celular_sms'], 'required'],
+            // Reglas para el escenario de agregar docente
+            [['numero_documento', 'apellido', 'nombre'], 'required', 'on' => self::SCENARIO_DOCENTE, 'message' => 'Este campo es obligatorio.'],
+            [['user_id'], 'integer', 'on' => self::SCENARIO_DOCENTE],
+            [['user_id'], 'default', 'value' => 0, 'on' => self::SCENARIO_DOCENTE], // Asegura que 0 es aceptado en este escenario
+            // Reglas para el escenario por defecto
+            [['numero_documento', 'user_id', 'apellido', 'nombre', 'email', 'cuil', 'nacimiento_localidad', 'nacimiento_expedido', 'nacimiento_pais', 'domicilio_calle', 'domicilio_numero', 'domicilio_codigo_postal', 'domicilio_localidad', 'domicilio_provincia', 'domicilio_pais', 'nacimiento_fecha', 'estado_civil', 'numero_celular_sms'], 'required', 'on' => self::SCENARIO_DEFAULT],
             [['user_id', 'gdpr_consent', 'concurso_id'], 'integer'],
-            [['titulos_obtenidos','antecedentes_docentes', 'antecedentes_cientificos', 'cursos', 'congresos', 'actuacion_universidades', 'formacion_rrhh', 'sintesis_aportes', 'sintesis_profesional', 'otros_antecedentes', 'labor_docente', 'renovacion','cargo_actual'], 'string'],
+            [['titulos_obtenidos', 'antecedentes_docentes', 'antecedentes_cientificos', 'cursos', 'congresos', 'actuacion_universidades', 'formacion_rrhh', 'sintesis_aportes', 'sintesis_profesional', 'otros_antecedentes', 'labor_docente', 'renovacion', 'cargo_actual'], 'string'],
             [['numero_documento'], 'string', 'max' => 12],
             [['apellido', 'nombre', 'email'], 'string', 'max' => 100],
             [['numero_legajo', 'id_trato'], 'string', 'max' => 50],
@@ -80,14 +88,13 @@ class Profile extends \yii\db\ActiveRecord
             [['sexo'], 'string', 'max' => 20],
             [['numero_celular_sms'], 'string', 'max' => 15],
             [['cuil', 'estado_civil', 'conyuge', 'madre', 'padre', 'nacimiento_localidad', 'nacimiento_expedido', 'nacimiento_pais', 'domicilio_calle', 'domicilio_numero', 'domicilio_piso', 'domicilio_departamento', 'domicilio_codigo_postal', 'domicilio_localidad', 'domicilio_provincia', 'domicilio_pais'], 'string', 'max' => 45],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
             [['cid'], 'safe'],
             [['cid'], 'string'],
-            [['nacimiento_fecha'],function ($attribute, $params, $validator) {
+            [['nacimiento_fecha'], function ($attribute, $params, $validator) {
                 $date = strtotime($this->$attribute);
                 $minAge = strtotime('-65 years -1 day');
                 $maxAge = strtotime('-18 years');
-    
+
                 if ($date > $maxAge || $date < $minAge) {
                     $this->addError($attribute, 'The person must be between 18 and 65 years old.');
                 }
@@ -143,8 +150,8 @@ class Profile extends \yii\db\ActiveRecord
             'renovacion' => Yii::t('app', 'Renovacion'),
             'cargo_actual' => Yii::t('app', 'Cargo Actual'),
             'cid' => Yii::t('app', 'cid'),
-            "concurso_id"=> Yii::t('app', 'Concurso ID'),
-            'id'=> Yii::t('app', 'Profile ID'),
+            'concurso_id' => Yii::t('app', 'Concurso ID'),
+            'id' => Yii::t('app', 'Profile ID'),
         ];
     }
 
@@ -158,22 +165,49 @@ class Profile extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
-
     // Definir la relación HasOne hacia el modelo Concursos
     public function getConcursos()
     {
-        // HasOne significa que un perfil puede tener como máximo un concurso
         return $this->hasOne(Concurso::class, ['id_concurso' => 'concurso_id']);
-        // 'profile_id' es el nombre de la clave foránea en la tabla 'Concursos' que apunta a 'id' en la tabla 'Profile'
     }
-    
-        // Definir la relación HasOne hacia el modelo Concursos
-        public function getCargosActuales()
-        {
-            // HasOne significa que un perfil puede tener como máximo un concurso
-            return $this->hasMany(CargosActuales::class, ['profile_id' => 'id']);
-            // 'profile_id' es el nombre de la clave foránea en la tabla 'Concursos' que apunta a 'id' en la tabla 'Profile'
+
+    // Definir la relación HasOne hacia el modelo Concursos
+    public function getCargosActuales()
+    {
+        return $this->hasMany(CargosActuales::class, ['profile_id' => 'id']);
+    }
+
+    /**
+     * Agregar un nuevo docente a la base de datos
+     *
+     * @param string $dni
+     * @param string $apellido
+     * @param string $nombre
+     * @return array
+     */
+    public static function agregarDocente($dni, $apellido, $nombre)
+    {
+        if (empty($dni) || empty($apellido) || empty($nombre)) {
+            return ['success' => false, 'message' => 'Todos los campos son obligatorios.'];
         }
+    
+        if (self::findOne(['numero_documento' => $dni])) {
+            return ['success' => false, 'message' => 'El docente ya existe.'];
+        }
+    
+        $docente = new self();
+        $docente->scenario = self::SCENARIO_DOCENTE; // Establecer el escenario docente
+        $docente->numero_documento = $dni;
+        $docente->apellido = $apellido;
+        $docente->nombre = $nombre;
+        $docente->user_id = 0; // Ajusta según sea necesario
+
+        if ($docente->validate() && $docente->save()) {
+            return ['success' => true];
+        } else {
+            return ['success' => false, 'message' => 'Error al guardar el docente.', 'errors' => $docente->errors];
+        }
+    }
 
     /**
      * {@inheritdoc}
@@ -183,5 +217,4 @@ class Profile extends \yii\db\ActiveRecord
     {
         return new ProfileQuery(get_called_class());
     }
-
- }
+}

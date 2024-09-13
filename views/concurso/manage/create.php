@@ -46,7 +46,6 @@ body {
     border-radius: 0;
 }
 
-
 .concurso-form .form-group {
     margin-top: 20px;
 }
@@ -235,6 +234,31 @@ body {
     vertical-align: middle;
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    background-color: #1d2554;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 15px;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pagination button:hover {
+    background-color: #f7a600;
+}
+
+.pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
 @media screen and (max-width: 768px) {
     .concurso-form {
         width: 90%;
@@ -414,9 +438,11 @@ echo '<thead><tr><th>DNI</th><th>Apellido</th><th>Nombre</th><th>Acción</th></t
 echo '<tbody id="docente-results-body"></tbody>';
 echo '</table>';
 echo '</div>';
+echo '<div id="pagination" class="pagination"></div>';
 
 // Contenedor para el botón "Añadir Docente" y los campos correspondientes
 echo '<div id="agregar-docente-container" style="display: none;">';
+echo '<hr style="margin-top: 10px;">'; 
 echo '<h4>Agregar Nuevo Docente</h4>';
 echo '<div class="form-group">';
 echo '<label for="nuevo-docente-dni">Número de Documento</label>';
@@ -434,14 +460,12 @@ echo '<input type="text" id="nuevo-docente-nombre" class="form-control">';
 echo '</div>';
 
 echo '<div class="form-group">';
-echo Html::button('Agregar Docente', ['class' => 'btn btn-primary btn-space', 'onclick' => 'agregarNuevoDocente()']);
+echo Html::button('Agregar Docente', ['class' => 'btn btn-success btn-space', 'onclick' => 'agregarNuevoDocente()']);
 echo '</div>';
 echo '</div>';
 
 Modal::end();
 ?>
-
-
 
 <script>
     function agregarAsignatura() {
@@ -509,7 +533,7 @@ Modal::end();
         modal.show();
     }
 
-    function buscarDocente() {
+    function buscarDocente(page = 1) {
         var dni = document.getElementById('docente-dni').value;
         var apellido = document.getElementById('docente-apellido').value;
         var nombre = document.getElementById('docente-nombre').value;
@@ -519,7 +543,7 @@ Modal::end();
             return;
         }
 
-        fetch("<?= Url::to(['buscar-docente']) ?>?dni=" + dni + "&apellido=" + apellido + "&nombre=" + nombre)
+        fetch("<?= Url::to(['buscar-docente']) ?>?dni=" + dni + "&apellido=" + apellido + "&nombre=" + nombre + "&page=" + page)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -527,18 +551,52 @@ Modal::end();
                 return response.json();
             })
             .then(data => {
+                console.log('Respuesta del servidor:', data); // Verifica la estructura de la respuesta aquí
                 var resultsBody = document.getElementById('docente-results-body');
                 resultsBody.innerHTML = '';
-                data.forEach(docente => {
-                    var row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${docente.numero_documento}</td>
-                        <td>${docente.apellido}</td>
-                        <td>${docente.nombre}</td>
-                        <td><button type="button" class="btn btn-success btn-sm" onclick="seleccionarDocente(this, '${docente.numero_documento}', '${docente.apellido}', '${docente.nombre}')">Seleccionar</button></td>
-                    `;
-                    resultsBody.appendChild(row);
-                });
+
+                if (Array.isArray(data.docentes) && data.docentes.length === 0) {
+                    resultsBody.innerHTML = '<tr><td colspan="4">No se encontraron docentes.</td></tr>';
+                } else if (Array.isArray(data.docentes)) {
+                    data.docentes.forEach(docente => {
+                        var row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${docente.numero_documento}</td>
+                            <td>${docente.apellido}</td>
+                            <td>${docente.nombre}</td>
+                            <td><button type="button" class="btn btn-success btn-sm" onclick="seleccionarDocente(this, '${docente.numero_documento}', '${docente.apellido}', '${docente.nombre}')">Seleccionar</button></td>
+                        `;
+                        resultsBody.appendChild(row);
+                    });
+                }
+
+                // Controles de paginación con estilo
+                var pagination = document.getElementById('pagination');
+                pagination.innerHTML = '';
+                if (data.totalPages > 1) {
+                    const currentPage = data.currentPage;
+                    if (currentPage > 1) {
+                        pagination.innerHTML += `<button onclick="buscarDocente(1)">&#171; Primero</button>`;
+                        pagination.innerHTML += `<button onclick="buscarDocente(${currentPage - 1})">&#8249; Anterior</button>`;
+                    }
+
+                    const maxPagesToShow = 5; // Número máximo de botones de página a mostrar
+                    const startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+                    const endPage = Math.min(data.totalPages, startPage + maxPagesToShow - 1);
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        const activeClass = i === currentPage ? 'active' : '';
+                        pagination.innerHTML += `<button class="${activeClass}" onclick="buscarDocente(${i})">${i}</button>`;
+                    }
+
+                    if (currentPage < data.totalPages) {
+                        pagination.innerHTML += `<button onclick="buscarDocente(${currentPage + 1})">Siguiente &#8250;</button>`;
+                        pagination.innerHTML += `<button onclick="buscarDocente(${data.totalPages})">Último &#187;</button>`;
+                    }
+                }
+
+                // Mostrar el contenedor de "Agregar Nuevo Docente"
+                mostrarBotonAgregarDocente();
             })
             .catch(error => {
                 console.error('Error al buscar docentes:', error);
@@ -569,7 +627,7 @@ Modal::end();
         row.remove();
     }
 
-function aceptarDocentes() {
+    function aceptarDocentes() {
         const docenteInput = document.getElementById('docente-input');
         docenteInput.value = docentesSeleccionados.map(docente => `${docente.nombre} ${docente.apellido} (DNI: ${docente.dni})`).join('\n');
 
@@ -577,94 +635,45 @@ function aceptarDocentes() {
         modal.hide();
     }
 
-function buscarDocente() {
-    var dni = document.getElementById('docente-dni').value;
-    var apellido = document.getElementById('docente-apellido').value;
-    var nombre = document.getElementById('docente-nombre').value;
-
-    if (!dni && !apellido && !nombre) {
-        alert('Debe completar al menos uno de los campos para buscar.');
-        return;
+    function mostrarBotonAgregarDocente() {
+        var container = document.getElementById('agregar-docente-container');
+        container.style.display = 'block'; // Mostrar el contenedor de "Agregar Docente"
     }
 
-    fetch("<?= Url::to(['buscar-docente']) ?>?dni=" + dni + "&apellido=" + apellido + "&nombre=" + nombre)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
+    function agregarNuevoDocente() {
+        var dni = document.getElementById('nuevo-docente-dni').value;
+        var apellido = document.getElementById('nuevo-docente-apellido').value;
+        var nombre = document.getElementById('nuevo-docente-nombre').value;
+
+        var data = {
+            dni: dni,
+            apellido: apellido,
+            nombre: nombre,
+            user_id: 0 // Enviar user_id como 0
+        };
+
+        console.log("Datos preparados para enviar: ", data);
+
+        fetch("<?= Url::to(['concurso/agregar-docente']) ?>", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': '<?= Yii::$app->request->csrfToken ?>',
+            },
+            body: JSON.stringify(data)
         })
+        .then(response => response.json())
         .then(data => {
-            var resultsBody = document.getElementById('docente-results-body');
-            resultsBody.innerHTML = '';
-            if (data.length === 0) {
-                mostrarBotonAgregarDocente();
+            console.log('Respuesta del servidor:', data);
+            if (data.success) {
+                alert('Docente añadido exitosamente a la base de datos.');
             } else {
-                data.forEach(docente => {
-                    var row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${docente.numero_documento}</td>
-                        <td>${docente.apellido}</td>
-                        <td>${docente.nombre}</td>
-                        <td><button type="button" class="btn btn-success btn-sm" onclick="seleccionarDocente(this, '${docente.numero_documento}', '${docente.apellido}', '${docente.nombre}')">Seleccionar</button></td>
-                    `;
-                    resultsBody.appendChild(row);
-                });
+                alert('Error: ' + data.message);
             }
         })
         .catch(error => {
-            console.error('Error al buscar docentes:', error);
-            alert('Error al buscar docentes. Inténtelo de nuevo.');
+            console.error('Error al agregar el docente:', error);
+            alert('Error al agregar el docente. Inténtelo de nuevo.');
         });
-}
-
-function mostrarBotonAgregarDocente() {
-    var container = document.getElementById('agregar-docente-container');
-    container.style.display = 'block'; // Mostrar el contenedor de "Agregar Docente"
-}
-
-function agregarNuevoDocente() {
-    // Obtener valores de los inputs
-    var dni = document.getElementById('nuevo-docente-dni').value;
-    var apellido = document.getElementById('nuevo-docente-apellido').value;
-    var nombre = document.getElementById('nuevo-docente-nombre').value;
-
-    // Preparar los datos para enviar
-    var data = {
-        dni: dni,
-        apellido: apellido,
-        nombre: nombre,
-        user_id: 0 // Enviar user_id como 0
-    };
-
-    // Mostrar en consola los datos preparados para verificar
-    console.log("Datos preparados para enviar: ", data);
-
-    // Realizar la solicitud fetch
-    fetch("<?= Url::to(['concurso/agregar-docente']) ?>", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json', // Asegurar el formato correcto
-            'X-CSRF-Token': '<?= Yii::$app->request->csrfToken ?>',
-        },
-        body: JSON.stringify(data) // Convertir a JSON antes de enviar
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Mostrar la respuesta del servidor en consola para verificar
-        console.log('Respuesta del servidor:', data);
-        if (data.success) {
-            alert('Docente añadido exitosamente a la base de datos.');
-        } else {
-            alert('Error: ' + data.message);
-        }
-    })
-    .catch(error => {
-        // Mostrar errores en consola
-        console.error('Error al agregar el docente:', error);
-        alert('Error al agregar el docente. Inténtelo de nuevo.');
-    });
-}
-
-
+    }
 </script>

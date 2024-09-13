@@ -81,7 +81,7 @@ class ConcursoController extends Controller
                     'class' => AccessControl::class,
                     'rules' => [
                         [
-                            'actions' => ['confirmar', 'descargar', 'previsualizar', 'preinscripcion', 'index', 'view', 'update', 'delete', 'area', 'formulario', 'tramite', 'desinscribir', 'pending', 'manage', 'publish', 'publish-confirm', 'get-departamentos', 'get-asignaturas', 'buscar-docente', 'nomina-preinscriptos'],
+                            'actions' => ['confirmar', 'descargar', 'previsualizar', 'preinscripcion', 'index', 'view', 'update', 'delete', 'area', 'formulario', 'tramite', 'desinscribir', 'pending', 'manage', 'publish', 'publish-confirm', 'get-departamentos', 'get-asignaturas', 'buscar-docente', 'nomina-preinscriptos', 'agregar-docente'],
                             'allow' => true,
                             'roles' => ['@'],
                         ],
@@ -467,7 +467,7 @@ class ConcursoController extends Controller
         $facultades = Facultad::find()->all();
         $facultadesList = ArrayHelper::map($facultades, 'id_facultad', 'nombre_facultad');
     
-        $categorias = Categoria::find()->all();
+        $categorias = Categoria::find()->where(['mostrar_en_propuesta' => 's'])->all();
         $categoriasList = ArrayHelper::map($categorias, 'id_categoria', 'descripcion_categoria');
     
         $dedicaciones = Dedicacion::find()->all();
@@ -539,8 +539,11 @@ class ConcursoController extends Controller
         $dni = Yii::$app->request->get('dni');
         $apellido = Yii::$app->request->get('apellido');
         $nombre = Yii::$app->request->get('nombre');
+        $page = Yii::$app->request->get('page', 1); // Página actual, por defecto es 1
+        $pageSize = 10; // Número de resultados por página, ajusta según sea necesario
     
-        $query = PersonasHistorico::find();
+  
+        $query = Profile::find();
     
         if ($dni) {
             $query->andWhere(['numero_documento' => $dni]);
@@ -552,12 +555,28 @@ class ConcursoController extends Controller
             $query->andWhere(['like', 'nombre', $nombre]);
         }
     
+        // Contar el total de resultados
+        $totalCount = $query->count();
+    
+        // Calcular el offset y limitar los resultados para la paginación
+        $query->offset(($page - 1) * $pageSize)
+              ->limit($pageSize);
+    
+        // Obtener los resultados paginados
         $resultados = $query->all();
+    
+        // Calcular el total de páginas
+        $totalPages = ceil($totalCount / $pageSize);
     
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
     
-        return $resultados;
+        return [
+            'docentes' => $resultados,
+            'totalPages' => $totalPages,
+            'currentPage' => $page,
+        ];
     }
+    
     
 
 
@@ -607,18 +626,27 @@ class ConcursoController extends Controller
     // }
 
     public function actionUpdate($id)
-{
-    $model = ConcursoPendiente::findOne($id);
-
-    if ($model->load(Yii::$app->request->post()) && $model->save()) {
-        Yii::$app->session->setFlash('success', 'El concurso ha sido actualizado exitosamente.');
-    } else {
-        Yii::$app->session->setFlash('error', 'No se pudo actualizar el concurso.');
+    {
+        $model = ConcursoPendiente::findOne($id);
+    
+        if (!$model) {
+            Yii::$app->session->setFlash('error', 'El concurso no fue encontrado.');
+            return $this->redirect(['pending']);
+        }
+    
+        // Procesa la solicitud POST
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->validate() && $model->save()) {
+                Yii::$app->session->setFlash('success', 'El concurso ha sido actualizado exitosamente.');
+            } else {
+                Yii::$app->session->setFlash('error', 'No se pudo actualizar el concurso: ' . implode(', ', $model->getFirstErrors()));
+            }
+            return $this->redirect(['pending']);
+        }
+            return $this->render('update', ['model' => $model]);
     }
 
-    return $this->redirect(['pending']);
-}
-
+    
     /**
      * Deletes an existing Concurso model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -820,9 +848,37 @@ public function actionNominaPreinscriptos()
     ]);
 }
 
+public function actionAgregarDocente()
+{
+    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
+    $data = \Yii::$app->request->getRawBody();
+    $data = json_decode($data, true);
 
+    $dni = $data['dni'] ?? null;
+    $apellido = $data['apellido'] ?? null;
+    $nombre = $data['nombre'] ?? null;
+    $user_id = $data['user_id'] ?? 0;
 
+    // Crear una nueva instancia de Profile y establecer el escenario
+    $docente = new Profile();
+    $docente->scenario = Profile::SCENARIO_DOCENTE;
+    $docente->numero_documento = $dni;
+    $docente->apellido = $apellido;
+    $docente->nombre = $nombre;
+    $docente->user_id = $user_id;
 
+    // Verifica y muestra los atributos antes de la validación y guardado
+    Yii::debug("Datos del modelo antes de guardar: " . json_encode($docente->attributes));
+
+    if ($docente->validate() && $docente->save()) {
+        return ['success' => true];
+    } else {
+        // Mostrar errores detallados de validación
+        Yii::debug("Errores al guardar el docente: " . json_encode($docente->errors));
+        return ['success' => false, 'message' => 'Error al guardar el docente: ' . implode(', ', array_map(fn($errors) => implode(', ', $errors), $docente->errors)),
+ 'errors' => $docente->errors];
+    }
+}
 
 }
