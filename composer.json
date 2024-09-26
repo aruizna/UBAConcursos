@@ -17,7 +17,7 @@
         "php": ">=7.4.0",
         "yiisoft/yii2": "~2.0.45",
         "yiisoft/yii2-bootstrap5": "~2.0.2",
-        "2amigos/yii2-usuario": "dev-v2.0.0-dev",
+        "2amigos/yii2-usuario": "~1.0",
         "yiisoft/yii2-swiftmailer": "^2.1",
         "kartik-v/yii2-grid": "dev-master",
         "kartik-v/yii2-widget-fileinput": "@dev",
