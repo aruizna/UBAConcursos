@@ -490,6 +490,7 @@ class m241002_214925_create_nuevos_concursos_20241009 extends Migration
         Yii::$app->db->createCommand($sql)->execute();
 
 
+        
         $sql = "
             insert INTO persona_concurso_renovacion 
             select  
