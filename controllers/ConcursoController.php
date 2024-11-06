@@ -266,30 +266,6 @@ class ConcursoController extends Controller
         return false;
     }
 
-    public function actionPreinscripcion($id)
-    {
-        $concurso = Concurso::find()->where(['id_concurso' => $id])->one();
-        $preinscripto = new Preinscripto();
-        $preinscripto->user_id = Yii::$app->user->id;
-        $preinscripto->concurso_id = $id;
-        $profile = Profile::findOne(['user_id' => Yii::$app->user->id]);
-
-        $file = FileHelper::findFiles('attachments/formularios', [
-            'only' => ['*' . $profile->cuil . '_' . $id . '*' . 'pdf'],
-        ]);
-
-        if ($this->request->isPost) {
-            if ($preinscripto->save(false)) {
-                Yii::$app->session->setFlash('success', 'Se preinscribió correctamente');
-                return true;
-            }
-            return false;
-        }
-        return $this->renderPartial('_preinscribirse', [
-            'file' => basename($file[0]),
-            'id' =>  $id
-        ]);
-    }
 
     public function actionConfirmar()
     {
@@ -358,17 +334,21 @@ class ConcursoController extends Controller
     public function actionIndex($ua = '%', $ar = '%')
     {
         $profile = Profile::find(['user_id' => Yii::$app->user->id])->one();
-        $searchModel = Concurso::find();
+        
+        // Ajuste: Filtrar concursos cuya inscripción ya haya comenzado
+        $searchModel = Concurso::find()->where(['<=', 'fecha_inicio_inscripcion', date('Y-m-d H:i:s')]);
+        
         $dataProvider = new ActiveDataProvider([
-            'query' => Concurso::find(),
+            'query' => $searchModel,
             'sort' => [
                 'defaultOrder' => [
                     'id_concurso' => SORT_DESC,
                 ]
             ],
-
         ]);
+    
         $facultad = Facultad::find("id_facultad", "nombre_facultad")->orderBy(['nombre_facultad' => SORT_ASC])->all();
+    
         return $this->render('index', [
             'model' => $dataProvider,
             'searchModel' => $searchModel,
@@ -378,6 +358,40 @@ class ConcursoController extends Controller
             'profile' => $profile
         ]);
     }
+    
+    public function actionPreinscripcion($id)
+    {
+        $concurso = Concurso::findOne(['id_concurso' => $id]);
+    
+        // Restricción para permitir preinscripción solo si ya ha comenzado la inscripción
+        if (strtotime($concurso->fecha_inicio_inscripcion) > time()) {
+            Yii::$app->session->setFlash('error', 'La inscripción para este concurso aún no ha comenzado.');
+            return $this->redirect(['index']);
+        }
+    
+        $preinscripto = new Preinscripto();
+        $preinscripto->user_id = Yii::$app->user->id;
+        $preinscripto->concurso_id = $id;
+        $profile = Profile::findOne(['user_id' => Yii::$app->user->id]);
+    
+        $file = FileHelper::findFiles('attachments/formularios', [
+            'only' => ['*' . $profile->cuil . '_' . $id . '*' . 'pdf'],
+        ]);
+    
+        if ($this->request->isPost) {
+            if ($preinscripto->save(false)) {
+                Yii::$app->session->setFlash('success', 'Se preinscribió correctamente');
+                return true;
+            }
+            return false;
+        }
+        
+        return $this->renderPartial('_preinscribirse', [
+            'file' => basename($file[0]),
+            'id' =>  $id
+        ]);
+    }
+    
 
     public function actionViewNominaPreinscriptos($id_concurso)
     {
@@ -456,52 +470,64 @@ class ConcursoController extends Controller
       * If creation is successful, the browser will be redirected to the 'index' page.
       * @return string|\yii\web\Response
     */
-    public function actionCreate()
-    {
-        $model = new ConcursoPendiente();
-    
-        // Obtener datos para los desplegables
-        $tiposConcurso = TipoConcurso::find()->all();
-        $tiposConcursoList = ArrayHelper::map($tiposConcurso, 'id_tipo_concurso', 'descripcion_tipo_concurso');
-    
-        $facultades = Facultad::find()->all();
-        $facultadesList = ArrayHelper::map($facultades, 'id_facultad', 'nombre_facultad');
-    
-        $categorias = Categoria::find()->where(['mostrar_en_propuesta' => 's'])->all();
-        $categoriasList = ArrayHelper::map($categorias, 'id_categoria', 'descripcion_categoria');
-    
-        $dedicaciones = Dedicacion::find()->all();
-        $dedicacionesList = ArrayHelper::map($dedicaciones, 'id_dedicacion', 'descripcion_dedicacion');
-    
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post())) {
-                // El modelo ya debe estar procesando las fechas en beforeSave
-                if ($model->validate()) {
-                    if ($model->save()) {
-                        Yii::$app->session->setFlash('success', 'Concurso pendiente creado correctamente.');
-                        return $this->redirect(['index']);
-                    } else {
-                        Yii::$app->session->setFlash('error', 'Error al guardar el concurso pendiente.');
-                    }
-                } else {
-                    Yii::$app->session->setFlash('error', 'Error de validación: ' . Json::encode($model->errors));
-                }
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-    
-        return $this->render('manage/create', [
-            'model' => $model,
-            'tiposConcursoList' => $tiposConcursoList,
-            'facultadesList' => $facultadesList,
-            'categoriasList' => $categoriasList,
-            'dedicacionesList' => $dedicacionesList,
-        ]);
-    }
-    
-    
+public function actionCreate()
+{
+    $model = new ConcursoPendiente();
 
+    // Obtener datos para los desplegables
+    $tiposConcurso = TipoConcurso::find()->all();
+    $tiposConcursoList = ArrayHelper::map($tiposConcurso, 'id_tipo_concurso', 'descripcion_tipo_concurso');
+
+    $facultades = Facultad::find()->all();
+    $facultadesList = ArrayHelper::map($facultades, 'id_facultad', 'nombre_facultad');
+
+    $categorias = Categoria::find()->where(['mostrar_en_propuesta' => 's'])->all();
+    $categoriasList = ArrayHelper::map($categorias, 'id_categoria', 'descripcion_categoria');
+
+    $dedicaciones = Dedicacion::find()->all();
+    $dedicacionesList = ArrayHelper::map($dedicaciones, 'id_dedicacion', 'descripcion_dedicacion');
+
+    $asignaturas = Asignatura::find()->all();
+    $asignaturasList = ArrayHelper::map($asignaturas, 'id_asignatura', 'descripcion_asignatura');
+
+    if ($this->request->isPost && $model->load($this->request->post())) {
+        Yii::info("Datos POST recibidos: " . json_encode($this->request->post()), __METHOD__);
+
+        // Asignación de asignaturas_seleccionadas en formato JSON
+        $asignaturasSeleccionadas = Yii::$app->request->post('ConcursoPendiente')['asignaturas_seleccionadas'] ?? '[]';
+        if (is_string($asignaturasSeleccionadas)) {
+            $model->asignaturas_seleccionadas = $asignaturasSeleccionadas;
+        } elseif (is_array($asignaturasSeleccionadas)) {
+            $model->asignaturas_seleccionadas = json_encode($asignaturasSeleccionadas);
+        }
+
+        // Procesar el valor del docente seleccionado desde el campo oculto
+        $model->docente = Yii::$app->request->post('ConcursoPendiente')['docente'] ?? null;
+
+        Yii::info("Valor de asignaturas_seleccionadas antes de guardar: " . $model->asignaturas_seleccionadas, __METHOD__);
+
+        // Validación y guardado del modelo
+        if ($model->validate() && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Concurso pendiente creado correctamente.');
+            return $this->redirect(['index']);
+        } else {
+            Yii::$app->session->setFlash('error', 'Error al guardar el concurso pendiente: ' . Json::encode($model->errors));
+        }
+    }
+
+    return $this->render('manage/create', [
+        'model' => $model,
+        'tiposConcursoList' => $tiposConcursoList,
+        'facultadesList' => $facultadesList,
+        'categoriasList' => $categoriasList,
+        'dedicacionesList' => $dedicacionesList,
+    ]);
+}
+
+
+
+    
+    
     // Acción para obtener los departamentos (áreas)
     public function actionGetDepartamentos($id_facultad)
     {
@@ -767,7 +793,42 @@ public function actionPublishConfirm($id)
             $concurso->fecha_entrevista_prueba_publicada = null;
         }
 
+        // Guardar el registro en la tabla 'concurso'
         if ($concurso->save()) {
+            // Obtener el ID del concurso recién insertado
+            $idConcurso = $concurso->id_concurso;
+
+            // 1. Insertar asignaturas en 'concurso_asignatura'
+            $asignaturasSeleccionadas = $concursoPendiente->asignaturas_seleccionadas;
+
+            // Verificar si $asignaturasSeleccionadas es un string JSON y decodificar si es necesario
+            if (is_string($asignaturasSeleccionadas)) {
+                $asignaturasSeleccionadas = json_decode($asignaturasSeleccionadas, true);
+            }
+
+            // Proceder solo si $asignaturasSeleccionadas es un array y no está vacío
+            if (is_array($asignaturasSeleccionadas) && !empty($asignaturasSeleccionadas)) {
+                foreach ($asignaturasSeleccionadas as $idAsignatura) {
+                    Yii::$app->db->createCommand()->insert('concurso_asignatura', [
+                        'id_concurso' => $idConcurso,
+                        'id_asignatura' => $idAsignatura,
+                        'id_facultad' => $concursoPendiente->id_facultad,
+                    ])->execute();
+                }
+            }
+
+            // 2. Insertar docente en 'persona_concurso_renovacion' si existe
+            if ($concursoPendiente->docente) {
+                Yii::$app->db->createCommand()->insert('persona_concurso_renovacion', [
+                    'id_concurso' => $idConcurso,
+                    'id_tipo_documento' => 1, // Asume tipo de documento 1 (puedes ajustarlo según corresponda)
+                    'numero_documento' => $concursoPendiente->docente,
+                    'id_categoria' => $concursoPendiente->id_categoria,
+                    'id_dedicacion' => $concursoPendiente->id_dedicacion,
+                ])->execute();
+            }
+
+            // Eliminar el registro de 'concurso_pendiente'
             $concursoPendiente->delete();
             Yii::$app->session->setFlash('success', 'El concurso ha sido publicado exitosamente.');
         } else {
@@ -782,38 +843,41 @@ public function actionPublishConfirm($id)
 }
 
 
+
+
 public function actionNominaPreinscriptos()
 {
     $expediente = Yii::$app->request->get('expediente');
     $unidad_academica = Yii::$app->request->get('unidad_academica');
 
     $query = (new \yii\db\Query())
-        ->select([
-            'preinscripto.id',
-            'user.username',
-            'user.email',
-            'concurso.numero_expediente',
-            'tipo_concurso.descripcion_tipo_concurso', // Agregamos descripción de tipo de concurso
-            'facultad.nombre_facultad', // Agregamos nombre de la facultad
-            'categoria.descripcion_categoria', // Agregamos descripción de categoría
-            'dedicacion.descripcion_dedicacion', // Agregamos descripción de dedicación
-            'area_departamento.descripcion_area_departamento', // Agregamos descripción del área/departamento
-            'concurso.cantidad_de_puestos',
-            'concurso.fecha_inicio_inscripcion',
-            'concurso.fecha_fin_inscripcion',
-            'concurso.hora_inicio_inscripcion',
-            'concurso.hora_fin_inscripcion',
-            'concurso.fecha_publicacion',
-            'preinscripto.doc'
-        ])
-        ->from('preinscripto')
-        ->innerJoin('user', 'preinscripto.user_id = user.id')
-        ->innerJoin('concurso', 'preinscripto.concurso_id = concurso.id_concurso')
-        ->innerJoin('tipo_concurso', 'concurso.id_tipo_concurso = tipo_concurso.id_tipo_concurso')
-        ->innerJoin('facultad', 'concurso.id_facultad = facultad.id_facultad')
-        ->innerJoin('categoria', 'concurso.id_categoria = categoria.id_categoria')
-        ->innerJoin('dedicacion', 'concurso.id_dedicacion = dedicacion.id_dedicacion')
-        ->innerJoin('area_departamento', 'concurso.id_area_departamento = area_departamento.id_area_departamento');
+    ->select([
+        'preinscripto.id',
+        'user.username',
+        'user.email',
+        'concurso.numero_expediente',
+        'tipo_concurso.descripcion_tipo_concurso', // Tipo de concurso
+        'preinscripto.doc',
+        'concurso.cantidad_de_puestos',
+        'concurso.fecha_inicio_inscripcion',
+        'concurso.fecha_fin_inscripcion',
+        'concurso.hora_inicio_inscripcion',
+        'concurso.hora_fin_inscripcion',
+        'concurso.fecha_publicacion',
+        // Subconsulta para obtener el nombre de la facultad
+        '(SELECT facultad.nombre_facultad FROM facultad WHERE facultad.id_facultad = concurso.id_facultad LIMIT 1) AS nombre_facultad',
+        // Subconsulta para obtener la descripción de la categoría
+        '(SELECT categoria.descripcion_categoria FROM categoria WHERE categoria.id_categoria = concurso.id_categoria LIMIT 1) AS descripcion_categoria',
+        // Subconsulta para obtener la dedicación
+        '(SELECT dedicacion.descripcion_dedicacion FROM dedicacion WHERE dedicacion.id_dedicacion = concurso.id_dedicacion LIMIT 1) AS descripcion_dedicacion',
+        // Subconsulta para obtener el área/departamento
+        '(SELECT area_departamento.descripcion_area_departamento FROM area_departamento WHERE area_departamento.id_area_departamento = concurso.id_area_departamento LIMIT 1) AS descripcion_area_departamento'
+    ])
+    ->from('preinscripto')
+    ->innerJoin('user', 'preinscripto.user_id = user.id')
+    ->innerJoin('concurso', 'preinscripto.concurso_id = concurso.id_concurso')
+    ->innerJoin('tipo_concurso', 'concurso.id_tipo_concurso = tipo_concurso.id_tipo_concurso');
+
 
     if ($expediente) {
         $query->andWhere(['concurso.numero_expediente' => $expediente]);
@@ -869,13 +933,13 @@ public function actionAgregarDocente()
     $docente->user_id = $user_id;
 
     // Verifica y muestra los atributos antes de la validación y guardado
-    Yii::debug("Datos del modelo antes de guardar: " . json_encode($docente->attributes));
+    Yii::info("Datos del modelo antes de guardar: " . json_encode($docente->attributes));
 
     if ($docente->validate() && $docente->save()) {
         return ['success' => true];
     } else {
         // Mostrar errores detallados de validación
-        Yii::debug("Errores al guardar el docente: " . json_encode($docente->errors));
+        Yii::info("Errores al guardar el docente: " . json_encode($docente->errors));
         return ['success' => false, 'message' => 'Error al guardar el docente: ' . implode(', ', array_map(fn($errors) => implode(', ', $errors), $docente->errors)),
  'errors' => $docente->errors];
     }

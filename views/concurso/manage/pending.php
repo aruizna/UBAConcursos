@@ -210,6 +210,7 @@ foreach ($dataProvider->models as $model) {
     echo '<p><strong>Número de Expediente:</strong> ' . Html::encode($model->numero_expediente) . '</p>';
     echo '<p><strong>Tipo de Concurso:</strong> ' . Html::encode($model->tipoConcurso->descripcion_tipo_concurso ?? 'N/A') . '</p>';
     echo '<p><strong>Facultad:</strong> ' . Html::encode($model->facultad->nombre_facultad ?? 'N/A') . '</p>';
+    echo '<p><strong>Asignatura(s):</strong> ' . Html::encode(implode(', ', $model->getAsignaturasNombres())) . '</p>'; // Mostrar nombres de asignaturas
     echo '<p><strong>Categoría:</strong> ' . Html::encode($model->categoria->descripcion_categoria ?? 'N/A') . '</p>';
     echo '<p><strong>Dedicación:</strong> ' . Html::encode($model->dedicacion->descripcion_dedicacion ?? 'N/A') . '</p>';
     echo '<p><strong>Área/Departamento:</strong> ' . Html::encode($model->areaDepartamento->descripcion_area_departamento ?? 'N/A') . '</p>';
@@ -220,6 +221,9 @@ foreach ($dataProvider->models as $model) {
     echo '<p><strong>Hora Fin Inscripción:</strong> ' . Html::encode($model->hora_fin_inscripcion) . '</p>';
     echo '<p><strong>Fecha Publicación:</strong> ' . Html::encode(Yii::$app->formatter->asDate($model->fecha_publicacion, 'php:d/m/Y')) . '</p>';
     echo '<p><strong>Comentario:</strong> ' . Html::encode($model->comentario) . '</p>';
+    echo '<p><strong>Docente que Ocupa el Cargo:</strong> ' . Html::encode($model->getDocenteNombre()) . '</p>'; // Mostrar nombres del docente
+
+    echo '</div>';
     echo '</div>';
 
     Modal::end();
