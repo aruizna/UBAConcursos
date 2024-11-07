@@ -92,7 +92,7 @@ body {
 .input-group {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 2px;
     width: 100%;
 }
 
@@ -284,7 +284,7 @@ body {
                 <span>EX-</span>
                 <?= $form->field($model, 'expediente_ano', ['template' => "{input}\n{error}"])->textInput(['maxlength' => 4, 'placeholder' => 'Año', 'id' => 'expediente-ano']) ?>
                 <span>-</span>
-                <?= $form->field($model, 'expediente_numero', ['template' => "{input}\n{error}"])->textInput(['maxlength' => 6, 'placeholder' => 'Número', 'id' => 'expediente-numero']) ?>
+                <?= $form->field($model, 'expediente_numero', ['template' => "{input}\n{error}"])->textInput(['maxlength' => 8, 'placeholder' => 'Número', 'id' => 'expediente-numero']) ?>
                 <span>--UBA-</span>
                 <?= $form->field($model, 'expediente_dependencia', ['template' => "{input}\n{error}"])->textInput(['maxlength' => 20, 'placeholder' => 'Dep.', 'id' => 'expediente-dependencia']) ?>
             </div>
@@ -300,22 +300,28 @@ body {
         <?= $form->field($model, 'id_facultad')->dropDownList($facultadesList, [
             'prompt' => 'Seleccione una Unidad Académica',
             'id' => 'unidad-academica',
-            'onchange' => '
+            'onchange' => "
                 var selectedValue = this.value;
-                fetch("' . Url::to(['get-departamentos']) . '?id_facultad=" + selectedValue)
+                fetch('" . Url::to(['get-departamentos']) . "?id_facultad=' + selectedValue)
                     .then(response => response.json())
                     .then(data => {
-                        var departamentoSelect = document.getElementById("' . Html::getInputId($model, 'id_area_departamento') . '");
-                        departamentoSelect.innerHTML = "<option>Seleccione un Departamento</option>";
-                        Object.keys(data).forEach(key => {
-                            var option = document.createElement("option");
-                            option.value = key;
-                            option.text = data[key];
-                            departamentoSelect.add(option);
-                        });
+                        var departamentoSelect = document.getElementById('departamento');
+                        if (departamentoSelect) {
+                            departamentoSelect.innerHTML = '<option>Seleccione un Departamento</option>';
+                            Object.keys(data).forEach(function(key) {
+                                var option = document.createElement('option');
+                                option.value = key;
+                                option.text = data[key];
+                                departamentoSelect.add(option);
+                            });
+                        }
                     })
-            ',
+                    .catch(function(error) {
+                        console.error('Error al cargar los departamentos:', error);
+                    });
+            ",
         ]) ?>
+
 
         <!-- Departamento -->
         <?= $form->field($model, 'id_area_departamento')->dropDownList([], [
@@ -345,6 +351,9 @@ body {
                     }'),
                 ],
             ]); ?>
+            <?= Html::hiddenInput('ConcursoPendiente[asignaturas_seleccionadas]', '', ['id' => 'asignaturas-seleccionadas-input']) ?>
+            
+
             <button type="button" id="agregar-asignatura" class="btn btn-primary" onclick="agregarAsignatura()">Agregar</button>
         </div>
 
@@ -387,10 +396,20 @@ body {
         </div>
 
         <!-- Botón de Cargar Docentes -->
-        <div id="docente-section" style="display: none; margin-top: 20px;">
-            <button type="button" class="btn btn-success" onclick="mostrarModalDocente()">Cargar docentes a cargo</button>
-            <textarea id="docente-input" class="form-control" rows="3" disabled></textarea>
-        </div>
+<div id="docente-section" style="display: none; margin-top: 20px;">
+    <button type="button" class="btn btn-success" onclick="mostrarModalDocente()">Cargar docentes a cargo</button>
+    <textarea id="docente-input" class="form-control" rows="3" disabled>
+        <?php if ($model->docenteRenovacion): ?>
+            <?= $model->docenteRenovacion->numero_documento ?> (<?= $model->docenteRenovacion->subcargo ?>)
+        <?php endif; ?>
+    </textarea>
+    <!-- Este es el campo oculto que recibirá el valor del docente seleccionado -->
+    <?= $form->field($model, 'docente')->hiddenInput(['id' => 'docente-hidden-field'])->label(false) ?>
+
+</div>
+
+
+
 
         <div class="form-group">
             <?= Html::submitButton('Guardar', ['class' => 'btn btn-success']) ?>
@@ -476,57 +495,71 @@ Modal::end();
         }
     }
 
-    function addAsignatura(label, id = null) {
-        var container = document.getElementById("asignaturas-container");
+    var asignaturasSeleccionadas = [];
+
+function addAsignatura(label, id) {
+    asignaturasSeleccionadas.push({ label: label, id: id });
+    actualizarContenedorAsignaturas();
+    
+}
+
+function actualizarContenedorAsignaturas() {
+    var container = document.getElementById("asignaturas-container");
+    container.innerHTML = ''; // Limpia el contenedor
+
+    asignaturasSeleccionadas.forEach(asignatura => {
         var asignaturaHtml = `
             <div class="asignatura-item" style="margin-bottom: 5px;">
-                <span>${label}</span>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="this.parentElement.remove()">Eliminar</button>
+                <span>${asignatura.label}</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="eliminarAsignatura('${asignatura.id}')">Eliminar</button>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', asignaturaHtml);
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const facultadSelect = document.getElementById('unidad-academica');
-        facultadSelect.addEventListener('change', function() {
-            var selectedValue = this.value;
-            if (selectedValue !== "") {
-                fetch("<?= Url::to(['get-departamentos']) ?>?id_facultad=" + selectedValue)
-                    .then(response => response.json())
-                    .then(data => {
-                        var departamentoSelect = document.getElementById('departamento');
-                        departamentoSelect.innerHTML = "<option>Seleccione un Departamento</option>";
-                        Object.keys(data).forEach(key => {
-                            var option = document.createElement("option");
-                            option.value = key;
-                            option.text = data[key];
-                            departamentoSelect.add(option);
-                        });
-                    })
-                    .catch(() => alert("Error al cargar los departamentos. Por favor, inténtalo de nuevo."));
-            } else {
-                document.getElementById('departamento').innerHTML = "<option>Seleccione un Departamento</option>";
-            }
-        });
-
-        // Mostrar u ocultar el botón de cargar docentes y el input de entrada múltiple basado en el tipo de concurso
-        const tipoConcursoSelect = document.getElementById('tipo-concurso');
-        const docenteSection = document.getElementById('docente-section');
-        const docenteInput = document.getElementById('docente-input');
-
-        tipoConcursoSelect.addEventListener('change', function() {
-            const selectedValue = this.options[this.selectedIndex].text;
-            if (selectedValue === 'Renovación de Cargo' || 
-                selectedValue === 'Cesación de Cargo por Art. 51' || 
-                selectedValue === 'Provisión Designación Interina') {
-                docenteSection.style.display = 'block';
-            } else {
-                docenteSection.style.display = 'none';
-                docenteInput.value = ''; // Limpiar el input de docentes
-            }
-        });
     });
+
+    // Actualizar el campo hidden para enviar asignaturas al servidor
+    var asignaturasInput = document.getElementById("asignaturas-seleccionadas-input");
+    if (asignaturasInput) {
+        console.log(asignaturasInput.value)
+        asignaturasInput.value = JSON.stringify(asignaturasSeleccionadas.map(a => a.id));
+    } else {
+        console.error("Campo 'asignaturas-seleccionadas-input' no encontrado.");
+    }
+    
+    // Console log para ver el valor actualizado de asignaturas seleccionadas
+    console.log("Asignaturas seleccionadas JSON:", asignaturasInput.value);
+}
+
+
+
+function eliminarAsignatura(id) {
+    asignaturasSeleccionadas = asignaturasSeleccionadas.filter(a => a.id !== id);
+    actualizarContenedorAsignaturas();
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const tipoConcursoSelect = document.getElementById('tipo-concurso');
+    const docenteSection = document.getElementById('docente-section');
+    const form = document.querySelector('.concurso-form');
+        
+    form.addEventListener('submit', function(event) {
+        // Log para ver el valor del campo antes de enviar el formulario
+        console.log("Asignaturas seleccionadas JSON:", document.getElementById("asignaturas-seleccionadas-input").value);
+    });
+
+    tipoConcursoSelect.addEventListener('change', function() {
+        const selectedText = this.options[this.selectedIndex].text;
+        if (selectedText === 'Renovación de Cargo' || 
+            selectedText === 'Cesación de Cargo por Art. 51' || 
+            selectedText === 'Provisión Designación Interina') {
+            docenteSection.style.display = 'block'; // Muestra la sección
+        } else {
+            docenteSection.style.display = 'none'; // Oculta la sección si no es necesario
+        }
+    });
+});
+
 
     function mostrarModalDocente() {
         var modal = new bootstrap.Modal(document.getElementById('modal-docente'));
@@ -607,25 +640,60 @@ Modal::end();
     let docentesSeleccionados = [];
 
     function seleccionarDocente(button, dni, apellido, nombre) {
-        if (docentesSeleccionados.some(docente => docente.dni === dni)) {
-            alert('Este docente ya ha sido seleccionado.');
-            return;
-        }
+    // Actualizar el campo oculto con la información del docente seleccionado
+    $('#docente-hidden-field').val(dni); // Aquí puedes asignar DNI o el dato que necesitas
+    $('#docente-input').val(`${nombre} ${apellido} (DNI: ${dni})`); // Mostrar el nombre en el modal
 
-        docentesSeleccionados.push({ dni, apellido, nombre });
+    var modal = bootstrap.Modal.getInstance(document.getElementById('modal-docente'));
+    modal.hide();
+}
 
-        button.textContent = 'Eliminar';
-        button.className = 'btn btn-secondary btn-sm';
-        button.onclick = function() {
-            eliminarDocente(this, dni);
-        };
+
+function seleccionarDocente(button, dni, apellido, nombre) {
+    // Verificar si el docente ya ha sido seleccionado
+    if (docentesSeleccionados.some(docente => docente.dni === dni)) {
+        alert('Este docente ya ha sido seleccionado.');
+        return;
     }
 
-    function eliminarDocente(button, dni) {
-        docentesSeleccionados = docentesSeleccionados.filter(docente => docente.dni !== dni);
-        const row = button.closest('tr');
-        row.remove();
+    // Agregar el docente seleccionado al arreglo
+    docentesSeleccionados.push({ dni, apellido, nombre });
+
+    // Actualizar el botón para eliminar
+    button.textContent = 'Eliminar';
+    button.className = 'btn btn-secondary btn-sm';
+    button.onclick = function() {
+        eliminarDocente(this, dni);
+    };
+
+    // Actualizar el textarea con los docentes seleccionados
+    const docenteInput = document.getElementById('docente-input');
+    docenteInput.value = docentesSeleccionados.map(docente => `${docente.nombre} ${docente.apellido} (DNI: ${docente.dni})`).join('\n');
+
+    // Actualizar el campo oculto con el DNI del docente seleccionado
+    const docenteHiddenField = document.getElementById('docente-hidden-field');
+    docenteHiddenField.value = dni; // Aquí estamos guardando el DNI en el campo oculto, puedes ajustar según tus necesidades
+}
+
+function eliminarDocente(button, dni) {
+    // Filtrar el docente eliminado del arreglo
+    docentesSeleccionados = docentesSeleccionados.filter(docente => docente.dni !== dni);
+
+    // Eliminar la fila correspondiente en la tabla
+    const row = button.closest('tr');
+    row.remove();
+
+    // Actualizar el textarea después de eliminar un docente
+    const docenteInput = document.getElementById('docente-input');
+    docenteInput.value = docentesSeleccionados.map(docente => `${docente.nombre} ${docente.apellido} (DNI: ${docente.dni})`).join('\n');
+
+    // Limpiar el campo oculto si se eliminan todos los docentes
+    const docenteHiddenField = document.getElementById('docente-hidden-field');
+    if (docentesSeleccionados.length === 0) {
+        docenteHiddenField.value = ''; // Limpiar el campo oculto si no quedan docentes
     }
+}
+
 
     function aceptarDocentes() {
         const docenteInput = document.getElementById('docente-input');
@@ -639,6 +707,16 @@ Modal::end();
         var container = document.getElementById('agregar-docente-container');
         container.style.display = 'block'; // Mostrar el contenedor de "Agregar Docente"
     }
+
+        function seleccionarDocente(button, dni, apellido, nombre) {
+        // Actualizar el campo oculto con la información del docente seleccionado
+        $('#docente-hidden-field').val(dni); // Aquí puedes asignar DNI o el dato que necesitas
+        $('#docente-input').val(`${nombre} ${apellido} (DNI: ${dni})`); // Mostrar el nombre en el modal
+
+        var modal = bootstrap.Modal.getInstance(document.getElementById('modal-docente'));
+        modal.hide();
+    }
+
 
     function agregarNuevoDocente() {
         var dni = document.getElementById('nuevo-docente-dni').value;

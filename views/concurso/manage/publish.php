@@ -129,6 +129,7 @@ body {
 }
 </style>
 
+
 <div class="concurso-pendiente-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -193,7 +194,7 @@ body {
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {edit} {publish}', // Añadido el botón "Editar"
+                'template' => '{view} {edit} {publish}',
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                         return Html::button('Ver', [
@@ -236,6 +237,10 @@ foreach ($dataProvider->models as $model) {
     echo '<p><strong>Número de Expediente:</strong> ' . $model->numero_expediente . '</p>';
     echo '<p><strong>Tipo de Concurso:</strong> ' . ($model->tipoConcurso ? $model->tipoConcurso->descripcion_tipo_concurso : 'N/A') . '</p>';
     echo '<p><strong>Facultad:</strong> ' . ($model->facultad ? $model->facultad->nombre_facultad : 'N/A') . '</p>';
+    echo '<p><strong>Asignatura(s):</strong> ' . Html::encode(implode(', ', $model->asignaturasNombres)) . '</p>';
+    echo '<p><strong>Docente:</strong> ' . Html::encode($model->getDocenteNombre()) . '</p>';
+
+
     echo '<p><strong>Categoría:</strong> ' . ($model->categoria ? $model->categoria->descripcion_categoria : 'N/A') . '</p>';
     echo '<p><strong>Dedicación:</strong> ' . ($model->dedicacion ? $model->dedicacion->descripcion_dedicacion : 'N/A') . '</p>';
     echo '<p><strong>Área/Departamento:</strong> ' . ($model->areaDepartamento ? $model->areaDepartamento->descripcion_area_departamento : 'N/A') . '</p>';
@@ -248,11 +253,11 @@ foreach ($dataProvider->models as $model) {
 
     Modal::end();
 
-    // Modal para editar el concurso    
+    // Modal para editar el concurso
     Modal::begin([
         'id' => 'editModal' . $model->id_concurso_pendiente,
         'title' => 'Editar Concurso',
-        'dialogOptions' => ['class' => 'modal-dialog modal-lg modal-dialog-centered'], // Clases para tamaño y centrado
+        'dialogOptions' => ['class' => 'modal-dialog modal-lg modal-dialog-centered'],
         'footer' => Html::button('Guardar', [
             'class' => 'btn btn-success',
             'onclick' => '$("#concurso-pendiente-form-' . $model->id_concurso_pendiente . '").submit();',
