@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 
+
 /**
  * This is the model class for table "asignatura".
  *
@@ -62,4 +63,10 @@ class Asignatura extends \yii\db\ActiveRecord
     {
         return new AsignaturaQuery(get_called_class());
     }
+
+    public function getAreaDepartamentoAsignaturas()
+    {
+        return $this->hasMany(AreaDepartamentoAsignatura::class, ['id_asignatura' => 'id_asignatura']);
+    }
+
 }

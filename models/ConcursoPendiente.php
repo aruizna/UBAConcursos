@@ -163,42 +163,54 @@ class ConcursoPendiente extends ActiveRecord
     
 
     public function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            // Procesar número de expediente
-            $this->numero_expediente = 'EX-' . $this->expediente_ano . '-' . $this->expediente_numero . '--UBA-' . $this->expediente_dependencia;
-            
-    
-            // Convertir las fechas y horas a formato datetime
-            $this->fecha_inicio_inscripcion = $this->fecha_inicio_inscripcion ? $this->fecha_inicio_inscripcion . ' 00:00:00' : null;
-            $this->fecha_fin_inscripcion = $this->fecha_fin_inscripcion ? $this->fecha_fin_inscripcion . ' 00:00:00' : null;
-            $this->fecha_publicacion = $this->fecha_publicacion ? $this->fecha_publicacion . ' 00:00:00' : null;
-    
-            return true;
-        }
-        return false;
+{
+    if (parent::beforeSave($insert)) {
+        // Procesar número de expediente
+        $this->numero_expediente = 'EX-' . $this->expediente_ano . '-' . $this->expediente_numero . '--UBA-' . $this->expediente_dependencia;
 
-        Yii::info("Valor final de asignaturas_seleccionadas antes de guardar: " . $this->asignaturas_seleccionadas);
+        // Convertir las fechas y horas a formato datetime
+        $this->fecha_inicio_inscripcion = $this->fecha_inicio_inscripcion ? $this->fecha_inicio_inscripcion . ' 00:00:00' : null;
+        $this->fecha_fin_inscripcion = $this->fecha_fin_inscripcion ? $this->fecha_fin_inscripcion . ' 00:00:00' : null;
+        $this->fecha_publicacion = $this->fecha_publicacion ? $this->fecha_publicacion . ' 00:00:00' : null;
 
-    }
-    
-    public function afterFind()
-    {
-        parent::afterFind();
-    
-        // Procesar número de expediente en componentes
-        if ($this->numero_expediente) {
-            $parts = explode('-', str_replace('--UBA-', '-', $this->numero_expediente));
-            $this->expediente_ano = $parts[1];
-            $this->expediente_numero = $parts[2];
-            $this->expediente_dependencia = $parts[3];
+        // Convertir el campo docente a JSON si es un array
+        if (is_array($this->docente)) {
+            $this->docente = json_encode($this->docente);
         }
-    
-        // Decodificar asignaturas_seleccionadas solo si es un string JSON
-        if (is_string($this->asignaturas_seleccionadas)) {
-            $this->asignaturas_seleccionadas = json_decode($this->asignaturas_seleccionadas, true) ?? [];
+
+        // Convertir asignaturas_seleccionadas a JSON si es un array
+        if (is_array($this->asignaturas_seleccionadas)) {
+            $this->asignaturas_seleccionadas = json_encode($this->asignaturas_seleccionadas);
         }
+
+        return true;
     }
+    return false;
+}
+
+public function afterFind()
+{
+    parent::afterFind();
+
+    // Procesar número de expediente en componentes
+    if ($this->numero_expediente) {
+        $parts = explode('-', str_replace('--UBA-', '-', $this->numero_expediente));
+        $this->expediente_ano = $parts[1];
+        $this->expediente_numero = $parts[2];
+        $this->expediente_dependencia = $parts[3];
+    }
+
+    // Decodificar asignaturas_seleccionadas solo si es un string JSON
+    if (is_string($this->asignaturas_seleccionadas)) {
+        $this->asignaturas_seleccionadas = json_decode($this->asignaturas_seleccionadas, true) ?? [];
+    }
+
+    // Decodificar el campo docente solo si es un string JSON
+    if (is_string($this->docente)) {
+        $this->docente = json_decode($this->docente, true) ?? [];
+    }
+}
+
     
 
     public function getDocenteRenovacion()

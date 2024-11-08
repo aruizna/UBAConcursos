@@ -335,22 +335,22 @@ body {
         <!-- Asignatura -->
         <div class="asignatura-label">Asignatura</div>
         <div class="form-group asignatura-wrapper">
-            <?= AutoComplete::widget([
-                'name' => 'asignatura-input',
-                'options' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Ingrese una asignatura',
-                    'id' => 'asignatura-input',
-                ],
-                'clientOptions' => [
-                    'source' => Url::to(['get-asignaturas']),
-                    'select' => new \yii\web\JsExpression('function(event, ui) {
-                        addAsignatura(ui.item.label, ui.item.value);
-                        this.value = "";
-                        return false;
-                    }'),
-                ],
-            ]); ?>
+        <?= AutoComplete::widget([
+    'name' => 'asignatura-input',
+    'options' => [
+        'class' => 'form-control',
+        'placeholder' => 'Ingrese una asignatura',
+        'id' => 'asignatura-input',
+    ],
+    'clientOptions' => [
+        'source' => new \yii\web\JsExpression('function(request, response) { cargarAsignaturas(); }'),
+        'select' => new \yii\web\JsExpression('function(event, ui) {
+            addAsignatura(ui.item.label, ui.item.value);
+            this.value = "";
+            return false;
+        }'),
+    ],
+]); ?>
             <?= Html::hiddenInput('ConcursoPendiente[asignaturas_seleccionadas]', '', ['id' => 'asignaturas-seleccionadas-input']) ?>
             
 
@@ -487,79 +487,123 @@ Modal::end();
 ?>
 
 <script>
-    function agregarAsignatura() {
-        var asignaturaInput = document.getElementById("asignatura-input").value;
-        if (asignaturaInput !== "") {
-            addAsignatura(asignaturaInput);
-            document.getElementById("asignatura-input").value = "";
+document.querySelector('.concurso-form').addEventListener('submit', function(event) {
+        const cantidadPuestos = parseInt(document.getElementById('concurso-cantidad-de-puestos').value);
+        const cantidadDocentes = docentesSeleccionados.length;
+
+        if (cantidadPuestos !== cantidadDocentes) {
+            event.preventDefault(); // Evita el envío del formulario
+            mostrarAlertaCantidadPuestosDocentes();
+        } else {
+            console.log("Asignaturas seleccionadas JSON:", document.getElementById("asignaturas-seleccionadas-input").value);
+            console.log("Docentes seleccionados JSON:", document.getElementById("docente-hidden-field").value);
         }
+    });
+
+    function mostrarAlertaCantidadPuestosDocentes() {
+        // Crea y muestra una alerta simple
+        const mensaje = "No es posible crear un concurso si la cantidad de puestos no es igual a la cantidad de docentes asignados.";
+        alert(mensaje);
+    }
+    
+    // Funciones para cargar asignaturas en base a Facultad y Departamento seleccionados
+    document.getElementById('unidad-academica').addEventListener('change', function() {
+        cargarAsignaturas();
+    });
+
+    document.getElementById('departamento').addEventListener('change', function() {
+        cargarAsignaturas();
+    });
+
+    function cargarAsignaturas() {
+        var unidadAcademica = document.getElementById('unidad-academica').value;
+        var departamento = document.getElementById('departamento').value;
+        var term = document.getElementById('asignatura-input').value;
+
+        var url = "<?= Url::to(['get-asignaturas']) ?>" + "?term=" + encodeURIComponent(term);
+        if (unidadAcademica) {
+            url += "&id_facultad=" + encodeURIComponent(unidadAcademica);
+        }
+        if (departamento) {
+            url += "&id_area_departamento=" + encodeURIComponent(departamento);
+        }
+
+        $('#asignatura-input').autocomplete({
+            source: url,
+            select: function(event, ui) {
+                addAsignatura(ui.item.label, ui.item.value);
+                this.value = "";
+                return false;
+            }
+        });
     }
 
+    // Funciones de manejo de asignaturas
     var asignaturasSeleccionadas = [];
 
-function addAsignatura(label, id) {
-    asignaturasSeleccionadas.push({ label: label, id: id });
-    actualizarContenedorAsignaturas();
-    
-}
+    function addAsignatura(label, id) {
+        id = String(id);
 
-function actualizarContenedorAsignaturas() {
-    var container = document.getElementById("asignaturas-container");
-    container.innerHTML = ''; // Limpia el contenedor
-
-    asignaturasSeleccionadas.forEach(asignatura => {
-        var asignaturaHtml = `
-            <div class="asignatura-item" style="margin-bottom: 5px;">
-                <span>${asignatura.label}</span>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="eliminarAsignatura('${asignatura.id}')">Eliminar</button>
-            </div>
-        `;
-        container.insertAdjacentHTML('beforeend', asignaturaHtml);
-    });
-
-    // Actualizar el campo hidden para enviar asignaturas al servidor
-    var asignaturasInput = document.getElementById("asignaturas-seleccionadas-input");
-    if (asignaturasInput) {
-        console.log(asignaturasInput.value)
-        asignaturasInput.value = JSON.stringify(asignaturasSeleccionadas.map(a => a.id));
-    } else {
-        console.error("Campo 'asignaturas-seleccionadas-input' no encontrado.");
-    }
-    
-    // Console log para ver el valor actualizado de asignaturas seleccionadas
-    console.log("Asignaturas seleccionadas JSON:", asignaturasInput.value);
-}
-
-
-
-function eliminarAsignatura(id) {
-    asignaturasSeleccionadas = asignaturasSeleccionadas.filter(a => a.id !== id);
-    actualizarContenedorAsignaturas();
-}
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    const tipoConcursoSelect = document.getElementById('tipo-concurso');
-    const docenteSection = document.getElementById('docente-section');
-    const form = document.querySelector('.concurso-form');
-        
-    form.addEventListener('submit', function(event) {
-        // Log para ver el valor del campo antes de enviar el formulario
-        console.log("Asignaturas seleccionadas JSON:", document.getElementById("asignaturas-seleccionadas-input").value);
-    });
-
-    tipoConcursoSelect.addEventListener('change', function() {
-        const selectedText = this.options[this.selectedIndex].text;
-        if (selectedText === 'Renovación de Cargo' || 
-            selectedText === 'Cesación de Cargo por Art. 51' || 
-            selectedText === 'Provisión Designación Interina') {
-            docenteSection.style.display = 'block'; // Muestra la sección
+        if (!asignaturasSeleccionadas.some(a => a.id === id)) {
+            asignaturasSeleccionadas.push({ label: label, id: id });
+            actualizarContenedorAsignaturas();
         } else {
-            docenteSection.style.display = 'none'; // Oculta la sección si no es necesario
+            console.warn("La asignatura ya está en la lista:", id);
         }
-    });
-});
+    }
 
+    function actualizarContenedorAsignaturas() {
+        var container = document.getElementById("asignaturas-container");
+        container.innerHTML = '';
+        asignaturasSeleccionadas.forEach(asignatura => {
+            var asignaturaHtml = `
+                <div class="asignatura-item" style="margin-bottom: 5px;" data-id="${asignatura.id}">
+                    <span>${asignatura.label}</span>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="eliminarAsignatura('${asignatura.id}', this)">Eliminar</button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', asignaturaHtml);
+        });
+
+        document.getElementById("asignaturas-seleccionadas-input").value = JSON.stringify(asignaturasSeleccionadas.map(a => a.id));
+    }
+
+    function eliminarAsignatura(id, button) {
+        id = String(id);
+        if (button && button.parentElement) {
+            button.parentElement.remove();
+        }
+        const inicialLength = asignaturasSeleccionadas.length;
+        asignaturasSeleccionadas = asignaturasSeleccionadas.filter(asignatura => asignatura.id !== id);
+        if (inicialLength !== asignaturasSeleccionadas.length) {
+            document.getElementById("asignaturas-seleccionadas-input").value = JSON.stringify(asignaturasSeleccionadas.map(a => a.id));
+        } else {
+            console.warn("No se encontró el ID para eliminar:", id);
+        }
+    }
+
+    // Funciones para manejar la selección y adición de docentes
+    document.addEventListener('DOMContentLoaded', function() {
+        const tipoConcursoSelect = document.getElementById('tipo-concurso');
+        const docenteSection = document.getElementById('docente-section');
+        const form = document.querySelector('.concurso-form');
+
+        form.addEventListener('submit', function(event) {
+            console.log("Asignaturas seleccionadas JSON:", document.getElementById("asignaturas-seleccionadas-input").value);
+            console.log("Docentes seleccionados JSON:", document.getElementById("docente-hidden-field").value);
+        });
+
+        tipoConcursoSelect.addEventListener('change', function() {
+            const selectedText = this.options[this.selectedIndex].text;
+            if (selectedText === 'Renovación de Cargo' || 
+                selectedText === 'Cesación de Cargo por Art. 51' || 
+                selectedText === 'Provisión Designación Interina') {
+                docenteSection.style.display = 'block';
+            } else {
+                docenteSection.style.display = 'none';
+            }
+        });
+    });
 
     function mostrarModalDocente() {
         var modal = new bootstrap.Modal(document.getElementById('modal-docente'));
@@ -584,7 +628,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                console.log('Respuesta del servidor:', data); // Verifica la estructura de la respuesta aquí
+                console.log('Respuesta del servidor:', data);
                 var resultsBody = document.getElementById('docente-results-body');
                 resultsBody.innerHTML = '';
 
@@ -603,7 +647,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
 
-                // Controles de paginación con estilo
                 var pagination = document.getElementById('pagination');
                 pagination.innerHTML = '';
                 if (data.totalPages > 1) {
@@ -613,7 +656,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         pagination.innerHTML += `<button onclick="buscarDocente(${currentPage - 1})">&#8249; Anterior</button>`;
                     }
 
-                    const maxPagesToShow = 5; // Número máximo de botones de página a mostrar
+                    const maxPagesToShow = 5;
                     const startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
                     const endPage = Math.min(data.totalPages, startPage + maxPagesToShow - 1);
 
@@ -627,9 +670,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         pagination.innerHTML += `<button onclick="buscarDocente(${data.totalPages})">Último &#187;</button>`;
                     }
                 }
-
-                // Mostrar el contenedor de "Agregar Nuevo Docente"
-                mostrarBotonAgregarDocente();
             })
             .catch(error => {
                 console.error('Error al buscar docentes:', error);
@@ -640,83 +680,41 @@ document.addEventListener('DOMContentLoaded', function() {
     let docentesSeleccionados = [];
 
     function seleccionarDocente(button, dni, apellido, nombre) {
-    // Actualizar el campo oculto con la información del docente seleccionado
-    $('#docente-hidden-field').val(dni); // Aquí puedes asignar DNI o el dato que necesitas
-    $('#docente-input').val(`${nombre} ${apellido} (DNI: ${dni})`); // Mostrar el nombre en el modal
+        if (docentesSeleccionados.some(docente => docente.dni === dni)) {
+            alert('Este docente ya ha sido seleccionado.');
+            return;
+        }
 
-    var modal = bootstrap.Modal.getInstance(document.getElementById('modal-docente'));
-    modal.hide();
-}
+        docentesSeleccionados.push({ dni, apellido, nombre });
 
+        button.textContent = 'Eliminar';
+        button.className = 'btn btn-secondary btn-sm';
+        button.onclick = function() {
+            eliminarDocente(this, dni);
+        };
 
-function seleccionarDocente(button, dni, apellido, nombre) {
-    // Verificar si el docente ya ha sido seleccionado
-    if (docentesSeleccionados.some(docente => docente.dni === dni)) {
-        alert('Este docente ya ha sido seleccionado.');
-        return;
+        actualizarDocenteInput();
     }
 
-    // Agregar el docente seleccionado al arreglo
-    docentesSeleccionados.push({ dni, apellido, nombre });
-
-    // Actualizar el botón para eliminar
-    button.textContent = 'Eliminar';
-    button.className = 'btn btn-secondary btn-sm';
-    button.onclick = function() {
-        eliminarDocente(this, dni);
-    };
-
-    // Actualizar el textarea con los docentes seleccionados
-    const docenteInput = document.getElementById('docente-input');
-    docenteInput.value = docentesSeleccionados.map(docente => `${docente.nombre} ${docente.apellido} (DNI: ${docente.dni})`).join('\n');
-
-    // Actualizar el campo oculto con el DNI del docente seleccionado
-    const docenteHiddenField = document.getElementById('docente-hidden-field');
-    docenteHiddenField.value = dni; // Aquí estamos guardando el DNI en el campo oculto, puedes ajustar según tus necesidades
-}
-
-function eliminarDocente(button, dni) {
-    // Filtrar el docente eliminado del arreglo
-    docentesSeleccionados = docentesSeleccionados.filter(docente => docente.dni !== dni);
-
-    // Eliminar la fila correspondiente en la tabla
-    const row = button.closest('tr');
-    row.remove();
-
-    // Actualizar el textarea después de eliminar un docente
-    const docenteInput = document.getElementById('docente-input');
-    docenteInput.value = docentesSeleccionados.map(docente => `${docente.nombre} ${docente.apellido} (DNI: ${docente.dni})`).join('\n');
-
-    // Limpiar el campo oculto si se eliminan todos los docentes
-    const docenteHiddenField = document.getElementById('docente-hidden-field');
-    if (docentesSeleccionados.length === 0) {
-        docenteHiddenField.value = ''; // Limpiar el campo oculto si no quedan docentes
+    function eliminarDocente(button, dni) {
+        docentesSeleccionados = docentesSeleccionados.filter(docente => docente.dni !== dni);
+        button.closest('tr').remove();
+        actualizarDocenteInput();
     }
-}
 
-
-    function aceptarDocentes() {
+    function actualizarDocenteInput() {
         const docenteInput = document.getElementById('docente-input');
         docenteInput.value = docentesSeleccionados.map(docente => `${docente.nombre} ${docente.apellido} (DNI: ${docente.dni})`).join('\n');
 
+        const docenteHiddenField = document.getElementById('docente-hidden-field');
+        docenteHiddenField.value = JSON.stringify(docentesSeleccionados);
+    }
+
+    function aceptarDocentes() {
+        actualizarDocenteInput();
         var modal = bootstrap.Modal.getInstance(document.getElementById('modal-docente'));
         modal.hide();
     }
-
-    function mostrarBotonAgregarDocente() {
-        var container = document.getElementById('agregar-docente-container');
-        container.style.display = 'block'; // Mostrar el contenedor de "Agregar Docente"
-    }
-
-        function seleccionarDocente(button, dni, apellido, nombre) {
-        // Actualizar el campo oculto con la información del docente seleccionado
-        $('#docente-hidden-field').val(dni); // Aquí puedes asignar DNI o el dato que necesitas
-        $('#docente-input').val(`${nombre} ${apellido} (DNI: ${dni})`); // Mostrar el nombre en el modal
-
-        var modal = bootstrap.Modal.getInstance(document.getElementById('modal-docente'));
-        modal.hide();
-    }
-
 
     function agregarNuevoDocente() {
         var dni = document.getElementById('nuevo-docente-dni').value;
@@ -727,10 +725,8 @@ function eliminarDocente(button, dni) {
             dni: dni,
             apellido: apellido,
             nombre: nombre,
-            user_id: 0 // Enviar user_id como 0
+            user_id: 0
         };
-
-        console.log("Datos preparados para enviar: ", data);
 
         fetch("<?= Url::to(['concurso/agregar-docente']) ?>", {
             method: 'POST',
@@ -742,7 +738,6 @@ function eliminarDocente(button, dni) {
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Respuesta del servidor:', data);
             if (data.success) {
                 alert('Docente añadido exitosamente a la base de datos.');
             } else {

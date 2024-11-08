@@ -5,6 +5,7 @@ namespace app\controllers;
 use yii\filters\AccessControl;
 
 use app\models\AreaDepartamento;
+use app\models\AreaDepartamentoAsignatura;
 use app\models\Asignatura;
 use app\models\Carrera;
 use app\models\Categoria;
@@ -538,17 +539,28 @@ public function actionCreate()
         return $this->asJson(ArrayHelper::map($departamentos, 'id_area_departamento', 'descripcion_area_departamento'));
     }
 
-    // Acción para obtener asignaturas
-    public function actionGetAsignaturas($term = '', $id_facultad = null)
+    public function actionGetAsignaturas($term = '', $id_facultad = null, $id_area_departamento = null)
     {
+        // Crear la consulta inicial para asignaturas
         $query = Asignatura::find()->where(['like', 'descripcion_asignatura', $term]);
-
+    
+        // Aplicar filtro de facultad si está definido
         if ($id_facultad) {
             $query->andWhere(['id_facultad' => $id_facultad]);
         }
-
+    
+        // Aplicar filtro de departamento si está definido
+        if ($id_area_departamento) {
+            $subquery = AreaDepartamentoAsignatura::find()
+                ->select('id_asignatura')
+                ->where(['id_area_departamento' => $id_area_departamento]);
+            $query->andWhere(['id_asignatura' => $subquery]);
+        }
+    
+        // Obtener los resultados finales de asignaturas
         $asignaturas = $query->all();
-
+    
+        // Formatear los resultados para el autocompletado
         $result = [];
         foreach ($asignaturas as $asignatura) {
             $result[] = [
@@ -556,9 +568,11 @@ public function actionCreate()
                 'value' => $asignatura->id_asignatura,
             ];
         }
-
+    
         return $this->asJson($result);
     }
+    
+    
 
     public function actionBuscarDocente()
     {
@@ -922,27 +936,47 @@ public function actionAgregarDocente()
     $dni = $data['dni'] ?? null;
     $apellido = $data['apellido'] ?? null;
     $nombre = $data['nombre'] ?? null;
-    $user_id = $data['user_id'] ?? 0;
 
-    // Crear una nueva instancia de Profile y establecer el escenario
+    if (!$dni || !$apellido || !$nombre) {
+        return ['success' => false, 'message' => 'Datos incompletos. Se requiere DNI, apellido y nombre.'];
+    }
+
+    // Busca si ya existe un usuario con este DNI como `username`
+    $user = \app\models\User::findOne(['username' => $dni]);
+
+    if (!$user) {
+        // Crea el usuario de solo lectura sin email ni credenciales
+        $user = new \app\models\User();
+        $user->username = $dni;
+        $user->nombre = $nombre;
+        $user->apellido = $apellido;
+        $user->status = 0;  // Usuario sin verificar o de solo lectura
+        
+        if (!$user->save(false)) {
+            Yii::error("Error al crear el usuario: " . json_encode($user->errors));
+            return ['success' => false, 'message' => 'Error al crear el usuario.'];
+        }
+    }
+
+    // Crear el perfil del docente, asociándolo al `user_id` creado o existente
     $docente = new Profile();
     $docente->scenario = Profile::SCENARIO_DOCENTE;
     $docente->numero_documento = $dni;
     $docente->apellido = $apellido;
     $docente->nombre = $nombre;
-    $docente->user_id = $user_id;
-
-    // Verifica y muestra los atributos antes de la validación y guardado
-    Yii::info("Datos del modelo antes de guardar: " . json_encode($docente->attributes));
+    $docente->user_id = $user->id;
 
     if ($docente->validate() && $docente->save()) {
         return ['success' => true];
     } else {
-        // Mostrar errores detallados de validación
-        Yii::info("Errores al guardar el docente: " . json_encode($docente->errors));
-        return ['success' => false, 'message' => 'Error al guardar el docente: ' . implode(', ', array_map(fn($errors) => implode(', ', $errors), $docente->errors)),
- 'errors' => $docente->errors];
+        Yii::info("Errores al guardar el perfil del docente: " . json_encode($docente->errors));
+        return [
+            'success' => false, 
+            'message' => 'Error al guardar el docente: ' . implode(', ', array_map(fn($errors) => implode(', ', $errors), $docente->errors)),
+            'errors' => $docente->errors
+        ];
     }
 }
+
 
 }
