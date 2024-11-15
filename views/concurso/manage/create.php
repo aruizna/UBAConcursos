@@ -371,7 +371,7 @@ body {
         <?= $form->field($model, 'id_dedicacion')->dropDownList($dedicacionesList, ['prompt' => 'Seleccione una Dedicación']) ?>
 
         <!-- Cantidad de cargos -->
-        <?= $form->field($model, 'cantidad_de_puestos')->input('number', ['min' => 1, 'placeholder' => 'Ingrese la cantidad de cargos']) ?>
+        <?= $form->field($model, 'cantidad_de_puestos')->input('number', ['min' => 1, 'placeholder' => 'Ingrese la cantidad de cargos', 'id' => 'cantidad_de_puestos']) ?>
 
         <!-- Fecha de Inscripción -->
         <div class="form-group">
@@ -487,24 +487,27 @@ Modal::end();
 ?>
 
 <script>
+
 document.querySelector('.concurso-form').addEventListener('submit', function(event) {
-        const cantidadPuestos = parseInt(document.getElementById('concurso-cantidad-de-puestos').value);
-        const cantidadDocentes = docentesSeleccionados.length;
+    const tipoConcursoSelect = document.getElementById('tipo-concurso');
+    const tipoConcurso = tipoConcursoSelect ? tipoConcursoSelect.options[tipoConcursoSelect.selectedIndex].text : '';
+    const cantidadPuestos = parseInt(document.getElementById('cantidad_de_puestos').value);
+    const cantidadDocentes = docentesSeleccionados.length;
 
-        if (cantidadPuestos !== cantidadDocentes) {
-            event.preventDefault(); // Evita el envío del formulario
-            mostrarAlertaCantidadPuestosDocentes();
-        } else {
-            console.log("Asignaturas seleccionadas JSON:", document.getElementById("asignaturas-seleccionadas-input").value);
-            console.log("Docentes seleccionados JSON:", document.getElementById("docente-hidden-field").value);
-        }
-    });
-
-    function mostrarAlertaCantidadPuestosDocentes() {
-        // Crea y muestra una alerta simple
-        const mensaje = "No es posible crear un concurso si la cantidad de puestos no es igual a la cantidad de docentes asignados.";
-        alert(mensaje);
+    // Verificar que el tipo de concurso sea "Renovación de Cargo" y que la cantidad de cargos coincida con la cantidad de docentes
+    if (tipoConcurso === 'Renovación de Cargo' && cantidadPuestos !== cantidadDocentes) {
+        event.preventDefault(); // Evita el envío del formulario
+        mostrarAlertaCantidadPuestosDocentes();
     }
+});
+
+
+function mostrarAlertaCantidadPuestosDocentes() {
+    // Crear y mostrar una alerta simple
+    const mensaje = "No es posible crear un concurso de renovación si la cantidad de cargos no es igual a la cantidad de docentes asignados.";
+    alert(mensaje);
+}
+
     
     // Funciones para cargar asignaturas en base a Facultad y Departamento seleccionados
     document.getElementById('unidad-academica').addEventListener('change', function() {
@@ -587,11 +590,6 @@ document.querySelector('.concurso-form').addEventListener('submit', function(eve
         const tipoConcursoSelect = document.getElementById('tipo-concurso');
         const docenteSection = document.getElementById('docente-section');
         const form = document.querySelector('.concurso-form');
-
-        form.addEventListener('submit', function(event) {
-            console.log("Asignaturas seleccionadas JSON:", document.getElementById("asignaturas-seleccionadas-input").value);
-            console.log("Docentes seleccionados JSON:", document.getElementById("docente-hidden-field").value);
-        });
 
         tipoConcursoSelect.addEventListener('change', function() {
             const selectedText = this.options[this.selectedIndex].text;

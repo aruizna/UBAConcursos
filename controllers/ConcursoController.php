@@ -789,38 +789,35 @@ public function actionPublishConfirm($id)
     $concursoPendiente = ConcursoPendiente::findOne($id);
 
     if ($concursoPendiente !== null) {
-        $concurso = new Concurso();
+        $transaction = Yii::$app->db->beginTransaction(); // Inicia la transacción
+        try {
+            $concurso = new Concurso();
 
-        // Asignar atributos desde concursoPendiente excluyendo id_concurso
-        $concurso->attributes = $concursoPendiente->getAttributes(null, ['id_concurso_pendiente', 'id_concurso']);
+  
+            $concurso->attributes = $concursoPendiente->getAttributes(null, ['id_concurso_pendiente', 'id_concurso']);
 
-        // Asegurar que las fechas se formatean correctamente como datetime
-        if (!empty($concursoPendiente->fecha_sorteo_publicada)) {
-            $concurso->fecha_sorteo_publicada = date('Y-m-d H:i:s', strtotime($concursoPendiente->fecha_sorteo_publicada));
-        } else {
-            $concurso->fecha_sorteo_publicada = null;
-        }
-
-        if (!empty($concursoPendiente->fecha_entrevista_prueba_publicada)) {
-            $concurso->fecha_entrevista_prueba_publicada = date('Y-m-d H:i:s', strtotime($concursoPendiente->fecha_entrevista_prueba_publicada));
-        } else {
-            $concurso->fecha_entrevista_prueba_publicada = null;
-        }
-
-        // Guardar el registro en la tabla 'concurso'
-        if ($concurso->save()) {
-            // Obtener el ID del concurso recién insertado
-            $idConcurso = $concurso->id_concurso;
-
-            // 1. Insertar asignaturas en 'concurso_asignatura'
-            $asignaturasSeleccionadas = $concursoPendiente->asignaturas_seleccionadas;
-
-            // Verificar si $asignaturasSeleccionadas es un string JSON y decodificar si es necesario
-            if (is_string($asignaturasSeleccionadas)) {
-                $asignaturasSeleccionadas = json_decode($asignaturasSeleccionadas, true);
+            if (!empty($concursoPendiente->fecha_inicio_inscripcion) && !empty($concursoPendiente->hora_inicio_inscripcion)) {
+                $fechaInicio = new \DateTime($concursoPendiente->fecha_inicio_inscripcion);
+                $horaInicio = explode(":", $concursoPendiente->hora_inicio_inscripcion);
+                $fechaInicio->setTime($horaInicio[0], $horaInicio[1], 0);
+                $concurso->fecha_inicio_inscripcion = $fechaInicio->format('Y-m-d H:i:s');
             }
 
-            // Proceder solo si $asignaturasSeleccionadas es un array y no está vacío
+            if (!empty($concursoPendiente->fecha_fin_inscripcion) && !empty($concursoPendiente->hora_fin_inscripcion)) {
+                $fechaFin = new \DateTime($concursoPendiente->fecha_fin_inscripcion);
+                $horaFin = explode(":", $concursoPendiente->hora_fin_inscripcion);
+                $fechaFin->setTime($horaFin[0], $horaFin[1], 0);
+                $concurso->fecha_fin_inscripcion = $fechaFin->format('Y-m-d H:i:s');
+            }
+
+            if (!$concurso->save()) {
+                throw new \Exception('Error al guardar el concurso: ' . json_encode($concurso->getErrors()));
+            }
+
+            $idConcurso = $concurso->id_concurso;
+
+            $asignaturasSeleccionadas = is_string($concursoPendiente->asignaturas_seleccionadas) ? json_decode($concursoPendiente->asignaturas_seleccionadas, true) : $concursoPendiente->asignaturas_seleccionadas;
+
             if (is_array($asignaturasSeleccionadas) && !empty($asignaturasSeleccionadas)) {
                 foreach ($asignaturasSeleccionadas as $idAsignatura) {
                     Yii::$app->db->createCommand()->insert('concurso_asignatura', [
@@ -831,23 +828,36 @@ public function actionPublishConfirm($id)
                 }
             }
 
-            // 2. Insertar docente en 'persona_concurso_renovacion' si existe
-            if ($concursoPendiente->docente) {
-                Yii::$app->db->createCommand()->insert('persona_concurso_renovacion', [
-                    'id_concurso' => $idConcurso,
-                    'id_tipo_documento' => 1, // Asume tipo de documento 1 (puedes ajustarlo según corresponda)
-                    'numero_documento' => $concursoPendiente->docente,
-                    'id_categoria' => $concursoPendiente->id_categoria,
-                    'id_dedicacion' => $concursoPendiente->id_dedicacion,
-                ])->execute();
+            if (is_array($concursoPendiente->docente)) {
+                foreach ($concursoPendiente->docente as $docente) {
+                    $exists = (new \yii\db\Query())
+                        ->from('persona_concurso_renovacion')
+                        ->where([
+                            'id_concurso' => $idConcurso,
+                            'numero_documento' => $docente['dni']
+                        ])
+                        ->exists();
+
+                    if (!$exists) {
+                        Yii::$app->db->createCommand()->insert('persona_concurso_renovacion', [
+                            'id_concurso' => $idConcurso,
+                            'id_tipo_documento' => 1,
+                            'numero_documento' => $docente['dni'],
+                            'id_categoria' => $concursoPendiente->id_categoria,
+                            'id_dedicacion' => $concursoPendiente->id_dedicacion,
+
+                        ])->execute();
+                    }
+                }
             }
 
-            // Eliminar el registro de 'concurso_pendiente'
             $concursoPendiente->delete();
+            $transaction->commit();
+
             Yii::$app->session->setFlash('success', 'El concurso ha sido publicado exitosamente.');
-        } else {
-            $errors = $concurso->getErrors();
-            Yii::$app->session->setFlash('error', 'No se pudo publicar el concurso: ' . json_encode($errors));
+        } catch (\Exception $e) {
+            $transaction->rollBack(); 
+            Yii::$app->session->setFlash('error', 'No se pudo publicar el concurso: ' . $e->getMessage());
         }
     } else {
         Yii::$app->session->setFlash('error', 'Concurso no encontrado.');
@@ -855,9 +865,6 @@ public function actionPublishConfirm($id)
 
     return $this->redirect(['publish']);
 }
-
-
-
 
 public function actionNominaPreinscriptos()
 {

@@ -135,92 +135,94 @@ body {
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    'dataProvider' => $dataProvider,
+    'columns' => [
+        ['class' => 'yii\grid\SerialColumn'],
+        'numero_expediente',
+        [
+            'label' => 'Asignatura(s)',
+            'value' => function($model) {
+                return $model->getAsignaturasNombres();
+            },
+        ],
 
-            'id_concurso_pendiente',
-            'numero_expediente',
-            [
-                'attribute' => 'id_tipo_concurso',
-                'value' => function($model) {
-                    return $model->tipoConcurso ? $model->tipoConcurso->descripcion_tipo_concurso : 'N/A';
-                },
-                'label' => 'Tipo de Concurso',
-            ],
-            [
-                'attribute' => 'id_facultad',
-                'value' => function($model) {
-                    return $model->facultad ? $model->facultad->nombre_facultad : 'N/A';
-                },
-                'label' => 'Facultad',
-            ],
-            [
-                'attribute' => 'id_categoria',
-                'value' => function($model) {
-                    return $model->categoria ? $model->categoria->descripcion_categoria : 'N/A';
-                },
-                'label' => 'Categoría',
-            ],
-            [
-                'attribute' => 'id_dedicacion',
-                'value' => function($model) {
-                    return $model->dedicacion ? $model->dedicacion->descripcion_dedicacion : 'N/A';
-                },
-                'label' => 'Dedicación',
-            ],
-            [
-                'attribute' => 'id_area_departamento',
-                'value' => function($model) {
-                    return $model->areaDepartamento ? $model->areaDepartamento->descripcion_area_departamento : 'N/A';
-                },
-                'label' => 'Área/Departamento',
-            ],
-            [
-                'attribute' => 'fecha_inicio_inscripcion',
-                'value' => function($model) {
-                    return $model->fecha_inicio_inscripcion ? Yii::$app->formatter->asDate($model->fecha_inicio_inscripcion, 'dd/MM/yyyy') : 'N/A';
-                },
-                'label' => 'Fecha Inicio Inscripción',
-            ],
-            [
-                'attribute' => 'fecha_fin_inscripcion',
-                'value' => function($model) {
-                    return $model->fecha_fin_inscripcion ? Yii::$app->formatter->asDate($model->fecha_fin_inscripcion, 'dd/MM/yyyy') : 'N/A';
-                },
-                'label' => 'Fecha Fin Inscripción',
-            ],
-            // Otros campos que desees mostrar
+        [
+            'attribute' => 'id_tipo_concurso',
+            'value' => function($model) {
+                return $model->tipoConcurso ? $model->tipoConcurso->descripcion_tipo_concurso : 'N/A';
+            },
+            'label' => 'Tipo de Concurso',
+        ],
+        [
+            'attribute' => 'id_facultad',
+            'value' => function($model) {
+                return $model->facultad ? $model->facultad->nombre_facultad : 'N/A';
+            },
+            'label' => 'Facultad',
+        ],
+        [
+            'attribute' => 'id_categoria',
+            'value' => function($model) {
+                return $model->categoria ? $model->categoria->descripcion_categoria : 'N/A';
+            },
+            'label' => 'Categoría',
+        ],
+        [
+            'attribute' => 'id_dedicacion',
+            'value' => function($model) {
+                return $model->dedicacion ? $model->dedicacion->descripcion_dedicacion : 'N/A';
+            },
+            'label' => 'Dedicación',
+        ],
+        [
+            'attribute' => 'id_area_departamento',
+            'value' => function($model) {
+                return $model->areaDepartamento ? $model->areaDepartamento->descripcion_area_departamento : 'N/A';
+            },
+            'label' => 'Área/Departamento',
+        ],
+        [
+            'label' => 'Período de Inscripción',
+            'format' => 'raw',
+            'value' => function($model) {
+                $fechaInicio = date('d/m/Y', strtotime($model->fecha_inicio_inscripcion)) . ' ' . $model->hora_inicio_inscripcion;
+                $fechaFin = date('d/m/Y', strtotime($model->fecha_fin_inscripcion)) . ' ' . $model->hora_fin_inscripcion;
+                return "<strong>Desde</strong> $fechaInicio<br><strong>Hasta</strong> $fechaFin";
+            },
+        ],
+        
+        
+        
 
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {edit} {publish}',
-                'buttons' => [
-                    'view' => function ($url, $model, $key) {
-                        return Html::button('Ver', [
-                            'class' => 'btn btn-info',
-                            'data-bs-toggle' => 'modal',
-                            'data-bs-target' => '#viewModal' . $model->id_concurso_pendiente,
-                        ]);
-                    },
-                    'edit' => function ($url, $model, $key) {
-                        return Html::button('Editar', [
-                            'class' => 'btn btn-primary',
-                            'data-bs-toggle' => 'modal',
-                            'data-bs-target' => '#editModal' . $model->id_concurso_pendiente,
-                        ]);
-                    },
-                    'publish' => function ($url, $model, $key) {
-                        return Html::button('Publicar', [
-                            'class' => 'btn btn-warning',
-                            'data-bs-toggle' => 'modal',
-                            'data-bs-target' => '#publishModal' . $model->id_concurso_pendiente,
-                        ]);
-                    },
-                ],
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'template' => '{view} {edit} {publish}',
+            'buttons' => [
+                'view' => function ($url, $model, $key) {
+                    return Html::button('Ver', [
+                        'class' => 'btn btn-info',
+                        'data-bs-toggle' => 'modal',
+                        'data-bs-target' => '#viewModal' . $model->id_concurso_pendiente,
+                    ]);
+                },
+                'edit' => function ($url, $model, $key) {
+                    return Html::button('Editar', [
+                        'class' => 'btn btn-primary',
+                        'data-bs-toggle' => 'modal',
+                        'data-bs-target' => '#editModal' . $model->id_concurso_pendiente,
+                    ]);
+                },
+                'publish' => function ($url, $model, $key) {
+                    return Html::button('Publicar', [
+                        'class' => 'btn btn-warning',
+                        'data-bs-toggle' => 'modal',
+                        'data-bs-target' => '#publishModal' . $model->id_concurso_pendiente,
+                    ]);
+                },
             ],
         ],
-    ]); ?>
+    ],
+]); ?>
 
 </div>
 
@@ -237,8 +239,8 @@ foreach ($dataProvider->models as $model) {
     echo '<p><strong>Número de Expediente:</strong> ' . $model->numero_expediente . '</p>';
     echo '<p><strong>Tipo de Concurso:</strong> ' . ($model->tipoConcurso ? $model->tipoConcurso->descripcion_tipo_concurso : 'N/A') . '</p>';
     echo '<p><strong>Facultad:</strong> ' . ($model->facultad ? $model->facultad->nombre_facultad : 'N/A') . '</p>';
-    echo '<p><strong>Asignatura(s):</strong> ' . Html::encode(implode(', ', $model->asignaturasNombres)) . '</p>';
-    echo '<p><strong>Docente:</strong> ' . Html::encode($model->getDocenteNombre()) . '</p>';
+    echo '<p><strong>Asignatura(s):</strong> ' . Html::encode(implode(', ', (array) $model->getAsignaturasNombres())) . '</p>';
+    echo '<p><strong>Docente/s:</strong> ' . Html::encode(implode(', ', (array) $model->getDocenteNombre())) . '</p>';
 
 
     echo '<p><strong>Categoría:</strong> ' . ($model->categoria ? $model->categoria->descripcion_categoria : 'N/A') . '</p>';
