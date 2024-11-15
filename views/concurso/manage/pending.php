@@ -8,13 +8,11 @@ use yii\bootstrap5\Modal;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Modificar Llamado de Concursos';
-$this->params['breadcrumbs'][] = ['label' => 'Gestionar Nuevos Concursos', 'url' => ['manage']];
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
 <style>
-/* Estilos previos */
 body {
     font-family: "Bitter", serif;
     font-weight: 400;
@@ -36,7 +34,6 @@ body {
 .grid-view {
     width: 100%;
     margin-bottom: 30px;
-    border: 1px solid #1d2554;
 }
 
 .grid-view th, .grid-view td {
@@ -128,71 +125,84 @@ body {
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    'dataProvider' => $dataProvider,
+    'columns' => [
+        ['class' => 'yii\grid\SerialColumn'],
 
-            'id_concurso_pendiente',
-            'numero_expediente',
-            [
-                'attribute' => 'id_tipo_concurso',
-                'value' => function($model) {
-                    return $model->tipoConcurso->descripcion_tipo_concurso ?? 'N/A';
+        'numero_expediente',
+        
+        [
+            'label' => 'Asignatura(s)',
+            'value' => function($model) {
+                return $model->getAsignaturasNombres(); // Mostrar los nombres de asignaturas
+            },
+        ],
+        [
+            'attribute' => 'id_tipo_concurso',
+            'value' => function($model) {
+                return $model->tipoConcurso->descripcion_tipo_concurso ?? 'N/A';
+            },
+            'label' => 'Tipo de Concurso'
+        ],
+        [
+            'attribute' => 'id_facultad',
+            'value' => function($model) {
+                return $model->facultad->nombre_facultad ?? 'N/A';
+            },
+            'label' => 'Facultad'
+        ],
+        [
+            'attribute' => 'id_categoria',
+            'value' => function($model) {
+                return $model->categoria->descripcion_categoria ?? 'N/A';
+            },
+            'label' => 'Categoría'
+        ],   
+        [
+            'attribute' => 'id_dedicacion',
+            'value' => function($model) {
+                return $model->dedicacion->descripcion_dedicacion ?? 'N/A';
+            },
+            'label' => 'Dedicación'
+        ],
+        [
+            'attribute' => 'id_area_departamento',
+            'value' => function($model) {
+                return $model->areaDepartamento->descripcion_area_departamento ?? 'N/A';
+            },
+            'label' => 'Área/Departamento'
+        ],
+        [
+            'label' => 'Período de Inscripción',
+            'format' => 'raw',
+            'value' => function($model) {
+                $fechaInicio = Yii::$app->formatter->asDatetime($model->fecha_inicio_inscripcion, 'dd/MM/yyyy HH:mm');
+                $fechaFin = Yii::$app->formatter->asDatetime($model->fecha_fin_inscripcion, 'dd/MM/yyyy HH:mm');
+                return "<strong>Desde</strong> $fechaInicio<br><strong>Hasta</strong> $fechaFin";
+            },
+        ],
+        [
+            'class' => 'yii\grid\ActionColumn',
+            'template' => '{view} {edit}', // Personaliza según tus necesidades
+            'buttons' => [
+                'view' => function ($url, $model, $key) {
+                    return Html::button('Ver', [
+                        'class' => 'btn btn-info',
+                        'data-bs-toggle' => 'modal',
+                        'data-bs-target' => '#viewModal' . $model->id_concurso_pendiente,
+                    ]);
                 },
-                'label' => 'Tipo de Concurso'
-            ],
-            [
-                'attribute' => 'id_facultad',
-                'value' => function($model) {
-                    return $model->facultad->nombre_facultad ?? 'N/A';
+                'edit' => function ($url, $model, $key) {
+                    return Html::button('Editar', [
+                        'class' => 'btn btn-primary',
+                        'data-bs-toggle' => 'modal',
+                        'data-bs-target' => '#editModal' . $model->id_concurso_pendiente,
+                    ]);
                 },
-                'label' => 'Facultad'
-            ],
-            [
-                'attribute' => 'id_categoria',
-                'value' => function($model) {
-                    return $model->categoria->descripcion_categoria ?? 'N/A';
-                },
-                'label' => 'Categoría'
-            ],
-            [
-                'attribute' => 'id_dedicacion',
-                'value' => function($model) {
-                    return $model->dedicacion->descripcion_dedicacion ?? 'N/A';
-                },
-                'label' => 'Dedicación'
-            ],
-            [
-                'attribute' => 'id_area_departamento',
-                'value' => function($model) {
-                    return $model->areaDepartamento->descripcion_area_departamento ?? 'N/A';
-                },
-                'label' => 'Área/Departamento'
-            ],
-            // Otros campos que desees mostrar
-
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {edit}', // Personaliza según tus necesidades
-                'buttons' => [
-                    'view' => function ($url, $model, $key) {
-                        return Html::button('Ver', [
-                            'class' => 'btn btn-info',
-                            'data-bs-toggle' => 'modal',
-                            'data-bs-target' => '#viewModal' . $model->id_concurso_pendiente,
-                        ]);
-                    },
-                    'edit' => function ($url, $model, $key) {
-                        return Html::button('Editar', [
-                            'class' => 'btn btn-primary',
-                            'data-bs-toggle' => 'modal',
-                            'data-bs-target' => '#editModal' . $model->id_concurso_pendiente,
-                        ]);
-                    },
-                ],
             ],
         ],
-    ]); ?>
+    ],
+]); ?>
 
 </div>
 
@@ -210,7 +220,7 @@ foreach ($dataProvider->models as $model) {
     echo '<p><strong>Número de Expediente:</strong> ' . Html::encode($model->numero_expediente) . '</p>';
     echo '<p><strong>Tipo de Concurso:</strong> ' . Html::encode($model->tipoConcurso->descripcion_tipo_concurso ?? 'N/A') . '</p>';
     echo '<p><strong>Facultad:</strong> ' . Html::encode($model->facultad->nombre_facultad ?? 'N/A') . '</p>';
-    echo '<p><strong>Asignatura(s):</strong> ' . Html::encode(implode(', ', $model->getAsignaturasNombres())) . '</p>'; // Mostrar nombres de asignaturas
+    echo '<p><strong>Asignatura(s):</strong> ' . Html::encode($model->getAsignaturasNombres()) . '</p>';
     echo '<p><strong>Categoría:</strong> ' . Html::encode($model->categoria->descripcion_categoria ?? 'N/A') . '</p>';
     echo '<p><strong>Dedicación:</strong> ' . Html::encode($model->dedicacion->descripcion_dedicacion ?? 'N/A') . '</p>';
     echo '<p><strong>Área/Departamento:</strong> ' . Html::encode($model->areaDepartamento->descripcion_area_departamento ?? 'N/A') . '</p>';
@@ -221,7 +231,7 @@ foreach ($dataProvider->models as $model) {
     echo '<p><strong>Hora Fin Inscripción:</strong> ' . Html::encode($model->hora_fin_inscripcion) . '</p>';
     echo '<p><strong>Fecha Publicación:</strong> ' . Html::encode(Yii::$app->formatter->asDate($model->fecha_publicacion, 'php:d/m/Y')) . '</p>';
     echo '<p><strong>Comentario:</strong> ' . Html::encode($model->comentario) . '</p>';
-    echo '<p><strong>Docente que Ocupa el Cargo:</strong> ' . Html::encode($model->getDocenteNombre()) . '</p>'; // Mostrar nombres del docente
+    echo '<p><strong>Docente/s que Ocupa/n el Cargo:</strong> ' . Html::encode(implode(', ', (array)$model->getDocenteNombre())) . '</p>'; // Mostrar nombres de los docentes
 
     echo '</div>';
     echo '</div>';

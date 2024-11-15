@@ -108,45 +108,47 @@ class ConcursoPendiente extends ActiveRecord
         return $this->hasOne(AreaDepartamento::class, ['id_area_departamento' => 'id_area_departamento']);
     }
 
+ 
     public function getAsignaturas()
     {
         return $this->hasMany(Asignatura::class, ['id' => 'asignatura_id'])
                     ->viaTable('concurso_asignatura', ['concurso_pendiente_id' => 'id_concurso_pendiente']);
     }
-
+ 
+ 
     public function getAsignaturasNombres()
     {
-        // Decodificar `asignaturas_seleccionadas` si es una cadena JSON
-        $asignaturasIds = is_string($this->asignaturas_seleccionadas) ? json_decode($this->asignaturas_seleccionadas, true) : $this->asignaturas_seleccionadas;
+        $asignaturaIds = is_array($this->asignaturas_seleccionadas) ? $this->asignaturas_seleccionadas : [];
     
-        // Verificar que `asignaturasIds` sea un array válido y no esté vacío
-        if (json_last_error() !== JSON_ERROR_NONE || empty($asignaturasIds)) {
-            return ['N/A'];
+        if (!empty($asignaturaIds)) {
+            $asignaturas = Asignatura::find()
+                ->select('descripcion_asignatura')
+                ->where(['id_asignatura' => $asignaturaIds])
+                ->column();
+    
+            return implode(', ', $asignaturas); 
         }
     
-        // Obtener los nombres de las asignaturas
-        return Asignatura::find()
-            ->select('descripcion_asignatura')
-            ->where(['id_asignatura' => $asignaturasIds])
-            ->column();
+        return 'N/A';
     }
+    
     
     public function getDocenteNombre()
     {
-        // Suponiendo que el campo `docente` contiene el número de documento del docente
-        if (empty($this->docente)) {
-            return 'N/A';
+        if (!is_array($this->docente) || empty($this->docente)) {
+            return ['N/A'];
         }
-
-        // Obtener el perfil del docente con base en el número de documento
-        $docente = Profile::find()
-            ->select(['nombre', 'apellido'])
-            ->where(['numero_documento' => $this->docente])
-            ->one();
-
-        // Devolver nombre y apellido si se encuentra el docente, de lo contrario, 'N/A'
-        return $docente ? $docente->nombre . ' ' . $docente->apellido : 'N/A';
+    
+        // Recorrer los docentes y construir una lista de nombres completos
+        $docentesNombres = [];
+        foreach ($this->docente as $docente) {
+            $nombreCompleto = $docente['apellido'] . ' ' . $docente['nombre'];
+            $docentesNombres[] = $nombreCompleto;
+        }
+        return $docentesNombres;
     }
+    
+    
 
 
     public function validateDates($attribute, $params)
@@ -167,38 +169,62 @@ class ConcursoPendiente extends ActiveRecord
         if (parent::beforeSave($insert)) {
             // Procesar número de expediente
             $this->numero_expediente = 'EX-' . $this->expediente_ano . '-' . $this->expediente_numero . '--UBA-' . $this->expediente_dependencia;
-            
     
             // Convertir las fechas y horas a formato datetime
-            $this->fecha_inicio_inscripcion = $this->fecha_inicio_inscripcion ? $this->fecha_inicio_inscripcion . ' 00:00:00' : null;
-            $this->fecha_fin_inscripcion = $this->fecha_fin_inscripcion ? $this->fecha_fin_inscripcion . ' 00:00:00' : null;
-            $this->fecha_publicacion = $this->fecha_publicacion ? $this->fecha_publicacion . ' 00:00:00' : null;
+            if ($this->fecha_inicio_inscripcion && $this->hora_inicio_inscripcion) {
+                $this->fecha_inicio_inscripcion .= ' ' . $this->hora_inicio_inscripcion . ':00';
+            } else {
+                $this->fecha_inicio_inscripcion = null;
+            }
+    
+            if ($this->fecha_fin_inscripcion && $this->hora_fin_inscripcion) {
+                $this->fecha_fin_inscripcion .= ' ' . $this->hora_fin_inscripcion . ':00';
+            } else {
+                $this->fecha_fin_inscripcion = null;
+            }
+    
+            if ($this->fecha_publicacion) {
+                $this->fecha_publicacion .= ' 00:00:00';
+            }
+    
+            // Convertir el campo docente a JSON si es un array
+            if (is_array($this->docente)) {
+                $this->docente = json_encode($this->docente, JSON_UNESCAPED_UNICODE);
+            }
+    
+            // Convertir asignaturas_seleccionadas a JSON si es un array
+            if (is_array($this->asignaturas_seleccionadas)) {
+                $this->asignaturas_seleccionadas = json_encode($this->asignaturas_seleccionadas, JSON_UNESCAPED_UNICODE);
+            }
     
             return true;
         }
         return false;
-
-        Yii::info("Valor final de asignaturas_seleccionadas antes de guardar: " . $this->asignaturas_seleccionadas);
-
     }
-    
-    public function afterFind()
-    {
-        parent::afterFind();
-    
-        // Procesar número de expediente en componentes
-        if ($this->numero_expediente) {
-            $parts = explode('-', str_replace('--UBA-', '-', $this->numero_expediente));
-            $this->expediente_ano = $parts[1];
-            $this->expediente_numero = $parts[2];
-            $this->expediente_dependencia = $parts[3];
-        }
-    
-        // Decodificar asignaturas_seleccionadas solo si es un string JSON
-        if (is_string($this->asignaturas_seleccionadas)) {
-            $this->asignaturas_seleccionadas = json_decode($this->asignaturas_seleccionadas, true) ?? [];
-        }
+     
+public function afterFind()
+{
+    parent::afterFind();
+
+    // Procesar número de expediente en componentes
+    if ($this->numero_expediente) {
+        $parts = explode('-', str_replace('--UBA-', '-', $this->numero_expediente));
+        $this->expediente_ano = $parts[1];
+        $this->expediente_numero = $parts[2];
+        $this->expediente_dependencia = $parts[3];
     }
+
+    // Decodificar asignaturas_seleccionadas solo si es un string JSON
+    if (is_string($this->asignaturas_seleccionadas)) {
+        $this->asignaturas_seleccionadas = json_decode($this->asignaturas_seleccionadas, true) ?? [];
+    }
+
+    // Decodificar el campo docente solo si es un string JSON
+    if (is_string($this->docente)) {
+        $this->docente = json_decode($this->docente, true) ?? [];
+    }
+}
+
     
 
     public function getDocenteRenovacion()

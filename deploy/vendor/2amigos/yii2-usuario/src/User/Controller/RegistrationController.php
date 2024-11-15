@@ -97,13 +97,13 @@ class RegistrationController extends Controller
         if (!$this->module->enableRegistration) {
             throw new NotFoundHttpException();
         }
+
         /** @var RegistrationForm $form */
-        $data = $this->make(RegistrationForm::class);
         $form = $this->make(RegistrationForm::class);
+
 
         /** @var FormEvent $event */
         $event = $this->make(FormEvent::class, [$form]);
-
         $this->make(AjaxRequestModelValidator::class, [$form])->validate();
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
@@ -128,8 +128,17 @@ class RegistrationController extends Controller
 
             if (($this->make(UserRegisterService::class, [$user, $mailService])->run())) { //&&($profile->save(false))) {
 
-                $profile = Profile::findOne(["user_id" => $user->id, "concurso_id" => null]);
-                $profile->numero_documento = $form->username;
+                /*
+                    BUSCO SI EXISTE UN PROFILE CON ESE DNI
+                */
+                $profile = Profile::findOne(["numero_documento" => $user->username, "concurso_id" => null]);
+                
+                if ($profile) {//SI EXISTE ACTUALIZO id del perfil
+                    $profile->user_id = $user->id;
+                }else{//SI NO EXISTE CREO EL PERFIL
+                    $profile = new Profile();
+                    $profile->numero_documento = $form->username;
+                }
                 $profile->nombre = $form->nombre;
                 $profile->apellido = $form->apellido;
                 $profile->cuil = $form->cuil;
