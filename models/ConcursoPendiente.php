@@ -44,7 +44,7 @@ class ConcursoPendiente extends ActiveRecord
             [['id_tipo_concurso', 'id_facultad', 'id_area_departamento', 'id_categoria', 'id_dedicacion', 'cantidad_de_puestos'], 'integer'],
             [['fecha_inicio_inscripcion', 'fecha_fin_inscripcion', 'hora_inicio_inscripcion', 'hora_fin_inscripcion', 'fecha_publicacion'], 'safe'],
             [['comentario'], 'string', 'max' => 400],
-            [['area'], 'string', 'max' => 255],
+            [['area'], 'string', 'max' => 500],
             [['numero_expediente'], 'string', 'max' => 50],
             [['expediente_ano'], 'required', 'message' => 'El año es obligatorio'],
             [['expediente_ano'], 'match', 'pattern' => '/^\d{4}$/', 'message' => 'El año debe tener 4 dígitos'],
