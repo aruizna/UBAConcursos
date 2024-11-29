@@ -668,6 +668,9 @@ function mostrarAlertaCantidadPuestosDocentes() {
                         pagination.innerHTML += `<button onclick="buscarDocente(${data.totalPages})">Último &#187;</button>`;
                     }
                 }
+            
+                document.getElementById('agregar-docente-container').style.display = 'block';
+
             })
             .catch(error => {
                 console.error('Error al buscar docentes:', error);

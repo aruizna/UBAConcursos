@@ -935,55 +935,48 @@ public function actionNominaPreinscriptos()
 
 public function actionAgregarDocente()
 {
-    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-    $data = \Yii::$app->request->getRawBody();
+    $data = Yii::$app->request->getRawBody();
     $data = json_decode($data, true);
 
     $dni = $data['dni'] ?? null;
     $apellido = $data['apellido'] ?? null;
     $nombre = $data['nombre'] ?? null;
+    $user_id = $data['user_id'] ?? 0;
 
-    if (!$dni || !$apellido || !$nombre) {
-        return ['success' => false, 'message' => 'Datos incompletos. Se requiere DNI, apellido y nombre.'];
+    // Verificar si ya existe un docente con el mismo DNI
+    $existeDocente = Profile::findOne(['numero_documento' => $dni]);
+    if ($existeDocente) {
+        return [
+            'success' => false,
+            'message' => 'Ya existe un docente con el DNI proporcionado.',
+        ];
     }
 
-    // Busca si ya existe un usuario con este DNI como `username`
-    $user = \app\models\User::findOne(['username' => $dni]);
-
-    if (!$user) {
-        // Crea el usuario de solo lectura sin email ni credenciales
-        $user = new \app\models\User();
-        $user->username = $dni;
-        $user->nombre = $nombre;
-        $user->apellido = $apellido;
-        $user->status = 0;  // Usuario sin verificar o de solo lectura
-        
-        if (!$user->save(false)) {
-            Yii::error("Error al crear el usuario: " . json_encode($user->errors));
-            return ['success' => false, 'message' => 'Error al crear el usuario.'];
-        }
-    }
-
-    // Crear el perfil del docente, asociándolo al `user_id` creado o existente
     $docente = new Profile();
     $docente->scenario = Profile::SCENARIO_DOCENTE;
     $docente->numero_documento = $dni;
     $docente->apellido = $apellido;
     $docente->nombre = $nombre;
-    $docente->user_id = $user->id;
+    $docente->user_id = $user_id;
+
+    // Verifica y muestra los atributos antes de la validación y guardado
+    Yii::info("Datos del modelo antes de guardar: " . json_encode($docente->attributes));
 
     if ($docente->validate() && $docente->save()) {
         return ['success' => true];
     } else {
-        Yii::info("Errores al guardar el perfil del docente: " . json_encode($docente->errors));
+        // Mostrar errores detallados de validación
+        Yii::info("Errores al guardar el docente: " . json_encode($docente->errors));
         return [
-            'success' => false, 
+            'success' => false,
             'message' => 'Error al guardar el docente: ' . implode(', ', array_map(fn($errors) => implode(', ', $errors), $docente->errors)),
-            'errors' => $docente->errors
+            'errors' => $docente->errors,
         ];
     }
 }
+
 
 
 }
