@@ -99,7 +99,7 @@ $this->title = 'Concursos';
         </div>
         <?php $preinscripto=Preinscripto::find()->select('concurso_id')->where(['user_id' => Yii::$app->user->id])->column()?>
         <!-- BOTONES -->
-        <?php $found=Concurso::find()->where(['IN', 'id_concurso', $preinscripto])->andWhere(['<=', 'fecha_inicio_inscripcion', date('Y-m-d')])->andWhere(['like','id_facultad',$ua,false])->andWhere(['OR', ['like', 'id_area_departamento', $ar, false], ['id_area_departamento' => null]])->count()?>
+        <?php $found=Concurso::find()->where(['IN', 'id_concurso', $preinscripto])->andWhere(['<=', 'DATE(fecha_inicio_inscripcion)', date('Y-m-d')])->andWhere(['like','id_facultad',$ua,false])->andWhere(['OR', ['like', 'id_area_departamento', $ar, false], ['id_area_departamento' => null]])->count()?>
         <?php $botones=Concurso::find()->where(['like','id_facultad',$ua,false])->andWhere(['IN', 'id_concurso', $preinscripto])->groupBy('id_facultad')->all();
         ?>
 
@@ -113,7 +113,7 @@ $this->title = 'Concursos';
                 ?>
                         <?php 
                             try{
-                                $activos=Concurso::find()->where(['like','id_facultad',$boton['id_facultad'],false])->andWhere(['OR', ['like', 'id_area_departamento', $ar, false], ['id_area_departamento' => null]])->andWhere(['IN', 'id_concurso', $preinscripto])->andWhere(['<=', 'fecha_inicio_inscripcion', date('Y-m-d')])->count();//date('Y-m-d')])->count();
+                                $activos=Concurso::find()->where(['like','id_facultad',$boton['id_facultad'],false])->andWhere(['OR', ['like', 'id_area_departamento', $ar, false], ['id_area_departamento' => null]])->andWhere(['IN', 'id_concurso', $preinscripto])->andWhere(['<=', 'DATE(fecha_inicio_inscripcion)', date('Y-m-d')])->count();//date('Y-m-d')])->count();
                             } 
                             catch(\Throwable $e){
                                 $activos=0;
@@ -159,7 +159,7 @@ $this->title = 'Concursos';
                     </tr>
                     <?php 
                         // $activos=Concurso::find()->where(['like','id_facultad',$boton['id_facultad'],false])->andWhere(['IN', 'id_concurso', $preinscripto])->andWhere(['OR', ['like', 'id_area_departamento', $boton['id_area_departamento'], false], ['id_area_departamento' => null]])->andWhere(['<=', 'fecha_inicio_inscripcion', date('Y-m-d')])->count();//date('Y-m-d')])->count();
-                        $concursos=Concurso::find()->where(['like','id_facultad',$ua,false])->andWhere(['IN', 'id_concurso', $preinscripto])->andWhere(['OR', ['like', 'id_area_departamento', $ar, false], ['id_area_departamento' => null]])->andWhere(['<=', 'fecha_inicio_inscripcion', date('Y-m-d')])->orderBy(['fecha_inicio_inscripcion' => SORT_DESC])->all();
+                        $concursos=Concurso::find()->where(['like','id_facultad',$ua,false])->andWhere(['IN', 'id_concurso', $preinscripto])->andWhere(['OR', ['like', 'id_area_departamento', $ar, false], ['id_area_departamento' => null]])->andWhere(['<=', 'DATE(fecha_inicio_inscripcion)', date('Y-m-d')])->orderBy(['fecha_inicio_inscripcion' => SORT_DESC])->all();
                         foreach ($concursos as $concurso): 
                     ?>
                         <tr>
