@@ -176,10 +176,19 @@ body {
         ],
         [
             'attribute' => 'id_area_departamento',
-            'value' => function($model) {
-                return $model->areaDepartamento ? $model->areaDepartamento->descripcion_area_departamento : 'N/A';
-            },
             'label' => 'Área/Departamento',
+            'value' => function ($model) {
+                // Realiza una consulta directa a la tabla area_departamento
+                $areaDepartamento = \app\models\AreaDepartamento::find()
+                    ->where([
+                        'id_area_departamento' => $model->id_area_departamento,
+                        'id_facultad' => $model->id_facultad,
+                        'activa' => 1, // Opcional, si solo deseas áreas activas
+                    ])
+                    ->one();
+        
+                return $areaDepartamento ? $areaDepartamento->descripcion_area_departamento : 'Área/Departamento no encontrado';
+            },
         ],
         [
             'label' => 'Período de Inscripción',
@@ -245,8 +254,16 @@ foreach ($dataProvider->models as $model) {
 
     echo '<p><strong>Categoría:</strong> ' . ($model->categoria ? $model->categoria->descripcion_categoria : 'N/A') . '</p>';
     echo '<p><strong>Dedicación:</strong> ' . ($model->dedicacion ? $model->dedicacion->descripcion_dedicacion : 'N/A') . '</p>';
-    echo '<p><strong>Área/Departamento:</strong> ' . ($model->areaDepartamento ? $model->areaDepartamento->descripcion_area_departamento : 'N/A') . '</p>';
-    echo '<p><strong>Fecha Inicio Inscripción:</strong> ' . ($model->fecha_inicio_inscripcion ? Yii::$app->formatter->asDate($model->fecha_inicio_inscripcion, 'dd/MM/yyyy') : 'N/A') . '</p>';
+    echo '<p><strong>Área/Departamento:</strong> ' . Html::encode(
+        \app\models\AreaDepartamento::find()
+            ->where([
+                'id_area_departamento' => $model->id_area_departamento,
+                'id_facultad' => $model->id_facultad,
+                'activa' => 1, 
+            ])
+            ->one()
+            ->descripcion_area_departamento ?? 'Área/Departamento no encontrado'
+    ) . '</p>';    echo '<p><strong>Fecha Inicio Inscripción:</strong> ' . ($model->fecha_inicio_inscripcion ? Yii::$app->formatter->asDate($model->fecha_inicio_inscripcion, 'dd/MM/yyyy') : 'N/A') . '</p>';
     echo '<p><strong>Fecha Fin Inscripción:</strong> ' . ($model->fecha_fin_inscripcion ? Yii::$app->formatter->asDate($model->fecha_fin_inscripcion, 'dd/MM/yyyy') : 'N/A') . '</p>';
     echo '<p><strong>Hora Inicio Inscripción:</strong> ' . $model->hora_inicio_inscripcion . '</p>';
     echo '<p><strong>Hora Fin Inscripción:</strong> ' . $model->hora_fin_inscripcion . '</p>';
