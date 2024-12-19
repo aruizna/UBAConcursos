@@ -21,8 +21,12 @@ $categoriasList = Categoria::find()
     ->indexBy('id_categoria')
     ->column();
 $dedicacionesList = Dedicacion::find()->select(['descripcion_dedicacion', 'id_dedicacion'])->indexBy('id_dedicacion')->column();
-$areasDepartamentoList = AreaDepartamento::find()->select(['descripcion_area_departamento', 'id_area_departamento'])->indexBy('id_area_departamento')->column();
-
+$areasDepartamentoList = AreaDepartamento::find()
+    ->select(['descripcion_area_departamento', 'id_area_departamento'])
+    ->where(['id_facultad' => $model->id_facultad, 'activa' => 1]) // Filtra por id_facultad y áreas activas
+    ->indexBy('id_area_departamento')
+    ->column();
+?>
 ?>
 
 <div class="concurso-pendiente-form" style="padding: 20px; background-color: #f4f7fa; border: 1px solid #1d2554; border-radius: 0px;">

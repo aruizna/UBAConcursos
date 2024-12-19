@@ -146,10 +146,10 @@ body {
         ],
         [
             'attribute' => 'id_facultad',
-            'value' => function($model) {
-                return $model->facultad->nombre_facultad ?? 'N/A';
+            'label' => 'Facultad',
+            'value' => function ($model) {
+                return isset($model->facultad) ? $model->facultad->nombre_facultad : 'Facultad no encontrada';
             },
-            'label' => 'Facultad'
         ],
         [
             'attribute' => 'id_categoria',
@@ -167,10 +167,19 @@ body {
         ],
         [
             'attribute' => 'id_area_departamento',
-            'value' => function($model) {
-                return $model->areaDepartamento->descripcion_area_departamento ?? 'N/A';
+            'label' => 'Área/Departamento',
+            'value' => function ($model) {
+                // Realiza una consulta directa a la tabla area_departamento
+                $areaDepartamento = \app\models\AreaDepartamento::find()
+                    ->where([
+                        'id_area_departamento' => $model->id_area_departamento,
+                        'id_facultad' => $model->id_facultad,
+                        'activa' => 1, // Opcional, si solo deseas áreas activas
+                    ])
+                    ->one();
+        
+                return $areaDepartamento ? $areaDepartamento->descripcion_area_departamento : 'Área/Departamento no encontrado';
             },
-            'label' => 'Área/Departamento'
         ],
         [
             'label' => 'Período de Inscripción',
@@ -223,7 +232,16 @@ foreach ($dataProvider->models as $model) {
     echo '<p><strong>Asignatura(s):</strong> ' . Html::encode($model->getAsignaturasNombres()) . '</p>';
     echo '<p><strong>Categoría:</strong> ' . Html::encode($model->categoria->descripcion_categoria ?? 'N/A') . '</p>';
     echo '<p><strong>Dedicación:</strong> ' . Html::encode($model->dedicacion->descripcion_dedicacion ?? 'N/A') . '</p>';
-    echo '<p><strong>Área/Departamento:</strong> ' . Html::encode($model->areaDepartamento->descripcion_area_departamento ?? 'N/A') . '</p>';
+    echo '<p><strong>Área/Departamento:</strong> ' . Html::encode(
+        \app\models\AreaDepartamento::find()
+            ->where([
+                'id_area_departamento' => $model->id_area_departamento,
+                'id_facultad' => $model->id_facultad,
+                'activa' => 1, 
+            ])
+            ->one()
+            ->descripcion_area_departamento ?? 'Área/Departamento no encontrado'
+    ) . '</p>';
     echo '<p><strong>Cantidad de Puestos:</strong> ' . Html::encode($model->cantidad_de_puestos) . '</p>';
     echo '<p><strong>Fecha Inicio Inscripción:</strong> ' . Html::encode(Yii::$app->formatter->asDate($model->fecha_inicio_inscripcion, 'php:d/m/Y')) . '</p>';
     echo '<p><strong>Fecha Fin Inscripción:</strong> ' . Html::encode(Yii::$app->formatter->asDate($model->fecha_fin_inscripcion, 'php:d/m/Y')) . '</p>';
