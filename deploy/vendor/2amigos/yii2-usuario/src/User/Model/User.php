@@ -158,14 +158,14 @@ class User extends ActiveRecord implements IdentityInterface
      *
      * @throws InvalidConfigException
      */
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-        if ($insert && $this->profile === null) {
-            $profile = $this->make(Profile::class);
-            $profile->link('user', $this);
-        }
-    }
+    // public function afterSave($insert, $changedAttributes)
+    // {
+    //     parent::afterSave($insert, $changedAttributes);
+    //     if ($insert && $this->profile === null) {
+    //         $profile = $this->make(Profile::class);
+    //         $profile->link('user', $this);
+    //     }
+    // }
 
     /**
      * {@inheritdoc}

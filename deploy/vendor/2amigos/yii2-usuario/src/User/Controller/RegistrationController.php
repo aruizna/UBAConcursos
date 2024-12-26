@@ -138,6 +138,7 @@ class RegistrationController extends Controller
                 }else{//SI NO EXISTE CREO EL PERFIL
                     $profile = new Profile();
                     $profile->numero_documento = $form->username;
+                    $profile->user_id = $user->id;
                 }
                 $profile->nombre = $form->nombre;
                 $profile->apellido = $form->apellido;
