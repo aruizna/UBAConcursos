@@ -496,6 +496,9 @@ public function actionCreate()
     if ($this->request->isPost && $model->load($this->request->post())) {
         Yii::info("Datos POST recibidos: " . json_encode($this->request->post()), __METHOD__);
 
+        $model->area = Yii::$app->request->post('ConcursoPendiente')['area'] ?? null;
+
+
         // Asignación de asignaturas_seleccionadas en formato JSON
         $asignaturasSeleccionadas = Yii::$app->request->post('ConcursoPendiente')['asignaturas_seleccionadas'] ?? '[]';
         if (is_string($asignaturasSeleccionadas)) {
@@ -526,10 +529,7 @@ public function actionCreate()
         'dedicacionesList' => $dedicacionesList,
     ]);
 }
-
-
-
-    
+ 
     
     // Acción para obtener los departamentos (áreas)
     public function actionGetDepartamentos($id_facultad)
@@ -574,8 +574,6 @@ public function actionCreate()
         return $this->asJson($result);
     }
     
-    
-
     public function actionBuscarDocente()
     {
         $dni = Yii::$app->request->get('dni');
@@ -678,6 +676,8 @@ public function actionCreate()
     
         // Procesa la solicitud POST
         if ($model->load(Yii::$app->request->post())) {
+            $model->area = Yii::$app->request->post('ConcursoPendiente')['area'] ?? null;
+
             if ($model->validate() && $model->save()) {
                 Yii::$app->session->setFlash('success', 'El concurso ha sido actualizado exitosamente.');
             } else {
