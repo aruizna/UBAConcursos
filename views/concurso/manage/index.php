@@ -90,5 +90,10 @@ body {
         <?= Html::a('Modificar Llamado a concurso', ['pending'], ['class' => 'smallButton smallButton2']) ?>
         <?= Html::a('Publicar Concursos Pendientes', ['publish'], ['class' => 'smallButton']) ?>
         <?= Html::a('Ver Nómina de Preinscriptos', ['nomina-preinscriptos'], ['class' => 'smallButton smallButton2']) ?>
+        <?= Html::a('Gestionar Asignaturas', ['asignaturas'], ['class' => 'smallButton']) ?>
+        <?= Html::a('Gestionar Áreas/Departamento', ['area-departamento'], ['class' => 'smallButton smallButton2']) ?>
+        <!-- <?= Html::a('Gestionar Áreas/Cátedras', ['area-catedra'], ['class' => 'smallButton']) ?> -->
+
     </div>
 </div>
+

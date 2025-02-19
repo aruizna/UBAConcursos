@@ -11,6 +11,8 @@ use Yii;
  * @property int $id_facultad
  * @property string $descripcion_area_departamento
  * @property int $activa
+ *
+ * @property Asignatura[] $asignaturas
  */
 class AreaDepartamento extends \yii\db\ActiveRecord
 {
@@ -28,8 +30,8 @@ class AreaDepartamento extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_area_departamento', 'id_facultad', 'descripcion_area_departamento', 'activa'], 'required'],
-            [['id_area_departamento', 'id_facultad', 'activa'], 'integer'],
+            [['id_facultad', 'descripcion_area_departamento', 'activa'], 'required'],
+            [['id_facultad', 'activa'], 'integer'],
             [['descripcion_area_departamento'], 'string', 'max' => 255],
         ];
     }
@@ -40,19 +42,42 @@ class AreaDepartamento extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_area_departamento' => Yii::t('app', 'Id Area Departamento'),
-            'id_facultad' => Yii::t('app', 'Id Facultad'),
-            'descripcion_area_departamento' => Yii::t('app', 'Descripcion Area Departamento'),
-            'activa' => Yii::t('app', 'Activa'),
+            'id_area_departamento' => 'ID Área / Cátedra',
+            'id_facultad' => 'Unidad Académica',
+            'descripcion_area_departamento' => 'Nombre del Área / Cátedra',
+            'activa' => 'Activa',
         ];
     }
 
     /**
-     * {@inheritdoc}
-     * @return AreaDepartamentoQuery the active query used by this AR class.
+     * Relación con la tabla de asignaturas.
+     * Devuelve las asignaturas asociadas al área/departamento.
      */
-    public static function find()
+    public function getAsignaturas()
     {
-        return new AreaDepartamentoQuery(get_called_class());
+        return $this->hasMany(Asignatura::class, ['id_asignatura' => 'id_asignatura'])
+            ->viaTable('area_departamento_asignatura', ['id_area_departamento' => 'id_area_departamento']);
+    }
+    
+    
+
+    /**
+     * Devuelve las asignaturas asociadas como una cadena de texto.
+     */
+    public function getAsignaturasAsString()
+    {
+        $asignaturas = $this->asignaturas;
+        return implode(', ', array_map(function ($asignatura) {
+            return $asignatura->descripcion_asignatura;
+        }, $asignaturas));
+    }
+
+    /**
+     * Relación con la tabla Facultad.
+     * Devuelve la unidad académica asociada al área/departamento.
+     */
+    public function getFacultad()
+    {
+        return $this->hasOne(Facultad::class, ['id_facultad' => 'id_facultad']);
     }
 }

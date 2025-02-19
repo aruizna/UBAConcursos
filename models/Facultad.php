@@ -66,4 +66,26 @@ class Facultad extends \yii\db\ActiveRecord
     {
         return new FacultadQuery(get_called_class());
     }
+
+    public function getAreasCatedras()
+    {
+        return $this->hasMany(AreaCatedra::class, ['id_facultad' => 'id_facultad']);
+    }
+
+    public function getCarreras()
+{
+    return $this->hasMany(Carrera::class, ['id_facultad' => 'id_facultad']);
+}
+
+public function getAsignaturas()
+{
+    return $this->hasMany(Asignatura::class, ['id_facultad' => 'id_facultad']);
+}
+
+public function getAreaDepartamentos()
+{
+    return $this->hasMany(AreaDepartamento::class, ['id_facultad' => 'id_facultad']);
+}
+
+
 }
