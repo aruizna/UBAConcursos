@@ -1078,7 +1078,7 @@ public function actionAreaDepartamento()
         $query->andFilterWhere(['like', 'descripcion_area_departamento', $descripcion]);
     }
 
-    if (!empty($idFacultad)) {
+    if (!empty($idFacultad) || $idFacultad == "0") {
         $query->andFilterWhere(['area_departamento.id_facultad' => $idFacultad]);
     }
 
@@ -1125,10 +1125,10 @@ public function actionAreaDepartamentoCreate()
                 }
             }
 
-            Yii::$app->session->setFlash('success', 'Área/Cátedra creada correctamente.');
+            Yii::$app->session->setFlash('success', 'Área o Departamento creado correctamente.');
             return $this->redirect(['area-departamento']); 
         } else {
-            Yii::$app->session->setFlash('error', 'Error al crear el Área/Cátedra: ' . json_encode($model->getErrors()));
+            Yii::$app->session->setFlash('error', 'Error al crear el Área o Departamento: ' . json_encode($model->getErrors()));
         }
     }
 
@@ -1146,7 +1146,7 @@ public function actionAreaDepartamentoUpdate($id)
     $model = AreaDepartamento::findOne($id);
 
     if (!$model) {
-        throw new NotFoundHttpException('El Área/Cátedra no fue encontrada.');
+        throw new NotFoundHttpException('El Área/Departamento no fue encontrado.');
     }
 
     if ($model->load(Yii::$app->request->post())) {
@@ -1172,7 +1172,7 @@ public function actionAreaDepartamentoUpdate($id)
                 }
             }
 
-            Yii::$app->session->setFlash('success', 'Área/Cátedra actualizada correctamente.');
+            Yii::$app->session->setFlash('success', 'Área/Departamento actualizada correctamente.');
             return $this->redirect(['area-departamento']);
         }
     }
@@ -1193,10 +1193,10 @@ private function guardarRelacionesAsignaturas($idAreaDepartamento, $asignaturasS
     // Trae id_facultad del área/departamento
     $areaDepartamento = AreaDepartamento::findOne($idAreaDepartamento);
     if (!$areaDepartamento) {
-        throw new \yii\web\NotFoundHttpException("Área/Cátedra no encontrada.");
+        throw new \yii\web\NotFoundHttpException("Área/Departamento no encontrado.");
     }
 
-    $idFacultad = $areaDepartamento->id_facultad; // ✅ Obtener el ID de la facultad
+    $idFacultad = $areaDepartamento->id_facultad;
 
     // Elimina relaciones anteriores
     AreaDepartamentoAsignatura::deleteAll(['id_area_departamento' => $idAreaDepartamento]);
@@ -1224,7 +1224,7 @@ public function actionAreaDepartamentoDelete($id)
 {
     $model = AreaDepartamento::findOne($id);
     if (!$model) {
-        throw new NotFoundHttpException('El Área/Cátedra no fue encontrada.');
+        throw new NotFoundHttpException('El Área/Departamento no fue encontrada.');
     }
 
     // ❗ Verificar si hay asignaturas asociadas antes de eliminar
@@ -1235,9 +1235,9 @@ public function actionAreaDepartamentoDelete($id)
     }
 
     if ($model->delete()) {
-        Yii::$app->session->setFlash('success', 'Área/Cátedra eliminada correctamente.');
+        Yii::$app->session->setFlash('success', 'Área/Departamento eliminado correctamente.');
     } else {
-        Yii::$app->session->setFlash('error', 'Error al eliminar el Área/Cátedra.');
+        Yii::$app->session->setFlash('error', 'Error al eliminar el Área/Departamento.');
     }
 
     return $this->redirect(['area-departamento']);

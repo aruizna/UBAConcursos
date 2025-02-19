@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /* @var $asignaturasAsignadas array */
 /* @var $facultades array */
 
-$this->title = $model->isNewRecord ? 'Agregar Área / Cátedra' : 'Modificar Área / Cátedra';
+$this->title = $model->isNewRecord ? 'Agregar Área / Departamento' : 'Modificar Área / Departamento';
 ?>
 <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900&display=swap" rel="stylesheet">
 
@@ -149,10 +149,10 @@ body {
         ['prompt' => 'Seleccione una Unidad Académica']
     ) ?>
 
-    <!-- Nombre del Área / Cátedra -->
+    <!-- Nombre del Área / Departamento -->
     <?= $form->field($model, 'nombre_area_catedra')->textInput([
         'maxlength' => true,
-        'placeholder' => 'Ingrese el nombre del área o cátedra'
+        'placeholder' => 'Ingrese el nombre del área o departamento'
     ]) ?>
 
     <!-- Selector de asignaturas -->
@@ -174,7 +174,7 @@ body {
                 <button type="button" id="btn-quitar" class="btn btn-danger">&lt;&lt;</button>
             </div>
             <div class="selector-box">
-                <h5>Asignaturas del Área / Cátedra</h5>
+                <h5>Asignaturas del Área / Departamento</h5>
                 <select id="asignaturas-asignadas" multiple>
                     <?php foreach ($asignaturasAsignadas as $id): ?>
                         <option value="<?= $id ?>"><?= $asignaturasList[$id] ?></option>

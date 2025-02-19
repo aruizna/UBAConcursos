@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /* @var $asignaturasAsignadas array */
 /* @var $facultades array */
 
-$this->title = $model->isNewRecord ? 'Agregar Departamento' : 'Modificar Departamento';
+$this->title = $model->isNewRecord ? 'Agregar Área/Departamento' : 'Modificar Área/Departamento';
 ?>
 <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900&display=swap" rel="stylesheet">
 
@@ -152,15 +152,14 @@ body {
     <!-- Nombre del Departamento -->
     <?= $form->field($model, 'descripcion_area_departamento')->textInput([
         'maxlength' => true,
-        'placeholder' => 'Ingrese el nombre del departamento'
+        'placeholder' => 'Ingrese el nombre del área ó departamento'
     ]) ?>
 
     <!-- Selector de asignaturas -->
     <div class="form-group">
-        <label><strong>Asignaturas</strong></label>
         <div class="selector-container">
             <div class="selector-box">
-                <h5>Asignaturas Disponibles</h5>
+                <h5>Asignaturas disponibles</h5>
                 <select id="asignaturas-disponibles" multiple>
                     <?php foreach ($asignaturasList as $id => $asignatura): ?>
                         <?php if (!in_array($id, $asignaturasAsignadas)): ?>
@@ -174,7 +173,7 @@ body {
                 <button type="button" id="btn-quitar" class="btn btn-danger">&lt;&lt;</button>
             </div>
             <div class="selector-box">
-                <h5>Asignaturas del Departamento</h5>
+                <h5>Asignaturas añadidas</h5>
                 <select id="asignaturas-asignadas" multiple>
                     <?php foreach ($asignaturasAsignadas as $id): ?>
                         <option value="<?= $id ?>"><?= $asignaturasList[$id] ?></option>

@@ -42,9 +42,9 @@ class AreaDepartamento extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id_area_departamento' => 'ID Área / Cátedra',
+            'id_area_departamento' => 'ID Área / Departamento',
             'id_facultad' => 'Unidad Académica',
-            'descripcion_area_departamento' => 'Nombre del Área / Cátedra',
+            'descripcion_area_departamento' => 'Nombre del Área / Departamento',
             'activa' => 'Activa',
         ];
     }
