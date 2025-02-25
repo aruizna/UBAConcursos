@@ -1015,7 +1015,7 @@ public function actionAsignaturaCreate()
 
     if ($model->load(Yii::$app->request->post())) {
         $model->habilitada = 's'; // Habilitada por defecto
-
+        $model->id_asignatura = Asignatura::find()->max('id_asignatura') + 1; // Obtiene el último ID y suma 1
         if ($model->save()) {
             Yii::$app->session->setFlash('success', 'Asignatura creada correctamente.');
             return $this->redirect(['asignaturas']);
@@ -1030,6 +1030,7 @@ public function actionAsignaturaCreate()
         'isUpdate' => false 
     ]);
 }
+
 
 
 
@@ -1227,7 +1228,7 @@ public function actionAreaDepartamentoDelete($id)
         throw new NotFoundHttpException('El Área/Departamento no fue encontrada.');
     }
 
-    // ❗ Verificar si hay asignaturas asociadas antes de eliminar
+    // Verificar si hay asignaturas asociadas antes de eliminar
     $asignaciones = AreaDepartamentoAsignatura::find()->where(['id_area_departamento' => $id])->count();
     if ($asignaciones > 0) {
         Yii::$app->session->setFlash('error', 'No se puede eliminar porque hay asignaturas asociadas.');
