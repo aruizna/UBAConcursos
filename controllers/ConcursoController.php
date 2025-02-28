@@ -6,6 +6,8 @@ use yii\filters\AccessControl;
 
 use app\models\AreaDepartamento;
 use app\models\AreaDepartamentoAsignatura;
+use app\models\AreaCatedra;
+use app\models\AreaCatedraAsignatura;
 use app\models\Asignatura;
 use app\models\Carrera;
 use app\models\Categoria;
@@ -82,7 +84,7 @@ class ConcursoController extends Controller
                     'class' => AccessControl::class,
                     'rules' => [
                         [
-                            'actions' => ['confirmar', 'descargar', 'previsualizar', 'preinscripcion', 'index', 'view', 'update', 'delete', 'area', 'formulario', 'tramite', 'desinscribir', 'pending', 'manage', 'publish', 'publish-confirm', 'get-departamentos', 'get-asignaturas', 'buscar-docente', 'nomina-preinscriptos', 'agregar-docente'],
+                            'actions' => ['confirmar', 'descargar', 'previsualizar', 'preinscripcion', 'index', 'view', 'update', 'delete', 'area', 'formulario', 'tramite', 'desinscribir', 'pending', 'manage', 'publish', 'publish-confirm', 'get-departamentos', 'get-asignaturas', 'buscar-docente', 'nomina-preinscriptos', 'agregar-docente', 'asignaturas', 'asignatura-create', 'asignatura-update', 'asignatura-delete',   'area-departamento', 'area-departamento-create', 'area-departamento-update', 'area-departamento-delete', 'area-catedra', 'area-catedra-create', 'area-catedra-update', 'area-catedra-delete'],
                             'allow' => true,
                             'roles' => ['@'],
                         ],
@@ -494,6 +496,9 @@ public function actionCreate()
     if ($this->request->isPost && $model->load($this->request->post())) {
         Yii::info("Datos POST recibidos: " . json_encode($this->request->post()), __METHOD__);
 
+        $model->area = Yii::$app->request->post('ConcursoPendiente')['area'] ?? null;
+
+
         // Asignación de asignaturas_seleccionadas en formato JSON
         $asignaturasSeleccionadas = Yii::$app->request->post('ConcursoPendiente')['asignaturas_seleccionadas'] ?? '[]';
         if (is_string($asignaturasSeleccionadas)) {
@@ -524,10 +529,7 @@ public function actionCreate()
         'dedicacionesList' => $dedicacionesList,
     ]);
 }
-
-
-
-    
+ 
     
     // Acción para obtener los departamentos (áreas)
     public function actionGetDepartamentos($id_facultad)
@@ -572,8 +574,6 @@ public function actionCreate()
         return $this->asJson($result);
     }
     
-    
-
     public function actionBuscarDocente()
     {
         $dni = Yii::$app->request->get('dni');
@@ -676,6 +676,8 @@ public function actionCreate()
     
         // Procesa la solicitud POST
         if ($model->load(Yii::$app->request->post())) {
+            $model->area = Yii::$app->request->post('ConcursoPendiente')['area'] ?? null;
+
             if ($model->validate() && $model->save()) {
                 Yii::$app->session->setFlash('success', 'El concurso ha sido actualizado exitosamente.');
             } else {
@@ -977,6 +979,428 @@ public function actionAgregarDocente()
     }
 }
 
+//Asignaturas 
 
+public function actionManageAsignaturas()
+{
+    $dataProvider = new ActiveDataProvider([
+        'query' => Asignatura::find()->orderBy(['id_asignatura' => SORT_DESC]),
+        'pagination' => ['pageSize' => 10],
+    ]);
+
+    return $this->render('manage/asignaturas', [
+        'dataProvider' => $dataProvider,
+    ]);
+}
+
+public function actionAsignaturas()
+{
+    $query = Asignatura::find();
+
+    $idFacultad = Yii::$app->request->get('id_facultad');
+    $idAsignatura = Yii::$app->request->get('id_asignatura');
+
+    // Asegurar que 0 (Rectorado) se tome como un valor válido
+    if ($idFacultad !== null && $idFacultad !== '') {
+        $query->andWhere(['id_facultad' => $idFacultad]);
+    }
+    if (!empty($idAsignatura)) {
+        $query->andWhere(['id_asignatura' => $idAsignatura]);
+    }
+
+    $dataProvider = new ActiveDataProvider([
+        'query' => $query,
+        'pagination' => ['pageSize' => 20],
+    ]);
+
+    return $this->render('manage/asignaturas', [
+        'dataProvider' => $dataProvider,
+        'idFacultad' => $idFacultad,
+        'idAsignatura' => $idAsignatura,
+    ]);
+}
+
+public function actionAsignaturaCreate()
+{
+    $model = new Asignatura();
+
+    if ($model->load(Yii::$app->request->post())) {
+        $model->habilitada = 's'; // Habilitada por defecto
+        $model->id_asignatura = Asignatura::find()->max('id_asignatura') + 1; // Obtiene el último ID y suma 1
+        if ($model->save()) {
+            Yii::$app->session->setFlash('success', 'Asignatura creada correctamente.');
+            return $this->redirect(['asignaturas']);
+        } else {
+            Yii::$app->session->setFlash('error', 'Error al guardar: ' . json_encode($model->getErrors()));
+        }
+    }
+
+    return $this->render('manage/asignaturas-form', [
+        'model' => $model,
+        'facultades' => Facultad::find()->all(),
+        'isUpdate' => false 
+    ]);
+}
+
+public function actionAsignaturaUpdate($id)
+{
+    $model = Asignatura::findOne($id);
+    if (!$model) {
+        throw new NotFoundHttpException('La asignatura no fue encontrada.');
+    }
+
+    if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        Yii::$app->session->setFlash('success', 'Asignatura actualizada correctamente.');
+        return $this->redirect(['asignaturas']);
+    }
+
+    return $this->render('manage/asignaturas-form', [
+        'model' => $model,
+        'facultades' => Facultad::find()->all(),
+        'isUpdate' => true 
+    ]);
+}
+
+public function actionAsignaturaDelete($id)
+{
+    Asignatura::findOne($id)->delete();
+    Yii::$app->session->setFlash('success', 'Asignatura eliminada correctamente.');
+    return $this->redirect(['asignaturas']);
+}
+
+// Areas-asignaturas
+
+public function actionAreaDepartamento()
+{
+    $query = AreaDepartamento::find()
+        ->joinWith(['facultad', 'asignaturas']) 
+        ->groupBy('area_departamento.id_area_departamento'); 
+
+    // Filtros
+    $descripcion = Yii::$app->request->getQueryParam('descripcion_area_departamento', '');
+    $idFacultad = Yii::$app->request->getQueryParam('id_facultad', '');
+    $asignatura = Yii::$app->request->getQueryParam('asignaturas', '');
+
+    if (!empty($descripcion)) {
+        $query->andFilterWhere(['like', 'descripcion_area_departamento', $descripcion]);
+    }
+
+    if (!empty($idFacultad) || $idFacultad == "0") {
+        $query->andFilterWhere(['area_departamento.id_facultad' => $idFacultad]);
+    }
+
+    if (!empty($asignatura)) {
+        $query->andFilterWhere(['like', 'asignatura.descripcion_asignatura', $asignatura]);
+    }
+
+    $dataProvider = new ActiveDataProvider([
+        'query' => $query,
+        'pagination' => [
+            'pageSize' => 10
+        ],
+    ]);
+
+    return $this->render('manage/area-departamento', [
+        'dataProvider' => $dataProvider,
+    ]);
+}
+
+public function actionAreaDepartamentoCreate()
+{
+    $model = new AreaDepartamento();
+    $model->activa = 1; // Activa por defecto
+
+    if ($model->load(Yii::$app->request->post())) {
+        // Obtener asignaturas seleccionadas en formato id_asignatura|id_facultad
+        $asignaturasSeleccionadas = Yii::$app->request->post('asignaturasSeleccionadas', []);
+        if (!is_array($asignaturasSeleccionadas)) {
+            $asignaturasSeleccionadas = explode(',', $asignaturasSeleccionadas);
+        }
+
+        if ($model->save()) {
+            // Guarda las relaciones en la tabla intermedia
+            if (!empty($asignaturasSeleccionadas)) {
+                foreach ($asignaturasSeleccionadas as $clave) {
+                    $valores = explode('|', $clave);
+                    if (count($valores) === 2) { // 🔹 Validación antes de usar los valores
+                        $idAsignatura = $valores[0];
+                        $idFacultad = $valores[1];
+
+                        Yii::$app->db->createCommand()->insert('area_departamento_asignatura', [
+                            'id_area_departamento' => $model->id_area_departamento,
+                            'id_asignatura' => $idAsignatura,
+                            'id_facultad' => $idFacultad
+                        ])->execute();
+                    } else {
+                        Yii::error("Formato incorrecto en asignaturasSeleccionadas: " . json_encode($clave), __METHOD__);
+                    }
+                }
+            }
+
+            Yii::$app->session->setFlash('success', 'Área o Departamento creado correctamente.');
+            return $this->redirect(['area-departamento']);
+        } else {
+            Yii::$app->session->setFlash('error', 'Error al crear el Área o Departamento: ' . json_encode($model->getErrors()));
+        }
+    }
+
+    return $this->render('manage/area-departamento-form', [
+        'model' => $model,
+        'facultades' => Facultad::find()->all(),
+        'asignaturasList' => $this->obtenerAsignaturasList(),
+        'asignaturasAsignadas' => [],
+    ]);
+}
+
+public function actionAreaDepartamentoUpdate($id)
+{
+    $model = AreaDepartamento::findOne($id);
+
+    if (!$model) {
+        throw new NotFoundHttpException('El Departamento no fue encontrado.');
+    }
+
+    if ($model->load(Yii::$app->request->post())) {
+        // Obtener asignaturas seleccionadas en formato id_asignatura|id_facultad
+        $asignaturasSeleccionadas = Yii::$app->request->post('asignaturasSeleccionadas', []);
+        if (!is_array($asignaturasSeleccionadas)) {
+            $asignaturasSeleccionadas = explode(',', $asignaturasSeleccionadas);
+        }
+
+        if ($model->save()) {
+            // Eliminar las relaciones anteriores
+            Yii::$app->db->createCommand()->delete('area_departamento_asignatura', [
+                'id_area_departamento' => $model->id_area_departamento
+            ])->execute();
+
+            // Insertar nuevas relaciones
+            if (!empty($asignaturasSeleccionadas)) {
+                foreach ($asignaturasSeleccionadas as $clave) {
+                    $valores = explode('|', $clave);
+                    if (count($valores) === 2) { // 🔹 Validación antes de usar los valores
+                        $idAsignatura = $valores[0];
+                        $idFacultad = $valores[1];
+
+                        Yii::$app->db->createCommand()->insert('area_departamento_asignatura', [
+                            'id_area_departamento' => $model->id_area_departamento,
+                            'id_asignatura' => $idAsignatura,
+                            'id_facultad' => $idFacultad
+                        ])->execute();
+                    } else {
+                        Yii::error("Formato incorrecto en asignaturasSeleccionadas: " . json_encode($clave), __METHOD__);
+                    }
+                }
+            }
+
+            Yii::$app->session->setFlash('success', 'Departamento actualizado correctamente.');
+            return $this->redirect(['area-departamento']);
+        }
+    }
+
+    return $this->render('manage/area-departamento-form', [
+        'model' => $model,
+        'facultades' => Facultad::find()->all(),
+        'asignaturasList' => $this->obtenerAsignaturasList(),
+        'asignaturasAsignadas' => $model->getAsignaturas()->select('id_asignatura')->column(),
+    ]);
+}
+
+
+private function guardarRelacionesAsignaturas($idAreaDepartamento, $asignaturasSeleccionadas)
+{
+    // Trae id_facultad del área/departamento
+    $areaDepartamento = AreaDepartamento::findOne($idAreaDepartamento);
+    if (!$areaDepartamento) {
+        throw new \yii\web\NotFoundHttpException("Departamento no encontrado.");
+    }
+
+    $idFacultad = $areaDepartamento->id_facultad;
+
+    // Elimina relaciones anteriores
+    AreaDepartamentoAsignatura::deleteAll(['id_area_departamento' => $idAreaDepartamento]);
+
+    // Inserta
+    $asignaturas = explode(',', $asignaturasSeleccionadas);
+    foreach ($asignaturas as $idAsignatura) {
+        $relacion = new AreaDepartamentoAsignatura();
+        $relacion->id_area_departamento = $idAreaDepartamento;
+        $relacion->id_asignatura = $idAsignatura;
+        $relacion->id_facultad = $idFacultad; 
+        if (!$relacion->save()) {
+            Yii::error("Error guardando relación: " . json_encode($relacion->errors), __METHOD__);
+        }
+    }
+}
+
+private function obtenerAsignaturasList()
+{
+    return \yii\helpers\ArrayHelper::map(Asignatura::find()->all(), 'id_asignatura', 'descripcion_asignatura');
+}
+
+public function actionAreaDepartamentoDelete($id)
+{
+    $model = AreaDepartamento::findOne($id);
+    if (!$model) {
+        throw new NotFoundHttpException('El Departamento no fue encontrado.');
+    }
+
+    // Verificar si hay asignaturas asociadas antes de eliminar
+    $asignaciones = AreaDepartamentoAsignatura::find()->where(['id_area_departamento' => $id])->count();
+    if ($asignaciones > 0) {
+        Yii::$app->session->setFlash('error', 'No se puede eliminar porque hay asignaturas asociadas.');
+        return $this->redirect(['area-departamento']);
+    }
+
+    if ($model->delete()) {
+        Yii::$app->session->setFlash('success', 'Departamento eliminado correctamente.');
+    } else {
+        Yii::$app->session->setFlash('error', 'Error al eliminar el Departamento.');
+    }
+
+    return $this->redirect(['area-departamento']);
+}
+
+//Area catedra
+
+public function actionAreaCatedra()
+{
+    $dataProvider = new ActiveDataProvider([
+        'query' => AreaCatedra::find()->orderBy(['id_area_catedra' => SORT_DESC]),
+        'pagination' => ['pageSize' => 10],
+    ]);
+
+    return $this->render('manage/area-catedra', [
+        'dataProvider' => $dataProvider,
+    ]);
+}
+
+public function actionAreaCatedraCreate()
+{
+    $model = new AreaCatedra();
+    $model->activa = 1; 
+
+    if ($model->load(Yii::$app->request->post())) {
+        $asignaturasSeleccionadas = Yii::$app->request->post('asignaturasSeleccionadas', []);
+        if (!is_array($asignaturasSeleccionadas)) {
+            $asignaturasSeleccionadas = explode(',', $asignaturasSeleccionadas);
+        }
+
+        if ($model->save()) {
+            // Guarda las relaciones en la tabla intermedia
+            if (!empty($asignaturasSeleccionadas)) {
+                foreach ($asignaturasSeleccionadas as $idAsignatura) {
+                    if (!empty($idAsignatura)) {
+                        Yii::$app->db->createCommand()->insert('asignatura_carrera', [
+                            'id_area_catedra' => $model->id_area_catedra,
+                            'id_asignatura' => $idAsignatura,
+                            'id_facultad' => $model->id_facultad
+                        ])->execute();
+                    }
+                }
+            }
+
+            Yii::$app->session->setFlash('success', 'Área / Cátedra creada correctamente.');
+            return $this->redirect(['area-catedra']);
+        } else {
+            Yii::$app->session->setFlash('error', 'Error al crear el Área / Cátedra: ' . json_encode($model->getErrors()));
+        }
+    }
+
+    return $this->render('manage/area-catedra-form', [
+        'model' => $model,
+        'facultades' => Facultad::find()->all(),
+        'asignaturasList' => $this->obtenerAsignaturasList(),
+        'asignaturasAsignadas' => [],
+    ]);
+}
+
+public function actionAreaCatedraUpdate($id)
+{
+    $model = AreaCatedra::findOne($id);
+
+    if (!$model) {
+        throw new NotFoundHttpException('El Área / Cátedra no fue encontrada.');
+    }
+
+    if ($model->load(Yii::$app->request->post())) {
+        $asignaturasSeleccionadas = Yii::$app->request->post('asignaturasSeleccionadas', []);
+        if (!is_array($asignaturasSeleccionadas)) {
+            $asignaturasSeleccionadas = explode(',', $asignaturasSeleccionadas);
+        }
+
+        if ($model->save()) {
+            Yii::$app->db->createCommand()->delete('asignatura_carrera', [
+                'id_area_catedra' => $model->id_area_catedra
+            ])->execute();
+
+            if (!empty($asignaturasSeleccionadas)) {
+                foreach ($asignaturasSeleccionadas as $idAsignatura) {
+                    if (!empty($idAsignatura)) {  // 🚀 Evita insertar NULLs
+                        Yii::$app->db->createCommand()->insert('asignatura_carrera', [
+                            'id_area_catedra' => $model->id_area_catedra,
+                            'id_asignatura' => $idAsignatura,
+                            'id_facultad' => $model->id_facultad
+                        ])->execute();
+                    }
+                }
+            }
+
+            Yii::$app->session->setFlash('success', 'Área / Cátedra actualizada correctamente.');
+            return $this->redirect(['area-catedra']);
+        }
+    }
+
+    return $this->render('manage/area-catedra-form', [
+        'model' => $model,
+        'facultades' => Facultad::find()->all(),
+        'asignaturasList' => $this->obtenerAsignaturasList(),
+        'asignaturasAsignadas' => $model->getAsignaturas()->select('id_asignatura')->column(),
+    ]);
+}
+
+public function actionAreaCatedraDelete($id)
+{
+    $model = AreaCatedra::findOne($id);
+    if (!$model) {
+        throw new NotFoundHttpException('El Área / Cátedra no fue encontrada.');
+    }
+
+    $asignaciones = AreaCatedraAsignatura::find()->where(['id_area_catedra' => $id])->count();
+    if ($asignaciones > 0) {
+        Yii::$app->session->setFlash('error', 'No se puede eliminar porque hay asignaturas asociadas.');
+        return $this->redirect(['area-catedra']);
+    }
+
+    if ($model->delete()) {
+        Yii::$app->session->setFlash('success', 'Área / Cátedra eliminada correctamente.');
+    } else {
+        Yii::$app->session->setFlash('error', 'Error al eliminar el Área / Cátedra.');
+    }
+
+    return $this->redirect(['area-catedra']);
+}
+
+private function guardarRelacionesAsignaturasAreaCatedra($idAreaCatedra, $asignaturasSeleccionadas)
+{
+    $areaCatedra = AreaCatedra::findOne($idAreaCatedra);
+    if (!$areaCatedra) {
+        throw new \yii\web\NotFoundHttpException("Área / Cátedra no encontrada.");
+    }
+
+    $idFacultad = $areaCatedra->id_facultad; // ✅ Obtener el ID de la facultad
+
+    AreaCatedraAsignatura::deleteAll(['id_area_catedra' => $idAreaCatedra]);
+
+    $asignaturas = explode(',', $asignaturasSeleccionadas);
+    foreach ($asignaturas as $idAsignatura) {
+        $relacion = new AreaCatedraAsignatura();
+        $relacion->id_area_catedra = $idAreaCatedra;
+        $relacion->id_asignatura = $idAsignatura;
+        $relacion->id_facultad = $idFacultad; 
+        if (!$relacion->save()) {
+            Yii::error("Error guardando relación: " . json_encode($relacion->errors), __METHOD__);
+        }
+    }
+}
 
 }

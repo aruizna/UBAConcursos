@@ -55,6 +55,7 @@ class Concurso extends \yii\db\ActiveRecord
             [['id_concurso', 'id_tipo_concurso', 'id_facultad', 'id_categoria', 'id_categoria_minima', 'id_dedicacion', 'id_dedicacion_minima', 'id_area_departamento', 'cantidad_de_puestos', 'id_tipo_informe', 'cantidad_dias_publicacion', 'id_tipo_presupuesto', 'ultimo_numero_movimiento', 'lck_concurso', 'fecha_sorteo_publicada', 'fecha_entrevista_prueba_publicada', 'estado_propuesta_jurados_preliminar', 'estado_propuesta_preliminar', 'firmantes_comision_seleccionados'], 'integer'],
             [['fecha_inicio_inscripcion', 'fecha_fin_inscripcion', 'fecha_publicacion', 'fecha_publicacion_prueba_oposicion'], 'safe'],
             [['numero_expediente'], 'string', 'max' => 50],
+            [['area'], 'string', 'max' => 70],
             [['hora_inicio_inscripcion', 'hora_fin_inscripcion'], 'string', 'max' => 5],
             [['comentario'], 'string', 'max' => 400],
         ];
@@ -93,6 +94,7 @@ class Concurso extends \yii\db\ActiveRecord
             'estado_propuesta_jurados_preliminar' => Yii::t('app', 'Estado Propuesta Jurados Preliminar'),
             'estado_propuesta_preliminar' => Yii::t('app', 'Estado Propuesta Preliminar'),
             'firmantes_comision_seleccionados' => Yii::t('app', 'Firmantes Comision Seleccionados'),
+            'area' => Yii::t('app', 'Area')
         ];
     }
 

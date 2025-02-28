@@ -272,7 +272,7 @@ $this->title = 'Profile';
                                         foreach ($concursoAsignaturas as $concursoAsignatura) {
                                             if ($concursoAsignatura instanceof ConcursoAsignatura) : ?>
 
-                                                <p class="concurso_data"><?= Asignatura::find()->where(['id_asignatura' => $concursoAsignatura->id_asignatura,'id_facultad'=>$concursoAsignatura->id_facultad])->one()->descripcion_asignatura; ?></p>
+                                                <p class="concurso_data"><?= Asignatura::find()->where(['id_asignatura' => $concursoAsignatura->id_asignatura])->one()->descripcion_asignatura; ?></p>
                                     <?php endif;
                                         }
                                     } catch (\Throwable $e) {

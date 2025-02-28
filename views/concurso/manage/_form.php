@@ -61,7 +61,7 @@ $areasDepartamentoList = AreaDepartamento::find()
         ]) ?>
 
     <?= $form->field($model, 'id_area_departamento')->dropDownList($areasDepartamentoList, [
-            'prompt' => 'Seleccione un Área/Departamento',
+            'prompt' => 'Seleccione un Departamento',
             'style' => 'border-radius: 0; border-color: #1d2554;'
         ]) ?>
 

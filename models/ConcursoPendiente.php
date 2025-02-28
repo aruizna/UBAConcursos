@@ -27,7 +27,7 @@ use yii\db\ActiveRecord;
  */
 class ConcursoPendiente extends ActiveRecord
 {
-    public $area;
+
     public $expediente_ano;
     public $expediente_numero;
     public $expediente_dependencia;
