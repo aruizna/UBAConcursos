@@ -20,6 +20,12 @@ use Yii;
  */
 class Asignatura extends \yii\db\ActiveRecord
 {
+
+    public static function primaryKey()
+{
+    return ['id_asignatura', 'id_facultad']; 
+}
+
     /**
      * Atributos virtuales para manejar el número de resolución dividido.
      */

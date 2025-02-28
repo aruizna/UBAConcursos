@@ -176,7 +176,7 @@ body {
         ],
         [
             'attribute' => 'id_area_departamento',
-            'label' => 'Área/Departamento',
+            'label' => 'Departamento',
             'value' => function ($model) {
                 // Realiza una consulta directa a la tabla area_departamento
                 $areaDepartamento = \app\models\AreaDepartamento::find()
@@ -187,7 +187,7 @@ body {
                     ])
                     ->one();
         
-                return $areaDepartamento ? $areaDepartamento->descripcion_area_departamento : 'Área/Departamento no encontrado';
+                return $areaDepartamento ? $areaDepartamento->descripcion_area_departamento : 'Departamento no encontrado';
             },
         ],
         [
@@ -254,7 +254,7 @@ foreach ($dataProvider->models as $model) {
 
     echo '<p><strong>Categoría:</strong> ' . ($model->categoria ? $model->categoria->descripcion_categoria : 'N/A') . '</p>';
     echo '<p><strong>Dedicación:</strong> ' . ($model->dedicacion ? $model->dedicacion->descripcion_dedicacion : 'N/A') . '</p>';
-    echo '<p><strong>Área/Departamento:</strong> ' . Html::encode(
+    echo '<p><strong>Departamento:</strong> ' . Html::encode(
         \app\models\AreaDepartamento::find()
             ->where([
                 'id_area_departamento' => $model->id_area_departamento,
@@ -262,7 +262,7 @@ foreach ($dataProvider->models as $model) {
                 'activa' => 1, 
             ])
             ->one()
-            ->descripcion_area_departamento ?? 'Área/Departamento no encontrado'
+            ->descripcion_area_departamento ?? 'Departamento no encontrado'
     ) . '</p>';    echo '<p><strong>Fecha Inicio Inscripción:</strong> ' . ($model->fecha_inicio_inscripcion ? Yii::$app->formatter->asDate($model->fecha_inicio_inscripcion, 'dd/MM/yyyy') : 'N/A') . '</p>';
     echo '<p><strong>Fecha Fin Inscripción:</strong> ' . ($model->fecha_fin_inscripcion ? Yii::$app->formatter->asDate($model->fecha_fin_inscripcion, 'dd/MM/yyyy') : 'N/A') . '</p>';
     echo '<p><strong>Hora Inicio Inscripción:</strong> ' . $model->hora_inicio_inscripcion . '</p>';

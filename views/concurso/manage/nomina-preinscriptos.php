@@ -167,7 +167,7 @@ body {
         echo '<p><strong>Facultad:</strong> ' . ($model['nombre_facultad'] ?: 'N/A') . '</p>';
         echo '<p><strong>Categoría:</strong> ' . ($model['descripcion_categoria'] ?: 'N/A') . '</p>';
         echo '<p><strong>Dedicación:</strong> ' . ($model['descripcion_dedicacion'] ?: 'N/A') . '</p>';
-        echo '<p><strong>Área/Departamento:</strong> ' . ($model['descripcion_area_departamento'] ?: 'N/A') . '</p>';
+        echo '<p><strong>Departamento:</strong> ' . ($model['descripcion_area_departamento'] ?: 'N/A') . '</p>';
         echo '<p><strong>Cantidad de Puestos:</strong> ' . ($model['cantidad_de_puestos'] ?: 'N/A') . '</p>';
         echo '<p><strong>Fecha Inicio Inscripción:</strong> ' . Yii::$app->formatter->asDate($model['fecha_inicio_inscripcion'], 'php:d/m/Y') . '</p>';
         echo '<p><strong>Fecha Fin Inscripción:</strong> ' . Yii::$app->formatter->asDate($model['fecha_fin_inscripcion'], 'php:d/m/Y') . '</p>';

@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /* @var $asignaturasAsignadas array */
 /* @var $facultades array */
 
-$this->title = $model->isNewRecord ? 'Agregar Área/Departamento' : 'Modificar Área/Departamento';
+$this->title = $model->isNewRecord ? 'Agregar Departamento' : 'Modificar Departamento';
 ?>
 <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900&display=swap" rel="stylesheet">
 
@@ -152,7 +152,7 @@ body {
     <!-- Nombre del Departamento -->
     <?= $form->field($model, 'descripcion_area_departamento')->textInput([
         'maxlength' => true,
-        'placeholder' => 'Ingrese el nombre del área ó departamento'
+        'placeholder' => 'Ingrese el nombre del departamento'
     ]) ?>
 
     <!-- Selector de asignaturas -->
@@ -161,9 +161,9 @@ body {
             <div class="selector-box">
                 <h5>Asignaturas disponibles</h5>
                 <select id="asignaturas-disponibles" multiple>
-                    <?php foreach ($asignaturasList as $id => $asignatura): ?>
-                        <?php if (!in_array($id, $asignaturasAsignadas)): ?>
-                            <option value="<?= $id ?>"><?= $asignatura ?></option>
+                    <?php foreach ($asignaturasList as $clave => $asignatura): ?>
+                        <?php if (!in_array($clave, $asignaturasAsignadas)): ?>
+                            <option value="<?= $clave ?>"><?= $asignatura ?></option>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </select>
@@ -175,8 +175,8 @@ body {
             <div class="selector-box">
                 <h5>Asignaturas añadidas</h5>
                 <select id="asignaturas-asignadas" multiple>
-                    <?php foreach ($asignaturasAsignadas as $id): ?>
-                        <option value="<?= $id ?>"><?= $asignaturasList[$id] ?></option>
+                    <?php foreach ($asignaturasAsignadas as $clave): ?>
+                        <option value="<?= $clave ?>"><?= $asignaturasList[$clave] ?? 'Asignatura desconocida' ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -184,7 +184,7 @@ body {
     </div>
 
     <!-- Campo oculto para guardar asignaturas -->
-    <?= Html::hiddenInput('asignaturasSeleccionadas', implode(',', $asignaturasAsignadas), ['id' => 'asignaturas-seleccionadas']) ?>
+    <?= Html::activeHiddenInput($model, 'asignaturaIds', ['id' => 'asignaturas-seleccionadas']) ?>
 
     <div class="form-group text-center">
         <?= Html::submitButton($model->isNewRecord ? 'Guardar' : 'Actualizar', ['class' => 'btn btn-success']) ?>

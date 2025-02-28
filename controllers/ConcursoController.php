@@ -995,19 +995,30 @@ public function actionManageAsignaturas()
 
 public function actionAsignaturas()
 {
-    $searchModel = new Asignatura();
+    $query = Asignatura::find();
+
+    $idFacultad = Yii::$app->request->get('id_facultad');
+    $idAsignatura = Yii::$app->request->get('id_asignatura');
+
+    // Asegurar que 0 (Rectorado) se tome como un valor válido
+    if ($idFacultad !== null && $idFacultad !== '') {
+        $query->andWhere(['id_facultad' => $idFacultad]);
+    }
+    if (!empty($idAsignatura)) {
+        $query->andWhere(['id_asignatura' => $idAsignatura]);
+    }
+
     $dataProvider = new ActiveDataProvider([
-        'query' => Asignatura::find(),
-        'pagination' => ['pageSize' => 10], // Mostrar 10 asignaturas por página
+        'query' => $query,
+        'pagination' => ['pageSize' => 20],
     ]);
 
     return $this->render('manage/asignaturas', [
-        'searchModel' => $searchModel,
         'dataProvider' => $dataProvider,
+        'idFacultad' => $idFacultad,
+        'idAsignatura' => $idAsignatura,
     ]);
 }
-
-
 
 public function actionAsignaturaCreate()
 {
@@ -1031,9 +1042,6 @@ public function actionAsignaturaCreate()
     ]);
 }
 
-
-
-
 public function actionAsignaturaUpdate($id)
 {
     $model = Asignatura::findOne($id);
@@ -1052,8 +1060,6 @@ public function actionAsignaturaUpdate($id)
         'isUpdate' => true 
     ]);
 }
-
-
 
 public function actionAsignaturaDelete($id)
 {
@@ -1099,35 +1105,40 @@ public function actionAreaDepartamento()
     ]);
 }
 
-
 public function actionAreaDepartamentoCreate()
 {
     $model = new AreaDepartamento();
     $model->activa = 1; // Activa por defecto
 
     if ($model->load(Yii::$app->request->post())) {
-        // Trae asignaturas seleccionadas
+        // Obtener asignaturas seleccionadas en formato id_asignatura|id_facultad
         $asignaturasSeleccionadas = Yii::$app->request->post('asignaturasSeleccionadas', []);
         if (!is_array($asignaturasSeleccionadas)) {
             $asignaturasSeleccionadas = explode(',', $asignaturasSeleccionadas);
         }
 
         if ($model->save()) {
-            // Guarda las relaciones en una tabla intermedia
+            // Guarda las relaciones en la tabla intermedia
             if (!empty($asignaturasSeleccionadas)) {
-                foreach ($asignaturasSeleccionadas as $idAsignatura) {
-                    if (!empty($idAsignatura)) {
+                foreach ($asignaturasSeleccionadas as $clave) {
+                    $valores = explode('|', $clave);
+                    if (count($valores) === 2) { // 🔹 Validación antes de usar los valores
+                        $idAsignatura = $valores[0];
+                        $idFacultad = $valores[1];
+
                         Yii::$app->db->createCommand()->insert('area_departamento_asignatura', [
                             'id_area_departamento' => $model->id_area_departamento,
                             'id_asignatura' => $idAsignatura,
-                            'id_facultad' => $model->id_facultad
+                            'id_facultad' => $idFacultad
                         ])->execute();
+                    } else {
+                        Yii::error("Formato incorrecto en asignaturasSeleccionadas: " . json_encode($clave), __METHOD__);
                     }
                 }
             }
 
             Yii::$app->session->setFlash('success', 'Área o Departamento creado correctamente.');
-            return $this->redirect(['area-departamento']); 
+            return $this->redirect(['area-departamento']);
         } else {
             Yii::$app->session->setFlash('error', 'Error al crear el Área o Departamento: ' . json_encode($model->getErrors()));
         }
@@ -1141,39 +1152,47 @@ public function actionAreaDepartamentoCreate()
     ]);
 }
 
-
 public function actionAreaDepartamentoUpdate($id)
 {
     $model = AreaDepartamento::findOne($id);
 
     if (!$model) {
-        throw new NotFoundHttpException('El Área/Departamento no fue encontrado.');
+        throw new NotFoundHttpException('El Departamento no fue encontrado.');
     }
 
     if ($model->load(Yii::$app->request->post())) {
+        // Obtener asignaturas seleccionadas en formato id_asignatura|id_facultad
         $asignaturasSeleccionadas = Yii::$app->request->post('asignaturasSeleccionadas', []);
         if (!is_array($asignaturasSeleccionadas)) {
             $asignaturasSeleccionadas = explode(',', $asignaturasSeleccionadas);
         }
 
         if ($model->save()) {
-                Yii::$app->db->createCommand()->delete('area_departamento_asignatura', [
+            // Eliminar las relaciones anteriores
+            Yii::$app->db->createCommand()->delete('area_departamento_asignatura', [
                 'id_area_departamento' => $model->id_area_departamento
             ])->execute();
 
+            // Insertar nuevas relaciones
             if (!empty($asignaturasSeleccionadas)) {
-                foreach ($asignaturasSeleccionadas as $idAsignatura) {
-                    if (!empty($idAsignatura)) {  
+                foreach ($asignaturasSeleccionadas as $clave) {
+                    $valores = explode('|', $clave);
+                    if (count($valores) === 2) { // 🔹 Validación antes de usar los valores
+                        $idAsignatura = $valores[0];
+                        $idFacultad = $valores[1];
+
                         Yii::$app->db->createCommand()->insert('area_departamento_asignatura', [
                             'id_area_departamento' => $model->id_area_departamento,
                             'id_asignatura' => $idAsignatura,
-                            'id_facultad' => $model->id_facultad
+                            'id_facultad' => $idFacultad
                         ])->execute();
+                    } else {
+                        Yii::error("Formato incorrecto en asignaturasSeleccionadas: " . json_encode($clave), __METHOD__);
                     }
                 }
             }
 
-            Yii::$app->session->setFlash('success', 'Área/Departamento actualizada correctamente.');
+            Yii::$app->session->setFlash('success', 'Departamento actualizado correctamente.');
             return $this->redirect(['area-departamento']);
         }
     }
@@ -1187,14 +1206,12 @@ public function actionAreaDepartamentoUpdate($id)
 }
 
 
-
-
 private function guardarRelacionesAsignaturas($idAreaDepartamento, $asignaturasSeleccionadas)
 {
     // Trae id_facultad del área/departamento
     $areaDepartamento = AreaDepartamento::findOne($idAreaDepartamento);
     if (!$areaDepartamento) {
-        throw new \yii\web\NotFoundHttpException("Área/Departamento no encontrado.");
+        throw new \yii\web\NotFoundHttpException("Departamento no encontrado.");
     }
 
     $idFacultad = $areaDepartamento->id_facultad;
@@ -1215,7 +1232,6 @@ private function guardarRelacionesAsignaturas($idAreaDepartamento, $asignaturasS
     }
 }
 
-
 private function obtenerAsignaturasList()
 {
     return \yii\helpers\ArrayHelper::map(Asignatura::find()->all(), 'id_asignatura', 'descripcion_asignatura');
@@ -1225,7 +1241,7 @@ public function actionAreaDepartamentoDelete($id)
 {
     $model = AreaDepartamento::findOne($id);
     if (!$model) {
-        throw new NotFoundHttpException('El Área/Departamento no fue encontrada.');
+        throw new NotFoundHttpException('El Departamento no fue encontrado.');
     }
 
     // Verificar si hay asignaturas asociadas antes de eliminar
@@ -1236,9 +1252,9 @@ public function actionAreaDepartamentoDelete($id)
     }
 
     if ($model->delete()) {
-        Yii::$app->session->setFlash('success', 'Área/Departamento eliminado correctamente.');
+        Yii::$app->session->setFlash('success', 'Departamento eliminado correctamente.');
     } else {
-        Yii::$app->session->setFlash('error', 'Error al eliminar el Área/Departamento.');
+        Yii::$app->session->setFlash('error', 'Error al eliminar el Departamento.');
     }
 
     return $this->redirect(['area-departamento']);
@@ -1386,7 +1402,5 @@ private function guardarRelacionesAsignaturasAreaCatedra($idAreaCatedra, $asigna
         }
     }
 }
-
-
 
 }

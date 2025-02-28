@@ -3,6 +3,11 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\bootstrap5\Modal;
+use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
+use yii\widgets\Pjax;
+use app\models\Facultad;
+use app\models\Asignatura;
 
 $this->title = 'Gestión de Asignaturas';
 
@@ -12,7 +17,6 @@ $this->title = 'Gestión de Asignaturas';
 <style>
 body {
     font-family: "Bitter", serif;
-    font-weight: 400;
     font-size: 14px;
     color: #1d2554;
     background-color: #f4f7fa;
@@ -29,22 +33,24 @@ body {
 }
 
 .grid-view {
-    width: 100%;
-    margin-bottom: 30px;
+    margin: 20px auto;
+    width: 95%;
+    max-width: 95%;
+    border: 1px solid #1d2554;
+    border-collapse: collapse;
 }
 
 .grid-view th, .grid-view td {
     padding: 10px;
-    text-align: left;
+    text-align: center;
     font-size: 14px;
-    color: #1d2554;
     border: 1px solid #1d2554;
 }
 
 .grid-view th {
     background-color: #f7a600;
     color: #FFFFFF;
-    font-weight: 600;
+    font-weight: bold;
     text-transform: uppercase;
 }
 
@@ -65,41 +71,76 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-.btn-info {
-    background-color: #1d2554;
-    color: #FFFFFF;
-    border: 1px solid #1d2554;
-}
-
-.btn-info:hover {
-    background-color: #91bde1;
-    border-color: #1d2554;
-}
-
-.btn-primary {
+.btn-warning {
     background-color: #f7a600;
-    border-color: #f7a600;
     color: #FFFFFF;
+    border: 1px solid #f7a600;
 }
 
-.btn-primary:hover {
+.btn-warning:hover {
     background-color: #fccd8e;
     border-color: #f7a600;
 }
 
-.btn-danger {
-    background-color: #d9534f;
-    border-color: #d9534f;
-    color: #FFFFFF;
+.search-form {
+    width: 95%;
+    max-width: 95%;
+    margin: 20px auto;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.btn-danger:hover {
-    background-color: #c9302c;
-    border-color: #ac2925;
+.search-form .row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 15px;
+    justify-content: space-between;
 }
 
-.action-column {
-    text-align: center;
+.search-form label {
+    font-weight: bold;
+    color: #1d2554;
+}
+
+.search-form .btn {
+    margin-top: 24px;
+}
+
+.search-form select {
+    width: 250px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 8px;
+}
+
+.pagination .page-link {
+    background-color: #f7a600;
+    color: white;
+    border: 1px solid #f7a600;
+    padding: 8px 14px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: #fccd8e;
+    color: #1d2554;
+}
+
+.pagination .active .page-link {
+    background-color: #1d2554;
+    color: white;
+    border: 1px solid #1d2554;
 }
 
 </style>
@@ -109,48 +150,89 @@ body {
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p class="text-center">
-        <?= Html::a('Agregar Asignatura', ['asignatura-create'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Agregar Asignatura', ['asignatura-create'], ['class' => 'btn btn-warning']) ?>
     </p>
+
+    <?php Pjax::begin(['id' => 'asignatura-grid']); ?>
+
+    <div class="search-form">
+        <?php $form = ActiveForm::begin([
+            'method' => 'get',
+            'action' => ['asignaturas'], // 🔹 Se asegura de que la URL sea limpia
+            'options' => ['data-pjax' => true, 'id' => 'filter-form'],
+        ]); ?>
+
+        <div class="row">
+            <div class="col-md-4">
+                <?= Html::label('Unidad Académica', 'id_facultad') ?>
+                <?= Html::dropDownList('id_facultad', Yii::$app->request->get('id_facultad', ''), 
+                    ArrayHelper::map(Facultad::find()->all(), 'id_facultad', 'nombre_facultad'), 
+                    ['prompt' => 'Seleccione una unidad académica', 'class' => 'form-control']
+                ) ?>
+            </div>
+
+            <div class="col-md-4">
+                <?= Html::label('Asignatura', 'id_asignatura') ?>
+                <?= Html::dropDownList('id_asignatura', Yii::$app->request->get('id_asignatura', ''), 
+                    ArrayHelper::map(Asignatura::find()->all(), 'id_asignatura', 'descripcion_asignatura'), 
+                    ['prompt' => 'Seleccione una asignatura', 'class' => 'form-control', 'style' => 'width: 250px;']
+                ) ?>
+            </div>
+
+            <div class="col-md-4" style="margin-top: 30px;">
+                <?= Html::submitButton('Buscar', ['class' => 'btn btn-warning']) ?>
+                <?= Html::a('Restablecer', ['asignaturas'], ['class' => 'btn btn-default', 'id' => 'reset-filters']) ?>
+            </div>
+        </div>
+
+        <?php ActiveForm::end(); ?>
+    </div>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => null,
         'columns' => [
-            [
-                'attribute' => 'id_asignatura',
-                'headerOptions' => ['style' => 'width:10%; text-align: center;'],
-                'contentOptions' => ['style' => 'text-align: center;'],
-            ],
+            'id_asignatura',
             [
                 'attribute' => 'id_facultad',
                 'value' => function($model) {
                     return $model->facultad->nombre_facultad ?? 'Sin facultad';
                 },
-                'label' => 'Unidad Académica'
+                'label' => 'Unidad Académica',
             ],
             'descripcion_asignatura',
             'numero_resolucion',
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{update}',
-                'contentOptions' => ['class' => 'action-column', 'style' => 'text-align: center;'],
                 'buttons' => [
                     'update' => function ($url, $model) {
                         return Html::a('Editar', ['asignatura-update', 'id' => $model->id_asignatura], [
-                            'title' => 'Actualizar',
-                            'class' => 'btn btn-info btn-sm'
+                            'title' => 'Editar',
+                            'class' => 'btn btn-warning btn-sm'
                         ]);
                     },
-                    // 'delete' => function ($url, $model) {
-                    //     return Html::a('Eliminar', ['asignatura-delete', 'id' => $model->id_asignatura], [
-                    //         'title' => 'Eliminar',
-                    //         'class' => 'btn btn-danger btn-sm',
-                    //         'data-confirm' => '¿Estás seguro de eliminar esta asignatura?',
-                    //         'data-method' => 'post'
-                    //     ]);
-                    // },
                 ],
             ],
         ],
     ]); ?>
 
+    <?php Pjax::end(); ?>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("filter-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        let url = new URL(window.location.href);
+        url.searchParams.set("id_facultad", document.getElementsByName("id_facultad")[0].value);
+        url.searchParams.set("id_asignatura", document.getElementsByName("id_asignatura")[0].value);
+        window.location.href = url.toString();
+    });
+
+    document.getElementById("reset-filters").addEventListener("click", function(e) {
+        e.preventDefault();
+        window.location.href = "<?= Yii::$app->urlManager->createUrl(['asignaturas']) ?>";
+    });
+});
+</script>

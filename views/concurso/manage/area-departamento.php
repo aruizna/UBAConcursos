@@ -7,7 +7,7 @@ use app\models\Facultad;
 use app\models\AreaDepartamento;
 use app\models\Asignatura;
 
-$this->title = 'Gestión de Áreas y Departamentos';
+$this->title = 'Gestión de Departamentos';
 
 $departamentos = ArrayHelper::map(
     AreaDepartamento::find()->select(['descripcion_area_departamento'])->distinct()->all(),
@@ -173,7 +173,7 @@ body {
 
         <div class="row">
             <div class="col-md-3">
-                <label>Área/Departamento</label>
+                <label>Departamento</label>
                 <?= Html::dropDownList('descripcion_area_departamento', Yii::$app->request->getQueryParam('descripcion_area_departamento', ''), 
                     ['' => 'Seleccione un departamento'] + $departamentos, 
                     ['class' => 'form-control']) 
@@ -209,7 +209,7 @@ body {
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            ['attribute' => 'descripcion_area_departamento', 'label' => 'Área/Departamento'],
+            ['attribute' => 'descripcion_area_departamento', 'label' => 'Departamento'],
             [
                 'attribute' => 'id_facultad',
                 'label' => 'Unidad Académica',
@@ -221,15 +221,15 @@ body {
                 'attribute' => 'asignaturas',
                 'label' => 'Asignaturas',
                 'value' => function ($model) {
-                    return implode(', ', ArrayHelper::getColumn($model->asignaturas, 'descripcion_asignatura'));
+                    return $model->getAsignaturasAsString();
                 },
-            ],
+            ],            
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{update}',
                 'buttons' => [
                     'update' => function ($url, $model) {
-                        return Html::a('Modificar', ['area-departamento-update', 'id' => $model->id_area_departamento], [
+                        return Html::a('Modificar', ['area-departamento-update', 'id' => $model->id_autoincrement], [
                             'class' => 'btn btn-primary btn-sm',
                         ]);
                     },

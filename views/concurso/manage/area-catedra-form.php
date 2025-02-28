@@ -149,7 +149,7 @@ body {
         ['prompt' => 'Seleccione una Unidad Académica']
     ) ?>
 
-    <!-- Nombre del Área / Departamento -->
+    <!-- Nombre del Departamento -->
     <?= $form->field($model, 'nombre_area_catedra')->textInput([
         'maxlength' => true,
         'placeholder' => 'Ingrese el nombre del área o departamento'
